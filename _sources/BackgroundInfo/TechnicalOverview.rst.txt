@@ -83,9 +83,9 @@ Preconfigured (Level 1) systems for Land DA already have the required external l
      - /work/noaa/epic/role-epic/spack-stack/hercules/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core
      - /work2/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules
    * - Container
-     - intel-oneapi-compilers/2021.8.0
-     - intel-oneapi-mpi/2021.8.0
-     - /opt/spack-stack/ (inside the container)
+     - intel-oneapi-compilers/2021.10.0
+     - intel-oneapi-mpi/2021.9.0
+     - /opt/spack-stack/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core (inside the container)
      - /opt/jedi-bundle (inside the container)
 
 Level 2-4 Systems
