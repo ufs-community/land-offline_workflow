@@ -13,16 +13,17 @@ Frequently Asked Questions (FAQ)
 My tasks went DEAD. Why might this be?
 ========================================
 
-The most common reason for the first few tasks to go DEAD is an improper path in the ``land_analysis.yaml`` configuration file. 
-In particular, ``EXP_BASEDIR`` must be set to the directory above ``land-DA_workflow``. For example, if ``land-DA_workflow`` resides at ``Users/Jane.Doe/landda/land-DA_workflow``, then ``EXP_BASEDIR`` must be set to ``Users/Jane.Doe/landda``. After correcting ``land_analysis.yaml``, users will need to regenerate the workflow XML by running: 
+The most common reason for the first few tasks to go DEAD is an improper path in the ``parm_xml.yaml`` configuration file. 
+In particular, ``exp_basedir`` must be set to the directory above ``land-DA_workflow``. For example, if ``land-DA_workflow`` resides at ``Users/Jane.Doe/landda/land-DA_workflow``, then ``exp_basedir`` must be set to ``Users/Jane.Doe/landda``. After correcting ``parm_xml.yaml``, users will need to regenerate the workflow XML by running: 
 
 .. code-block:: console
 
+   uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml
    uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
 Then, rewind the DEAD tasks as described :ref:`below <RestartTask>` using ``rocotorewind``, and use ``rocotorun``/``rocotostat`` to advance/check on the workflow (see :numref:`Section %s <run-w-rocoto>` for how to do this). 
 
-If the first few tasks run successfully, but future tasks go DEAD, users will need to check the experiment log files, located at ``$EXP_BASEDIR/ptmp/test/com/output/logs``. It may also be useful to check that the JEDI directory and other paths and values are correct in ``land_analysis.yaml``. 
+If the first few tasks run successfully, but future tasks go DEAD, users will need to check the experiment log files, located at ``$EXP_BASEDIR/ptmp/test/com/output/logs``. It may also be useful to check that the JEDI directory and other paths and values are correct in ``parm_xml.yaml``. 
 
 
 .. _RestartTask:
