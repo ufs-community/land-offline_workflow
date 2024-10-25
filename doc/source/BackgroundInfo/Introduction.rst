@@ -13,6 +13,10 @@ The following improvements have been made to the Land DA System ahead of the |la
 
 * Added cycled run capability (:land-wflow-repo:`PR #101 <pull/101/>`)
 * Provided automated run option using cron (:land-wflow-repo:`PR #110 <pull/110>`)
+* Incorporated `Unified Workflow Tools <https://github.com/ufs-community/uwtools>`_:
+
+   * Added Rocoto tool to produce the Rocoto workflow XML file from a YAML configuration file (:land-wflow-repo:`PR #47 <pull/47>`)
+   * Added template tool to render a configuration file from a template (:land-wflow-repo:`PR #153 <pull/153>`)
 * Added plotting options: 
 
    * Analysis plotting task (:land-wflow-repo:`PR #107 <pull/107>`)
@@ -23,11 +27,12 @@ The following improvements have been made to the Land DA System ahead of the |la
 * Added prerequisites for workflow end-to-end (WE2E) testing capability (:land-wflow-repo:`PR #131 <pull/131>`)
 * Upgraded to JEDI Skylab v7.0 (:land-wflow-repo:`PR #92 <pull/92/>`)
 * Upgraded to spack-stack v1.6.0 (:land-wflow-repo:`PR #102 <pull/102>`)
-* Updated directory structure for NCO compliance (:land-wflow-repo:`PR #75 <pull/75>`)
+* Updated directory structure for NCO compliance (e.g., :land-wflow-repo:`PR #75 <pull/75>`)
 * Added platform test to CTest & updated version of UFS WM (:land-wflow-repo:`PR #146 <pull/146>`)
 * Removed land driver from CTest (:land-wflow-repo:`PR #123 <pull/123>`)
 * Removed land driver and vector2tile (:land-wflow-repo:`PR #129 <pull/129>`)
 
+.. COMMENT: Add container PR once merged. 
 
 The Land DA System citation is as follows and should be used when presenting results based on research conducted with the Land DA System:
 

@@ -149,9 +149,10 @@ The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operatio
     ├── parm
     │     ├── jedi
     │     ├── templates
+    │     │     └── template.land_analysis.yaml
     │     ├── check_release_outputs.sh
     │     ├── detect_platform.sh
-    │     ├── land_analysis_<platform>.yaml
+    │     ├── parm_xml_<platform>.yaml
     │     └── launch_rocoto_wflow.sh
     ├── scripts
     ├── sorc
@@ -172,6 +173,7 @@ The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operatio
     │     ├── CMakeLists.txt
     │     └── app_build.sh
     ├── ush
+    |     ├── fill_jinja_template.py
     |     ├── hofx_analysis_stats.py
     |     ├── letkf_create_ens.py
     |     └── plot_forecast_restart.py

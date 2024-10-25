@@ -72,5 +72,5 @@ The CTests test the operability of four major elements of the Land DA System: ``
 
 .. note::
 
-   There are plans to add workflow end-to-end (WE2E) tests to the Land DA System. Currently, when ``WE2E_VAV: "YES"``, this functionality checks that the output from the Jan. 3-4, 2000 sample case is within the tolerance set (via the ``WE2E_ATOL`` variable) at the end of the three main tasks --- *analysis*, *forecast*, and *post_anal*. The results are logged by default in ``we2e.log``. In the future, this functionality will be expanded to encompass a full range of WE2E tests. 
+   There are plans to add workflow end-to-end (WE2E) tests to the Land DA System. Currently, when ``TEST: "YES"``, this functionality checks that the output from the Jan. 3-4, 2000 sample case is within the tolerance set (via the ``WE2E_ATOL`` variable) at the end of the three main tasks --- *analysis*, *forecast*, and *post_anal*. The results are logged by default in ``we2e.log``. In the future, this functionality will be expanded to encompass a full range of WE2E tests. 
 

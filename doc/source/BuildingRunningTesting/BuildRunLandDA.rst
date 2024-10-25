@@ -116,14 +116,13 @@ Users will need to configure the ``account`` and ``exp_basedir`` variables in ``
    * ``account:`` A valid account name. Hera, Orion, Hercules, and most NOAA :term:`RDHPCS` systems require a valid account name; other systems may not (in which case, any value will do).
    * ``exp_basedir:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). 
       
-      .. hint:: 
-         For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir:`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
+      * For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
 
 .. note::
 
    To determine an appropriate ``account`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
 
-Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this files using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
+Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this file using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
 
 .. _GetData:
 
@@ -158,7 +157,7 @@ Generate the workflow XML file with ``uwtools`` by running:
    uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml
    uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
-If the command runs without problems, ``uwtools`` will output a "0 errors found" message similar to the following: 
+If the commands run without issue, ``uwtools`` will output a "0 errors found" message similar to the following: 
 
 .. code-block:: console
 
