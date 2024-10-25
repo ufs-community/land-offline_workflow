@@ -4,12 +4,9 @@
 Containerized Land DA Workflow
 **********************************
 
-These instructions will help users build and run a basic case for the Unified Forecast System (:term:`UFS`) Land Data Assimilation (DA) System using a `Singularity/Apptainer <https://apptainer.org/docs/user/latest/>`_ container. The Land DA :term:`container` packages together the Land DA System with its dependencies (e.g., :term:`spack-stack`, :term:`JEDI`) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth systems models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, :term:`MPIs <MPI>`, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported :ref:`Level 1 <LevelsOfSupport>` system (i.e., Hera, Orion). 
+These instructions will help users build and run a basic case for the Unified Forecast System (:term:`UFS`) Land Data Assimilation (DA) System using a `Singularity/Apptainer <https://apptainer.org/docs/user/latest/>`_ container. The Land DA :term:`container` packages together the Land DA System with its dependencies (e.g., :term:`spack-stack`, :term:`JEDI`) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth system models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, :term:`MPIs <MPI>`, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported :ref:`Level 1 <LevelsOfSupport>` system (e.g., Hera, Orion). 
 
-This chapter provides instructions for building and running basic Land DA cases in a container. Users can choose between two options: 
-
-   * A Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component
-   * A Dec. 21-22, 2019 00z sample case using :term:`ERA5` data with the UFS Land Driver
+This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System using a container to run a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (DATM) component.
 
 .. attention::
 
@@ -23,8 +20,9 @@ Prerequisites
 The containerized version of Land DA requires: 
 
    * `Installation of Apptainer <https://apptainer.org/docs/admin/latest/installation.html>`_
-   * At least 6 CPU cores
+   * At least 26 CPU cores (may be possible to run with 13, but this has not been tested)
    * An **Intel** compiler and :term:`MPI` (available for `free here <https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit-download.html>`_) 
+   * Slurm job scheduler
 
 
 Install Singularity/Apptainer
@@ -37,7 +35,7 @@ Install Singularity/Apptainer
 To build and run Land DA using a Singularity/Apptainer container, first install the software according to the `Apptainer Installation Guide <https://apptainer.org/docs/admin/1.2/installation.html>`_. This will include the installation of all dependencies. 
 
 .. attention:: 
-   Docker containers can only be run with root privileges, and users generally do not have root privileges on :term:`HPCs <HPC>`. However, a Singularity image may be built directly from a Docker image for use on the system.
+   Docker containers can only be run with root privileges, and users generally do not have root privileges on :term:`HPCs <HPC>`. However, an Apptainer image may be built directly from a Docker image for use on the system.
 
 .. _DownloadContainer:
 
@@ -93,7 +91,7 @@ where ``/path/to/landda`` is the path to this top-level directory (e.g., ``/User
 NOAA RDHPCS Systems
 ----------------------
 
-On many NOAA :term:`RDHPCS`, a container named ``ubuntu20.04-intel-landda-release-public-v1.2.0.img`` has already been built, and users may access the container at the locations in :numref:`Table %s <PreBuiltContainers>`.
+On many NOAA :term:`RDHPCS`, a container named ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` has already been built, and users may access the container at the locations in :numref:`Table %s <PreBuiltContainers>`.
 
 .. _PreBuiltContainers:
 
@@ -102,13 +100,11 @@ On many NOAA :term:`RDHPCS`, a container named ``ubuntu20.04-intel-landda-releas
    +-----------------+--------------------------------------------------------+
    | Machine         | File location                                          |
    +=================+========================================================+
-   | Derecho         | /glade/work/epicufsrt/contrib/containers               |
-   +-----------------+--------------------------------------------------------+
    | Gaea            | /gpfs/f5/epic/world-shared/containers                  |
    +-----------------+--------------------------------------------------------+
    | Hera            | /scratch1/NCEPDEV/nems/role.epic/containers            |
    +-----------------+--------------------------------------------------------+
-   | Jet             | /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers            |
+   | Jet             | /mnt/lfs5/HFIP/hfv3gfs/role.epic/containers            |
    +-----------------+--------------------------------------------------------+
    | NOAA Cloud      | /contrib/EPIC/containers                               |
    +-----------------+--------------------------------------------------------+
@@ -119,30 +115,30 @@ Users can simply set an environment variable to point to the container:
 
 .. code-block:: console
 
-   export img=path/to/ubuntu20.04-intel-landda-release-public-v1.2.0.img
+   export img=path/to/ubuntu22.04-intel-landda-release-public-v2.0.0.img
 
 If users prefer, they may copy the container to their local working directory. For example, on Jet:
 
 .. code-block:: console
 
-   cp /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers/ubuntu20.04-intel-landda-release-public-v1.2.0.img .
+   cp /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers/ubuntu22.04-intel-landda-release-public-v2.0.0.img .
 
 Other Systems
 ----------------
 
-On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu20.04-intel-landda-release-public-v1.2.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. However, the container in the data bucket is the ``release/v1.2.0`` container rather than the updated ``develop`` branch container. 
+On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. However, the container in the data bucket is the ``release/v1.2.0`` container rather than the updated ``develop`` branch container. 
 
 To download from the data bucket, users can run:
 
 .. code-block:: console
 
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v1.2.0/ubuntu20.04-intel-landda-release-public-v1.2.0.img
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/ubuntu22.04-intel-landda-release-public-v2.0.0.img
 
 To build the container from a Docker image, users can run:
 
 .. code-block:: console
 
-   singularity build --force ubuntu20.04-intel-landda-release-public-v1.2.0.img docker://noaaepic/ubuntu20.04-intel-landda:release-public-v1.2.0
+   singularity build --force ubuntu22.04-intel-landda-release-public-v2.0.0.img docker://noaaepic/ubuntu22.04-intel-landda:release-public-v2.0.0
 
 This process may take several hours depending on the system. 
 
@@ -162,8 +158,8 @@ Users on any system may download and untar the data from the `Land DA Data Bucke
 .. code-block:: console
 
    cd $LANDDAROOT
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v1.2.0/Landdav1.2.0_input_data.tar.gz
-   tar xvfz Landdav1.2.0_input_data.tar.gz
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/LandDAInputDatav2.0.0.tar.gz
+   tar xvfz LandDAInputDatav2.0.0.tar.gz
 
 If users choose to add data in a location other than ``$LANDDAROOT``, they can set the input data directory by running:
 
@@ -193,7 +189,7 @@ Save the location of the container in an environment variable.
 
 .. code-block:: console
 
-   export img=path/to/ubuntu20.04-intel-landda-release-public-v1.2.0.img
+   export img=path/to/ubuntu22.04-intel-landda-release-public-v2.0.0.img
 
 Set the ``USE_SINGULARITY`` environment variable to "yes". 
 
@@ -207,14 +203,14 @@ Users may convert a container ``.img`` file to a writable sandbox. This step is 
 
 .. code-block:: console
 
-   singularity build --sandbox ubuntu20.04-intel-landda-release-public-v1.2.0 $img
+   singularity build --sandbox ubuntu22.04-intel-landda-release-public-v2.0.0 $img
 
 When making a writable sandbox on NOAA :term:`RDHPCS`, the following warnings commonly appear and can be ignored:
 
 .. code-block:: console
 
    INFO:    Starting build...
-   INFO:    Verifying bootstrap image ubuntu20.04-intel-landda-release-public-v1.2.0.img
+   INFO:    Verifying bootstrap image ubuntu22.04-intel-landda-release-public-v2.0.0.img
    WARNING: integrity: signature not found for object group 1
    WARNING: Bootstrap image could not be verified, but build will continue.
 
