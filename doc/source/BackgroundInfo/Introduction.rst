@@ -32,8 +32,6 @@ The following improvements have been made to the Land DA System ahead of the |la
 * Removed land driver from CTest (:land-wflow-repo:`PR #123 <pull/123>`)
 * Removed land driver and vector2tile (:land-wflow-repo:`PR #129 <pull/129>`)
 
-.. COMMENT: Add container PR once merged. 
-
 The Land DA System citation is as follows and should be used when presenting results based on research conducted with the Land DA System:
 
 UFS Development Team. (2024, October 30). Unified Forecast System (UFS) Land Data Assimilation (DA) System (Version v2.0.0). Zenodo. https://doi.org/10.5281/zenodo.13909475

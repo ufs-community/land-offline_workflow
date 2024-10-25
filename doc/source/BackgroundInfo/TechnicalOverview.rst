@@ -20,9 +20,7 @@ Minimum System Requirements
 Additionally, users will need:
 
    * Disk space: ~24GB (11GB for Land DA System [or 6.5GB for Land DA container], 12GB for Land DA data, and ~1GB for staging and output) 
-   * 7 CPU cores (or option to run with "oversubscribe")
-
-   .. COMMENT: Is 7 CPU cores still enough? land_analysis.yaml lists 26
+   * 26 CPU cores (13 CPUs may be possible, but it has not been tested)
 
 Software Prerequisites
 ========================

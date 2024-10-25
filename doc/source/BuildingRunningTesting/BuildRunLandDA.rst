@@ -114,9 +114,7 @@ where ``<platform>`` is ``hera``, ``orion``, or ``hercules``.
 Users will need to configure the ``account`` and ``exp_basedir`` variables in ``parm_xml.yaml``: 
 
    * ``account:`` A valid account name. Hera, Orion, Hercules, and most NOAA :term:`RDHPCS` systems require a valid account name; other systems may not (in which case, any value will do).
-   * ``exp_basedir:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). 
-      
-      * For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
+   * ``exp_basedir:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
 
 .. note::
 
