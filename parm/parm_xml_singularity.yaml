@@ -1,0 +1,7 @@
+machine: singularity
+account: epic
+# exp_basedir: /path/to/parent/directory/of/land-DA_workflow
+exp_basedir: SINGULARITY_WORKING_DIR 
+jedi_install: SINGULARITY_WORKING_DIR
+warmstart_dir: SINGULARITY_WORKING_DIR/land-DA_workflow/fix/DATA_RESTART
+we2e_test: 'NO'
