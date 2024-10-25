@@ -3,45 +3,45 @@ geometry:
     namelist filename: Data/fv3files/fmsmpp.nml
     field table filename: Data/fv3files/field_table
   akbk: Data/fv3files/akbk64.nc4
-  npx: XXREP
-  npy: XXREP
+  npx: {{ resp1 }}
+  npy: {{ resp1 }}
   npz: 64
   field metadata override: gfs-land.yaml
   time invariant fields:
     state fields:
-      datetime: XXYYYP-XXMP-XXDPTXXHP:00:00Z
+      datetime: {{ yyyp }}-{{ mp }}-{{ dp }}T{{ hp }}:00:00Z
       filetype: fms restart
       skip coupler file: true
       state variables: [orog_filt]
-      datapath: XXTPATH
-      filename_orog: XXTSTUB.nc
+      datapath: {{ tpath }}
+      filename_orog: {{ tstub }}.nc
     derived fields: [nominal_surface_pressure]
 
 time window:
-  begin: XXYYYP-XXMP-XXDPTXXHP:00:00Z
+  begin: {{ yyyp }}-{{ mp }}-{{ dp }}T{{ hp }}:00:00Z
   length: PT24H
 
 background:
- date: &date XXYYYY-XXMM-XXDDTXXHH:00:00Z
+ date: &date {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
  members:
-   - datetime: XXYYYY-XXMM-XXDDTXXHH:00:00Z
+   - datetime: {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
      filetype: fms restart
      state variables: [snwdph,vtype,slmsk]
      datapath: mem_pos/
-     filename_sfcd: XXYYYYXXMMXXDD.XXHH0000.sfc_data.nc
-     filename_cplr: XXYYYYXXMMXXDD.XXHH0000.coupler.res
-   - datetime: XXYYYY-XXMM-XXDDTXXHH:00:00Z
+     filename_sfcd: {{ yyyymmdd }}.{{ hh }}0000.sfc_data.nc
+     filename_cplr: {{ yyyymmdd }}.{{ hh }}0000.coupler.res
+   - datetime: {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
      filetype: fms restart
      state variables: [snwdph,vtype,slmsk]
      datapath: mem_neg/
-     filename_sfcd: XXYYYYXXMMXXDD.XXHH0000.sfc_data.nc
-     filename_cplr: XXYYYYXXMMXXDD.XXHH0000.coupler.res
+     filename_sfcd: {{ yyyymmdd }}.{{ hh }}0000.sfc_data.nc
+     filename_cplr: {{ yyyymmdd }}.{{ hh }}0000.coupler.res
 
 driver:
   save posterior mean: false
   save posterior mean increment: true
   save posterior ensemble: false
-  run as observer only: XXHOFX
+  run as observer only: {{ driver_obs_only }}
 
 local ensemble DA:
   solver: LETKF

@@ -33,28 +33,31 @@ do
   cp -p ${rst_fn} ${DATA_SHARE}
 done
 
-  # update tile2tile namelist
-  cp  ${PARMlandda}/templates/template.ufs2jedi ufs2jedi.namelist
+# update tile2tile namelist
+settings="\
+  'fix_landda': ${FIXlandda}
+  'res': ${RES}
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'tstub': ${TSTUB}
+" # End of settins variable
 
-  sed -i "s|FIXlandda|${FIXlandda}|g" ufs2jedi.namelist
-  sed -i -e "s/XXYYYY/${YYYY}/g" ufs2jedi.namelist
-  sed -i -e "s/XXMM/${MM}/g" ufs2jedi.namelist
-  sed -i -e "s/XXDD/${DD}/g" ufs2jedi.namelist
-  sed -i -e "s/XXHH/${HH}/g" ufs2jedi.namelist
-  sed -i -e "s/XXHH/${HH}/g" ufs2jedi.namelist
-  sed -i -e "s/XXRES/${RES}/g" ufs2jedi.namelist
-  sed -i -e "s/XXTSTUB/${TSTUB}/g" ufs2jedi.namelist
+fp_template="${PARMlandda}/templates/template.ufs2jedi"
+fn_namelist="ufs2jedi.namelist"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
-  # submit tile2tile
-  export pgm="tile2tile_converter.exe"
-  . prep_step
-  ${EXEClandda}/$pgm ufs2jedi.namelist >>$pgmout 2>errfile
-  cp errfile errfile_tile2tile
-  export err=$?; err_chk
-  if [[ $err != 0 ]]; then
-    echo "tile2tile failed"
-    exit 22 
-  fi
+# submit tile2tile
+export pgm="tile2tile_converter.exe"
+. prep_step
+${EXEClandda}/$pgm ufs2jedi.namelist >>$pgmout 2>errfile
+cp errfile errfile_tile2tile
+export err=$?; err_chk
+if [[ $err != 0 ]]; then
+  echo "tile2tile failed"
+  exit 22 
+fi
 
 #stage restarts for applying JEDI update to intermediate directory
 for itile in {1..6}

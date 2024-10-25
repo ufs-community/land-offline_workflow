@@ -51,33 +51,49 @@ cp -p ${PARMlandda}/templates/template.fd_ufs.yaml fd_ufs.yaml
 cp -p ${PARMlandda}/templates/template.data_table data_table
 
 # Set ufs.configure
-cp -p ${PARMlandda}/templates/template.ufs.configure ufs.configure
 nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
-sed -i -e "s/XXNPROCS_ATM_M1/${nprocs_atm_m1}/g" ufs.configure
-sed -i -e "s/XXNPROCS_FORECAST_ATM/${NPROCS_FORECAST_ATM}/g" ufs.configure
 nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
-sed -i -e "s/XXNPROCS_ATM_LND_M1/${nprocs_atm_lnd_m1}/g" ufs.configure
-sed -i -e "s/XXLND_LAYOUT_X/${LND_LAYOUT_X}/g" ufs.configure
-sed -i -e "s/XXLND_LAYOUT_Y/${LND_LAYOUT_Y}/g" ufs.configure
-sed -i -e "s/XXLND_OUTPUT_FREQ_SEC/${LND_OUTPUT_FREQ_SEC}/g" ufs.configure
-sed -i -e "s/XXDT_RUNSEQ/${DT_RUNSEQ}/g" ufs.configure
+
+settings="\
+  'nprocs_atm_m1': ${nprocs_atm_m1}
+  'nprocs_forecast_atm': ${NPROCS_FORECAST_ATM}
+  'nprocs_atm_lnd_m1': ${nprocs_atm_lnd_m1}
+  'lnd_layout_x': ${LND_LAYOUT_X}
+  'lnd_layout_y': ${LND_LAYOUT_Y}
+  'lnd_output_freq_sec': ${LND_OUTPUT_FREQ_SEC}
+  'dt_runseq': ${DT_RUNSEQ}
+" # End of settins variable
+
+fp_template="${PARMlandda}/templates/template.ufs.configure"
+fn_namelist="ufs.configure"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 # Set model_configure
-cp -p ${PARMlandda}/templates/template.model_configure model_configure
-sed -i -e "s/XXYYYY/${YYYY}/g" model_configure
-sed -i -e "s/XXMM/${MM}/g" model_configure
-sed -i -e "s/XXDD/${DD}/g" model_configure
-sed -i -e "s/XXHH/${HH}/g" model_configure
-sed -i -e "s/XXFCSTHR/${FCSTHR}/g" model_configure
-sed -i -e "s/XXDT_ATMOS/${DT_ATMOS}/g" model_configure
+settings="\
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'fcsthr': ${FCSTHR}
+  'dt_atmos': ${DT_ATMOS}
+" # End of settins variable
+
+fp_template="${PARMlandda}/templates/template.model_configure"
+fn_namelist="model_configure"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 # set diag table
-cp -p ${PARMlandda}/templates/template.diag_table diag_table
-sed -i -e "s/XXYYYYMMDD/${YYYYMMDD}/g" diag_table
-sed -i -e "s/XXYYYY/${YYYY}/g" diag_table
-sed -i -e "s/XXMM/${MM}/g" diag_table
-sed -i -e "s/XXDD/${DD}/g" diag_table
-sed -i -e "s/XXHH/${HH}/g" diag_table
+settings="\
+  'yyyymmdd': !!str ${YYYYMMDD}
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+" # End of settins variable
+
+fp_template="${PARMlandda}/templates/template.diag_table"
+fn_namelist="diag_table"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 # Set up the run directory
 mkdir -p RESTART
@@ -155,8 +171,8 @@ do
   ln -nsf ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc ${DATA_RESTART}
 done
 
-# WE2E V&V
-if [[ "${WE2E_VAV}" == "YES" ]]; then
+# WE2E test
+if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"

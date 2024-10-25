@@ -11,6 +11,7 @@ parm/*.db
 parm/*.out
 parm/*.err
 parm/*.log
+parm/parm_xml.yaml
 parm/land_analysis.yaml
 parm/log.*
 

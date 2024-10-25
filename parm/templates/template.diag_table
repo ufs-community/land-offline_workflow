@@ -1,5 +1,5 @@
-XXYYYYMMDD.00Z.1760x880.64bit.non-mono
-XXYYYY XXMM XXDD XXHH 0 0
+{{ yyyymmdd }}.00Z.1760x880.64bit.non-mono
+{{ yyyy }} {{ mm }} {{ dd }} {{ hh }} 0 0
 
 "fv3_history",    0,  "hours",  1,  "hours",  "time"
 "fv3_history2d",  0,  "hours",  1,  "hours",  "time"

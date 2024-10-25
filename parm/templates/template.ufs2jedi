@@ -8,17 +8,17 @@
 
 ! FV3 resolution and path to oro files for restart/perturbation conversion
 
-  tile_size = XXRES
-  tile_path = "FIXlandda/FV3_fix_tiled/CXXRES/"
-  tile_fstub = "XXTSTUB"
+  tile_size = {{ res }}
+  tile_path = "{{ fix_landda }}/FV3_fix_tiled/C{{ res }}/"
+  tile_fstub = "{{ tstub }}"
   
 !------------------- only restart conversion -------------------
 ! Time stamp for conversion for restart conversion
 
-  restart_date = "XXYYYY-XXMM-XXDD XXHH:00:00"
+  restart_date = "{{ yyyy }}-{{ mm }}-{{ dd }} {{ hh }}:00:00"
   
 ! Path for static file  
-  static_filename = "FIXlandda/static/ufs-land_CXXRES_static_fields.nc"
+  static_filename = "{{ fix_landda }}/static/ufs-land_C{{ res }}_static_fields.nc"
   
 ! Location of vector restart file (vector2tile direction)
 

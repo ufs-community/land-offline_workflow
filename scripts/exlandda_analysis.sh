@@ -43,17 +43,21 @@ do
 done
 ln -nsf ${COMIN}/obs/*_${YYYY}${MM}${DD}${HH}.nc .
 
-cres_file=${DATA}/${FILEDATE}.coupler.res
-cp ${PARMlandda}/templates/template.coupler.res $cres_file
+# update coupler.res file
+settings="\
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'yyyp': !!str ${YYYP}
+  'mp': !!str ${MP}
+  'dp': !!str ${DP}
+  'hp': !!str ${HP}
+" # End of settins variable
 
-sed -i -e "s/XXYYYY/${YYYY}/g" $cres_file
-sed -i -e "s/XXMM/${MM}/g" $cres_file
-sed -i -e "s/XXDD/${DD}/g" $cres_file
-sed -i -e "s/XXHH/${HH}/g" $cres_file
-sed -i -e "s/XXYYYP/${YYYP}/g" $cres_file
-sed -i -e "s/XXMP/${MP}/g" $cres_file
-sed -i -e "s/XXDP/${DP}/g" $cres_file
-sed -i -e "s/XXHP/${HP}/g" $cres_file
+fp_template="${PARMlandda}/templates/template.coupler.res"
+fn_namelist="${DATA}/${FILEDATE}.coupler.res"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 ################################################
 # CREATE BACKGROUND ENSEMBLE (LETKFOI)
@@ -95,11 +99,7 @@ fi
 
 do_DA="YES"
 do_HOFX="NO"
-
-if [[ $do_DA == "NO" && $do_HOFX == "NO" ]]; then 
-  echo "do_landDA:No obs found, not calling JEDI" 
-  exit 0 
-fi
+RESP1=$((RES+1))
 
 mkdir -p output/DA/hofx
 # if yaml is specified by user, use that. Otherwise, build the yaml
@@ -116,20 +116,28 @@ if [[ $do_DA == "YES" ]]; then
     cp ${PARMlandda}/jedi/${YAML_DA} ${DATA}/letkf_land.yaml
   fi
 
-  sed -i -e "s/XXYYYY/${YYYY}/g" letkf_land.yaml
-  sed -i -e "s/XXMM/${MM}/g" letkf_land.yaml
-  sed -i -e "s/XXDD/${DD}/g" letkf_land.yaml
-  sed -i -e "s/XXHH/${HH}/g" letkf_land.yaml
-  sed -i -e "s/XXYYYP/${YYYP}/g" letkf_land.yaml
-  sed -i -e "s/XXMP/${MP}/g" letkf_land.yaml
-  sed -i -e "s/XXDP/${DP}/g" letkf_land.yaml
-  sed -i -e "s/XXHP/${HP}/g" letkf_land.yaml
-  sed -i -e "s/XXTSTUB/${TSTUB}/g" letkf_land.yaml
-  sed -i -e "s#XXTPATH#${TPATH}#g" letkf_land.yaml
-  sed -i -e "s/XXRES/${RES}/g" letkf_land.yaml
-  RESP1=$((RES+1))
-  sed -i -e "s/XXREP/${RESP1}/g" letkf_land.yaml
-  sed -i -e "s/XXHOFX/false/g" letkf_land.yaml  # do DA
+  # update jedi yaml file
+  settings="\
+    'yyyy': !!str ${YYYY}
+    'mm': !!str ${MM}
+    'dd': !!str ${DD}
+    'hh': !!str ${HH}
+    'yyyymmdd': !!str ${PDY}
+    'yyyymmddhh': !!str ${PDY}${cyc}
+    'yyyp': !!str ${YYYP}
+    'mp': !!str ${MP}
+    'dp': !!str ${DP}
+    'hp': !!str ${HP}
+    'tstub': ${TSTUB}
+    'tpath': ${TPATH}
+    'res': ${RES}
+    'resp1': ${RESP1}
+    'driver_obs_only': false
+  " # End of settins variable
+
+  fp_template="${DATA}/letkf_land.yaml"
+  fn_namelist="${DATA}/letkf_land.yaml"
+  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
 if [[ $do_HOFX == "YES" ]]; then 
@@ -145,21 +153,28 @@ if [[ $do_HOFX == "YES" ]]; then
     cp ${PARMlandda}/jedi/${YAML_HOFX} ${DATA}/hofx_land.yaml
   fi
 
-  sed -i -e "s/XXYYYY/${YYYY}/g" hofx_land.yaml
-  sed -i -e "s/XXMM/${MM}/g" hofx_land.yaml
-  sed -i -e "s/XXDD/${DD}/g" hofx_land.yaml
-  sed -i -e "s/XXHH/${HH}/g" hofx_land.yaml
-  sed -i -e "s/XXYYYP/${YYYP}/g" hofx_land.yaml
-  sed -i -e "s/XXMP/${MP}/g" hofx_land.yaml
-  sed -i -e "s/XXDP/${DP}/g" hofx_land.yaml
-  sed -i -e "s/XXHP/${HP}/g" hofx_land.yaml
-  sed -i -e "s#XXTPATH#${TPATH}#g" hofx_land.yaml
-  sed -i -e "s/XXTSTUB/${TSTUB}/g" hofx_land.yaml
-  sed -i -e "s/XXRES/${RES}/g" hofx_land.yaml
-  RESP1=$((RES+1))
-  sed -i -e "s/XXREP/${RESP1}/g" hofx_land.yaml
-  sed -i -e "s/XXHOFX/true/g" hofx_land.yaml  # do HOFX
+  # update jedi yaml file
+  settings="\
+    'yyyy': !!str ${YYYY}
+    'mm': !!str ${MM}
+    'dd': !!str ${DD}
+    'hh': !!str ${HH}
+    'yyyymmdd': !!str ${PDY}
+    'yyyymmddhh': !!str ${PDY}${cyc}
+    'yyyp': !!str ${YYYP}
+    'mp': !!str ${MP}
+    'dp': !!str ${DP}
+    'hp': !!str ${HP}
+    'tstub': ${TSTUB}
+    'tpath': ${TPATH}
+    'res': ${RES}
+    'resp1': ${RESP1}
+    'driver_obs_only': true
+  " # End of settins variable
 
+  fp_template="${DATA}/hofx_land.yaml"
+  fn_namelist="${DATA}/hofx_land.yaml"
+  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
 if [[ "$GFSv17" == "NO" ]]; then
@@ -251,8 +266,8 @@ if [[ -d output/DA/hofx ]]; then
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
 
-# WE2E V&V
-if [[ "${WE2E_VAV}" == "YES" ]]; then
+# WE2E test
+if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"
   fn_inc="${FILEDATE}.xainc.sfc_data.tile"

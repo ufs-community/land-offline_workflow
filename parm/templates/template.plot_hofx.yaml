@@ -1,8 +1,0 @@
-hofx_files: 'INPUTFP'
-field_var: 'XXFIELDVAR'
-field_range: [XXFRLOW,XXFRHIGH]
-nbins: XXNBINS
-plottype: 'XXPLOTTYPE'
-title_fig: 'XXFIGTITLE'
-output_prefix: 'XXPREOUTFN'
-machine: 'XXMACHINE'

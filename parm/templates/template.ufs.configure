@@ -14,7 +14,7 @@ EARTH_attributes::
 
 # MED #
 MED_model:                      cmeps
-MED_petlist_bounds:             0 XXNPROCS_ATM_M1
+MED_petlist_bounds:             0 {{ nprocs_atm_m1 }}
 MED_omp_num_threads:            1
 MED_attributes::
   Verbosity = 1
@@ -30,7 +30,7 @@ MED_attributes::
 
 # ATM #
 ATM_model:                      datm
-ATM_petlist_bounds:             0 XXNPROCS_ATM_M1
+ATM_petlist_bounds:             0 {{ nprocs_atm_m1 }}
 ATM_omp_num_threads:            1
 ATM_attributes::
   Verbosity = 0
@@ -39,7 +39,7 @@ ATM_attributes::
 
 # LND #
 LND_model:                      noahmp
-LND_petlist_bounds:             XXNPROCS_FORECAST_ATM XXNPROCS_ATM_LND_M1
+LND_petlist_bounds:             {{ nprocs_forecast_atm }} {{ nprocs_atm_lnd_m1 }}
 LND_omp_num_threads:            1
 LND_attributes::
   Verbosity = 1
@@ -47,7 +47,7 @@ LND_attributes::
   mosaic_file = INPUT/C96_mosaic.nc
   input_dir = INPUT/
   ic_type = custom
-  layout = XXLND_LAYOUT_X:XXLND_LAYOUT_Y # need to be consistent with number of PEs (6*Lx*Ly)
+  layout = {{ lnd_layout_x }}:{{ lnd_layout_y }} # need to be consistent with number of PEs (6*Lx*Ly)
   num_soil_levels = 4
   forcing_height = 10
   soil_level_thickness = 0.10:0.30:0.60:1.00
@@ -67,7 +67,7 @@ LND_attributes::
   surface_evap_resistance_option = 1 # not used, it is fixed to 4 in sfc_noahmp_drv.F90
   glacier_option = 1
   surface_thermal_roughness_option = 2
-  output_freq = XXLND_OUTPUT_FREQ_SEC
+  output_freq = {{ lnd_output_freq_sec }}
   restart_freq = -1
   calc_snet = .true.
   initial_albedo = 0.25
@@ -75,7 +75,7 @@ LND_attributes::
 
 # cold
 runSeq::
-@XXDT_RUNSEQ
+@{{ dt_runseq }}
    MED med_phases_prep_atm
    MED -> ATM :remapMethod=redist
    ATM

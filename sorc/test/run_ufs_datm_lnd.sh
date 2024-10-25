@@ -97,12 +97,7 @@ fi
 cp ${PATHRT}/parm/noahmptable.tbl noahmptable.tbl
 
 # start runs
-echo "Start ufs-weather-model run"
-if [ "${PLATFORM}" = "hera" ] || [ "${PLATFORM}" = "orion" ] || [ "${PLATFORM}" = "hercules" ]; then 
-  export MPIRUN="srun"
-else
-  export MPIRUN=${MPIRUN:-`which mpiexec`}
-fi
+echo "Start ufs-weather-model run with ${MPIRUN}"
 ${MPIRUN} -n ${NPROCS_FORECAST} ./ufs_model
 
 #

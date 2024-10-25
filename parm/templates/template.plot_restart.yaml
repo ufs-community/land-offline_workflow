@@ -1,8 +1,0 @@
-path_data: 'PATH_DATA'
-work_dir: 'WORK_DIR'
-fn_data_base: 'XXFN_DATA_BASE'
-fn_data_ext: 'XXFN_DATA_EXT'
-soil_lvl_number: 'XXSOIL_LEVEL_NUMBER'
-out_title_base: 'XXOUT_TITLE_BASE'
-out_fn_base: 'XXOUT_FN_BASE'
-machine: 'XXMACHINE'

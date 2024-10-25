@@ -7,6 +7,8 @@ source ../../versions/build.ver_orion
 module use ../../modulefiles
 module load build_orion_intel
 
+export MPIRUN="srun"
+
 ctest
 
 wait

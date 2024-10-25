@@ -7,11 +7,11 @@
       obsdatain:
         engine:
           type: H5File
-          obsfile: GHCN_XXYYYYXXMMXXDDXXHH.nc
+          obsfile: GHCN_{{ yyyymmddhh }}.nc
       obsdataout:
         engine:
           type: H5File
-          obsfile: output/DA/hofx/letkf_hofx_ghcn_XXYYYYXXMMXXDDXXHH.nc
+          obsfile: output/DA/hofx/letkf_hofx_ghcn_{{ yyyymmddhh }}.nc
     obs operator:
       name: Identity
     obs error:

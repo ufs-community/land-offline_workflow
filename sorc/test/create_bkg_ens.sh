@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 ################################################
 # pass arguments
 project_binary_dir=$1
@@ -35,16 +35,20 @@ if [[ ${DAtype} == 'letkfoi_snow' ]]; then
       cp $i ${WORKDIR}/mem_${ens}
     done
 
-    cres_file=$WORKDIR/mem_${ens}/${FILEDATE}.coupler.res
-    cp ${project_source_dir}/../parm/templates/template.coupler.res $cres_file
-    sed -i -e "s/XXYYYY/${YY}/g" $cres_file
-    sed -i -e "s/XXMM/${MM}/g" $cres_file
-    sed -i -e "s/XXDD/${DD}/g" $cres_file
-    sed -i -e "s/XXHH/${HH}/g" $cres_file
-    sed -i -e "s/XXYYYP/${YP}/g" $cres_file
-    sed -i -e "s/XXMP/${MP}/g" $cres_file
-    sed -i -e "s/XXDP/${DP}/g" $cres_file
-    sed -i -e "s/XXHP/${HP}/g" $cres_file
+    # update coupler.res file
+    settings="\
+      'yyyy': !!str ${YY}
+      'mm': !!str ${MM}
+      'dd': !!str ${DD}
+      'hh': !!str ${HH}
+      'yyyp': !!str ${YP}
+      'mp': !!str ${MP}
+      'dp': !!str ${DP}
+      'hp': !!str ${HP}
+    " # End of settins variable
+    fp_template="${project_source_dir}/../parm/templates/template.coupler.res"
+    fn_namelist="${WORKDIR}/mem_${ens}/${FILEDATE}.coupler.res"
+    ${project_source_dir}/../ush/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
   done
 
   echo "============================= calling create ensemble"

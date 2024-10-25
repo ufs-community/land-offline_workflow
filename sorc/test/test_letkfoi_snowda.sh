@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 ################################################
 # pass arguments
 project_binary_dir=$1
@@ -48,21 +48,30 @@ do
   ln -fs $obs_file ./${OBS_TYPES[$ii]}_${YY}${MM}${DD}${HH}.nc 
 done
 
-sed -i -e "s/XXYYYY/${YY}/g" letkf_land.yaml
-sed -i -e "s/XXMM/${MM}/g" letkf_land.yaml
-sed -i -e "s/XXDD/${DD}/g" letkf_land.yaml
-sed -i -e "s/XXHH/${HH}/g" letkf_land.yaml
-sed -i -e "s/XXYYYP/${YP}/g" letkf_land.yaml
-sed -i -e "s/XXMP/${MP}/g" letkf_land.yaml
-sed -i -e "s/XXDP/${DP}/g" letkf_land.yaml
-sed -i -e "s/XXHP/${HP}/g" letkf_land.yaml
-sed -i -e "s/XXTSTUB/${TSTUB}/g" letkf_land.yaml
-sed -i -e "s#XXTPATH#${TPATH}#g" letkf_land.yaml
-#sed -i -e "s#DATAPATH#${OROG_PATH}#g" letkf_land.yaml
-sed -i -e "s/XXRES/${RES}/g" letkf_land.yaml
 RESP1=$((RES+1))
-sed -i -e "s/XXREP/${RESP1}/g" letkf_land.yaml
-sed -i -e "s/XXHOFX/false/g" letkf_land.yaml  # do DA
+yyyymmdd="${YY}${MM}${DD}"
+yyyymmddhh="${yyyymmdd}${HH}"
+# update jedi yaml file
+settings="\
+  'yyyy': !!str ${YY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'yyyymmdd': !!str ${yyyymmdd}
+  'yyyymmddhh': !!str ${yyyymmddhh}
+  'yyyp': !!str ${YP}
+  'mp': !!str ${MP}
+  'dp': !!str ${DP}
+  'hp': !!str ${HP}
+  'tstub': ${TSTUB}
+  'tpath': ${TPATH}
+  'res': ${RES}
+  'resp1': ${RESP1}
+  'driver_obs_only': false
+" # End of settins variable
+fp_template="letkf_land.yaml"
+fn_namelist="letkf_land.yaml"
+${project_source_dir}/../ush/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 # create folder for hofx
 mkdir -p ./output/DA/hofx
@@ -74,5 +83,5 @@ ln -fs $JEDI_STATICDIR ./
 cp $project_source_dir/../parm/jedi/gfs-land.yaml .
 
 #
-echo "============================= calling ${JEDI_EXEC}"
+echo "============================= calling ${JEDI_EXEC} with ${MPIRUN}"
 ${MPIRUN} -n $NPROC ${JEDI_EXEC} letkf_land.yaml

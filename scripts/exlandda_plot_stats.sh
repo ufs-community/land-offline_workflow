@@ -7,11 +7,14 @@ MM=${PDY:4:2}
 DD=${PDY:6:2}
 HH=${cyc}
 
+nYYYY=${NTIME:0:4}
+nMM=${NTIME:4:2}
+nDD=${NTIME:6:2}
+nHH=${NTIME:8:2}
+
 ############################################################
 # Stats Plot
 ############################################################
-
-cp -p ${PARMlandda}/templates/template.plot_hofx.yaml plot_hofx.yaml
 
 # Path to the directory containing the input file
 INPUTFP="${DATA_HOFX}"
@@ -29,15 +32,16 @@ FIGTITLE="GHCN Snow Depth (mm)::Obs-Ana::${PDY}"
 # Prefix of output file name
 PREOUTFN="hofx_oma_${PDY}"
 
-sed -i "s|INPUTFP|${INPUTFP}|g" plot_hofx.yaml
-sed -i -e "s/XXFIELDVAR/${FIELDVAR}/g" plot_hofx.yaml
-sed -i -e "s/XXFRLOW/${FRLOW}/g" plot_hofx.yaml
-sed -i -e "s/XXFRHIGH/${FRHIGH}/g" plot_hofx.yaml
-sed -i -e "s/XXNBINS/${NBINS}/g" plot_hofx.yaml
-sed -i -e "s/XXPLOTTYPE/${PLOTTYPE}/g" plot_hofx.yaml
-sed -i -e "s/XXFIGTITLE/${FIGTITLE}/g" plot_hofx.yaml
-sed -i -e "s/XXPREOUTFN/${PREOUTFN}/g" plot_hofx.yaml
-sed -i -e "s/XXMACHINE/${MACHINE}/g" plot_hofx.yaml
+cat > plot_hofx.yaml <<EOF
+hofx_files: '${INPUTFP}'
+field_var: '${FIELDVAR}'
+field_range: [${FRLOW},${FRHIGH}]
+nbins: ${NBINS}
+plottype: '${PLOTTYPE}'
+title_fig: '${FIGTITLE}'
+output_prefix: '${PREOUTFN}'
+machine: '${MACHINE}'
+EOF
 
 ${USHlandda}/hofx_analysis_stats.py
 if [[ $? != 0 ]]; then
@@ -50,32 +54,64 @@ cp -p ${PREOUTFN}* ${COMOUTplot}
 
 
 ############################################################
+# Time-history Plot
+############################################################
+
+FN_DATA_ANAL_PREFIX="analysis_"
+FN_DATA_ANAL_SUFFIX=".log"
+FN_DATA_FCST_PREFIX="forecast_"
+FN_DATA_FCST_SUFFIX=".log"
+OUT_TITLE_ANAL_BASE="Land-DA::Analysis::QC SnowDepthGHCN::"
+OUT_FN_ANAL_BASE="landda_timehistory_"
+OUT_TITLE_TIME="Land-DA::Wall-clock time"
+OUT_FN_TIME="landda_timehistory_wtime"
+
+cat > plot_timehistory.yaml <<EOF
+path_data: '${LOGDIR}'
+work_dir: '${DATA}'
+fn_data_anal_prefix: '${FN_DATA_ANAL_PREFIX}'
+fn_data_anal_suffix: '${FN_DATA_ANAL_SUFFIX}'
+fn_data_fcst_prefix: '${FN_DATA_FCST_PREFIX}'
+fn_data_fcst_suffix: '${FN_DATA_FCST_SUFFIX}'
+nprocs_anal: '${NPROCS_ANALYSIS}'
+nprocs_fcst: '${NPROCS_FORECAST}'
+out_title_anal_base: '${OUT_TITLE_ANAL_BASE}'
+out_fn_anal_base: '${OUT_FN_ANAL_BASE}'
+out_title_time: '${OUT_TITLE_TIME}'
+out_fn_time: '${OUT_FN_TIME}'
+EOF
+
+${USHlandda}/plot_analysis_timehistory.py
+if [[ $? != 0 ]]; then
+  echo "FATAL ERROR: Time-history plots failed"
+  exit 44
+fi
+
+# Copy result files to COMOUT
+cp -p ${OUT_FN_ANAL_BASE}* ${COMOUTplot}
+cp -p ${OUT_FN_TIME}* ${COMOUTplot}
+
+
+############################################################
 # Restart Plot
 ############################################################
 
-nYYYY=${NTIME:0:4}
-nMM=${NTIME:4:2}
-nDD=${NTIME:6:2}
-nHH=${NTIME:8:2}
-
-cp -p ${PARMlandda}/templates/template.plot_restart.yaml plot_restart.yaml
-
-PATH_DATA="${COMIN}"
-WORK_DIR="${DATA}"
 FN_DATA_BASE="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
 FN_DATA_EXT=".nc"
 SOIL_LEVEL_NUMBER="1"
 OUT_TITLE_BASE="Land-DA::restart::${nYYYY}-${nMM}-${nDD}_${nHH}::"
 OUT_FN_BASE="landda_out_restart_${nYYYY}-${nMM}-${nDD}_${nHH}_"
 
-sed -i "s|PATH_DATA|${PATH_DATA}|g" plot_restart.yaml
-sed -i "s|WORK_DIR|${WORK_DIR}|g" plot_restart.yaml
-sed -i -e "s/XXFN_DATA_BASE/${FN_DATA_BASE}/g" plot_restart.yaml
-sed -i -e "s/XXFN_DATA_EXT/${FN_DATA_EXT}/g" plot_restart.yaml
-sed -i -e "s/XXSOIL_LEVEL_NUMBER/${SOIL_LEVEL_NUMBER}/g" plot_restart.yaml
-sed -i -e "s/XXOUT_TITLE_BASE/${OUT_TITLE_BASE}/g" plot_restart.yaml
-sed -i -e "s/XXOUT_FN_BASE/${OUT_FN_BASE}/g" plot_restart.yaml
-sed -i -e "s/XXMACHINE/${MACHINE}/g" plot_restart.yaml
+cat > plot_restart.yaml <<EOF
+path_data: '${COMIN}'
+work_dir: '${DATA}'
+fn_data_base: '${FN_DATA_BASE}'
+fn_data_ext: '${FN_DATA_EXT}'
+soil_lvl_number: '${SOIL_LEVEL_NUMBER}'
+out_title_base: '${OUT_TITLE_BASE}'
+out_fn_base: '${OUT_FN_BASE}'
+machine: '${MACHINE}'
+EOF
 
 ${USHlandda}/plot_forecast_restart.py
 if [[ $? != 0 ]]; then

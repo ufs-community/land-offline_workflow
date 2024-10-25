@@ -1,9 +1,9 @@
-start_year:              XXYYYY
-start_month:             XXMM
-start_day:               XXDD
-start_hour:              XXHH
+start_year:              {{ yyyy }}
+start_month:             {{ mm }}
+start_day:               {{ dd }}
+start_hour:              {{ hh }}
 start_minute:            0
 start_second:            0
-nhours_fcst:             XXFCSTHR
-dt_atmos:                XXDT_ATMOS
+nhours_fcst:             {{ fcsthr }}
+dt_atmos:                {{ dt_atmos }}
 fhrot:                   0
