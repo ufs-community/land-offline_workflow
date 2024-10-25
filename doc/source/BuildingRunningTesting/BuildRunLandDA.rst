@@ -111,28 +111,26 @@ Copy the experiment settings into ``land_analysis.yaml``:
 
 where ``<platform>`` is ``hera``, ``orion``, or ``hercules``.
    
-Users will need to configure certain elements of their experiment in ``parm_xml.yaml``: 
+Users will need to configure the ``account`` and ``exp_basedir`` variables in ``parm_xml.yaml``: 
 
-   * ``ACCOUNT:`` A valid account name. Hera, Orion, Hercules, and most NOAA :term:`RDHPCS` systems require a valid account name; other systems may not (in which case, any value will do).
-   * ``EXP_BASEDIR:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). 
+   * ``account:`` A valid account name. Hera, Orion, Hercules, and most NOAA :term:`RDHPCS` systems require a valid account name; other systems may not (in which case, any value will do).
+   * ``exp_basedir:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). 
       
       .. hint:: 
-         For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``EXP_BASEDIR:`` to ``/scratch2/NAGAPE/epic/User.Name/landda``. 
-
-   * ``cycledef.spec:`` Cycle specification using start, stop, step method to indicate the start cycle, the end cycle, and an increment.
+         For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir:`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
 
 .. note::
 
-   To determine an appropriate ``ACCOUNT`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
+   To determine an appropriate ``account`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
 
-Users may configure other elements of an experiment in ``parm_xml.yaml`` if desired. The ``land_analysis_*.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in these files and the files they reference using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
+Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this files using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
 
 .. _GetData:
 
 Data
 ------
 
-:numref:`Table %s <Level1Data>` shows the locations of pre-staged data on NOAA :term:`RDHPCS` (e.g., Hera, Orion). These data locations are already included in the ``land_analysis_*.yaml`` files but are provided here for informational purposes. 
+:numref:`Table %s <Level1Data>` shows the locations of pre-staged data on NOAA :term:`RDHPCS` (e.g., Hera, Orion). These data locations are already linked to the Land DA System during the build but are provided here for informational purposes. 
    
 .. _Level1Data:
 
