@@ -30,10 +30,8 @@ For data specific to the latest release (|latestr|), users can run:
 
 .. code-block:: console
    
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v1.2.0/Landdav1.2.0_input_data.tar.gz
-   tar xvfz Landdav1.2.0_input_data.tar.gz
-
-.. COMMENT: Update tar file name for v2.0.0 release! 
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/LandDAInputDatav2.0.0.tar.gz
+   tar xvfz LandDAInputDatav2.0.0.tar.gz
 
 These files and their parameters are described in the following subsections.
 

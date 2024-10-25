@@ -255,7 +255,7 @@ Because of a conda conflict between the container and the host system, it is bes
 
    module load rocoto
    
-The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_xml_singularity.yaml`` file. Update any relevant variables in this file (e.g. ``ACCOUNT`` or ``cycledef/spec``) before creating the Rocoto XML file.
+The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_xml_singularity.yaml`` file. Update any relevant variables in this file (e.g. ``account`` or ``exp_basedir``) before creating the Rocoto XML file.
 
 .. code-block:: console
 
@@ -264,7 +264,7 @@ The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_
 
 Save and close the file.
 
-Once everything looks good, run the uwtools scripts to create the Rocoto XML file:
+Once everything looks good, run the `uwtools <https://github.com/ufs-community/uwtools>`_ scripts to create the Rocoto XML file:
 
 .. code-block:: console
 
@@ -284,7 +284,9 @@ To start the experiment, run:
    
    rocotorun -w land_analysis.xml -d land_analysis.db
 
-See the :ref:`Workflow Overview <wflow-overview>` section to learn more about the workflow process.
+Users will need to issue the ``rocotorun`` command multiple times. The tasks must be run in order, and ``rocotorun`` initiates the next task once its dependencies have completed successfully. 
+
+See the :ref:`Workflow Overview <wflow-overview>` section to learn more about the steps in the workflow process.
 
 .. _TrackProgress:
 
@@ -310,5 +312,5 @@ See the :ref:`Track Experiment Status <VerifySuccess>` section to learn more abo
 Check Experiment Output
 -------------------------
 
-Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users should see the :ref:`experiment output structure <land-da-dir-structure>` as well as the :ref:`plotting results <plotting>` to learn more about the expected experiment outputs. 
+Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users view the :ref:`experiment output structure <land-da-dir-structure>` and :ref:`plotting results <plotting>` sections to learn more about the expected experiment output. 
 
