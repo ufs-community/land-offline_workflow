@@ -68,6 +68,8 @@ def plot_scatter():
         cartopy.config['data_dir']='/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
     elif yaml_data['machine']=='orion' or yaml_data['machine']=='hercules':
         cartopy.config['data_dir']='/work/noaa/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
+    elif yaml_data['machine']=='singularity':
+        cartopy.config['data_dir']='SINGULARITY_WORKING_DIR/land-DA_workflow/fix/NaturalEarth'
 
     field_mean=float("{:.2f}".format(np.mean(np.absolute(field))))
     field_std=float("{:.2f}".format(np.std(np.absolute(field))))

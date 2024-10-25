@@ -138,7 +138,7 @@ To build the container from a Docker image, users can run:
 
 .. code-block:: console
 
-   singularity build --force ubuntu22.04-intel-landda-release-public-v2.0.0.img docker://noaaepic/ubuntu22.04-intel-landda:release-public-v2.0.0
+   singularity build --force ubuntu22.04-intel-landda-release-public-v2.0.0.img docker://noaaepic/ubuntu22.04-intel21.10-landda:ue160-fms2024.01-release
 
 This process may take several hours depending on the system. 
 
@@ -165,9 +165,9 @@ If users choose to add data in a location other than ``$LANDDAROOT``, they can s
 
 .. code-block:: console
 
-   export LANDDA_INPUTS=/path/to/input/data
+   export LANDDA_INPUTS=/path/to/inputs
 
-where ``/path/to/input/data`` is replaced by the absolute path to the location of their Land DA input data. 
+where ``/path/to`` is replaced by the absolute path to the location of their Land DA input data. 
 
 .. _RunContainer:
 
@@ -189,15 +189,7 @@ Save the location of the container in an environment variable.
 
 .. code-block:: console
 
-   export img=path/to/ubuntu22.04-intel-landda-release-public-v2.0.0.img
-
-Set the ``USE_SINGULARITY`` environment variable to "yes". 
-
-.. code-block:: console
-
-   export USE_SINGULARITY=yes
-
-This variable tells the workflow to use the containerized version of all the executables (including python) when running a cycle. 
+   export img=/path/to/ubuntu22.04-intel-landda-release-public-v2.0.0.img
 
 Users may convert a container ``.img`` file to a writable sandbox. This step is optional on most systems:
 
@@ -214,17 +206,17 @@ When making a writable sandbox on NOAA :term:`RDHPCS`, the following warnings co
    WARNING: integrity: signature not found for object group 1
    WARNING: Bootstrap image could not be verified, but build will continue.
 
-From within the ``$LANDDAROOT`` directory, copy the ``land-DA_workflow`` directory out of the container. 
+From within the ``$LANDDAROOT`` directory, copy the ``setup_container.sh`` script out of the container. 
 
 .. code-block:: console
 
-   singularity exec -H $PWD $img cp -r /opt/land-DA_workflow .
+   singularity exec -H $PWD $img cp -r /opt/land-DA_workflow/setup_container.sh .
 
-There should now be a ``land-DA_workflow`` directory in the ``$LANDDAROOT`` directory. Navigate into the ``land-DA_workflow`` directory. If for some reason, this is unsuccessful, users may try a version of the following command instead: 
+The ``setup_container.sh`` script should now be in the ``$LANDDAROOT`` directory. If for some reason, the previous command was unsuccessful, users may try a version of the following command instead: 
 
 .. code-block:: console
 
-   singularity exec -B /<local_base_dir>:/<container_dir> $img cp -r /opt/land-DA_workflow .
+   singularity exec -B /<local_base_dir>:/<container_dir> $img cp -r /opt/land-DA_workflow/setup_container.sh .
 
 where ``<local_base_dir>`` and ``<container_dir>`` are replaced with a top-level directory on the local system and in the container, respectively. Additional directories can be bound by adding another ``-B /<local_base_dir>:/<container_dir>`` argument before the container location (``$img``). Note that if previous steps included a ``sudo`` command, ``sudo`` may be required in front of this command. 
 
@@ -236,90 +228,50 @@ where ``<local_base_dir>`` and ``<container_dir>`` are replaced with a top-level
 
    Sometimes binding directories with different names can cause problems. In general, it is recommended that the local base directory and the container directory have the same name. For example, if the host system's top-level directory is ``/user1234``, the user may want to convert the ``.img`` file to a writable sandbox and create a ``user1234`` directory in the sandbox to bind to. 
 
-Navigate to the ``land-DA_workflow`` directory after it has been successfully copied into ``$LANDDAROOT``.
+Run the ``setup_container.sh`` script with the proper arguments. Ensure ``LANDDA_INPUTS`` variable is set before running this script.
 
 .. code-block:: console
 
-   cd land-DA_workflow
+   ./setup_container.sh -c=<compiler> -m=<mpi_implementation> -i=$img
 
-When using a Singularity container, Intel compilers and Intel :term:`MPI` (preferably 2020 versions or newer) need to be available on the host system to properly launch MPI jobs. The Level 1 systems that have Intel compilers and Intel MPI available are: Hera, Jet, NOAA Cloud, and Orion. Generally, this is accomplished by loading a module with a recent Intel compiler and then loading the corresponding Intel MPI. For example, users can modify the following commands to load their system's compiler/MPI combination:
+where:
 
-.. code-block:: console
-
-   module load intel/2022.1.2 impi/2022.1.2
-
-.. note:: 
-
-   :term:`Spack-stack` uses lua modules, which require Lmod to be initialized for the ``module load`` command to work. If for some reason, Lmod is not initialized, users can source the ``init/bash`` file on their system before running the command above. For example, users can modify and run the following command: 
-
-   .. code-block:: console
-
-      source /path/to/init/bash
+   * ``-c`` is the compiler on the user's local machine (e.g., ``intel/2022.1.2``)
+   * ``-m`` is the :term:`MPI` on the user's local machine (e.g., ``impi/2022.1.2``)
+   * ``-i`` is the full path to the container image ( e.g., ``$LANDDAROOT/ubuntu22.04-intel-landda-release-public-v2.0.0.img``).
    
-   Then they should be able to load the appropriate modules.
-
-The remaining Level 1 systems that do not have Intel MPI available will need to load a different Intel compiler and MPI combination. Refer to :numref:`Table %s <NonIMPICompilers>` for which Intel compiler and MPI to load for these systems.
-
-.. _NonIMPICompilers:
-
-.. table:: Intel compilers and MPIs for non-Intel MPI Level 1 systems
-
-   +-----------------+-------------------------------------------------------------------------+
-   | Machine         | Intel compiler and MPI combinations                                     |
-   +=================+=========================================================================+
-   | Derecho         |  module load intel-oneapi/2023.2.1 cray-mpich/8.1.25                    |
-   +-----------------+-------------------------------------------------------------------------+
-   | Gaea            |  module load intel-classic/2023.1.0 cray-mpich/8.1.25                   |
-   +-----------------+-------------------------------------------------------------------------+
-   | Hercules        |  module load intel-oneapi-compilers/2022.2.1 intel-oneapi-mpi/2021.7.1  |
-   +-----------------+-------------------------------------------------------------------------+
-
-For Derecho and Gaea, an additional script is needed to help set up the ``land-DA_workflow`` scripts so that the container can run there. 
-
-.. code-block:: console
-
-   ./setup_container.sh -p=<platform>
-
-where ``<platform>`` is ``derecho`` or ``gaea``. 
+When using a Singularity container, Intel compilers and Intel :term:`MPI` (preferably 2020 versions or newer) need to be available on the host system to properly launch MPI jobs. Generally, this is accomplished by loading a module with a recent Intel compiler and then loading the corresponding Intel MPI. 
 
 .. _ConfigureExptC:
 
 Configure the Experiment
 ===========================
 
-Modify Machine Settings
-------------------------
+The user should now see the ``Land-DA_workflow`` and ``jedi-bundle`` directories in the ``$LANDDAROOT`` directory. 
 
-Users on a system with a Slurm job scheduler will need to make some minor changes to the ``submit_cycle.sh`` file. Open the file and change the account and queue (qos) to match the desired account and qos on the system. Users may also need to add the following line to the script to specify the partition. For example, on Jet, users should set: 
+Because of a conda conflict between the container and the host system, it is best to load rocoto separately instead of using workflow files found in the ``modulefiles`` directory.
 
 .. code-block:: console
 
-   #SBATCH --partition=xjet
+   module load rocoto
    
-When using the GSWP3 forcing option, users will need to update line 7 to say ``#SBATCH --cpus-per-task=4``. Users can perform this change manually in a code editor or run:
+The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_xml_singularity.yaml`` file. Update any relevant variables in this file (e.g. ``ACCOUNT`` or ``cycledef/spec``) before creating the Rocoto XML file.
 
 .. code-block:: console
 
-   sed -i 's/--cpus-per-task=1/--cpus-per-task=4/g' submit_cycle.sh
+   cd $LANDDAROOT/land-DA_workflow/parm
+   vi parm_xml.yaml
 
 Save and close the file.
 
-Modify Experiment Settings
----------------------------
-
-The Land DA System uses a script-based workflow that is launched using the ``do_submit_cycle.sh`` script. That script requires an input file that details all the specifics of a given experiment. EPIC has provided two sample ``settings_*`` files as examples: ``settings_DA_cycle_era5`` and ``settings_DA_cycle_gswp3``. 
-
-.. attention::
-   
-   Note that the GSWP3 option will only run as-is on Hera and Orion. Users on other systems may need to make significant changes to configuration files, which is not a supported option for the |latestr| release. It is recommended that users on other systems use the UFS land driver ERA5 sample experiment set in ``settings_DA_cycle_era5``.
-
-First, update the ``$BASELINE`` environment variable in the selected ``settings_DA_*`` file to say ``singularity.internal`` instead of ``hera.internal``:
+Once everything looks good, run the uwtools scripts to create the Rocoto XML file:
 
 .. code-block:: console
 
-   export BASELINE=singularity.internal
+   ../sorc/conda/envs/land_da/bin/uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml
+   ../sorc/conda/envs/land_da/bin/uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
-When using the GSWP3 forcing option, users must also update the ``MACHINE_ID`` to ``orion`` in ``settings_DA_cycle_gswp3`` if running on Orion. 
+A successful run of this command will output a “0 errors found” message.
 
 .. _RunExptC:
 
@@ -330,107 +282,33 @@ To start the experiment, run:
 
 .. code-block:: console
    
-   ./do_submit_cycle.sh settings_DA_cycle_era5
+   rocotorun -w land_analysis.xml -d land_analysis.db
 
-The ``do_submit_cycle.sh`` script will read the ``settings_DA_cycle_*`` file and the ``release.environment`` file, which contain sensible experiment default values to simplify the process of running the workflow for the first time. Advanced users will wish to modify the parameters in ``do_submit_cycle.sh`` to fit their particular needs. After reading the defaults and other variables from the settings files, ``do_submit_cycle.sh`` creates a working directory (named ``workdir`` by default) and an output directory called ``landda_expts`` in the parent directory of ``land-DA_workflow`` and then submits a job (``submit_cycle.sh``) to the queue that will run through the workflow. If all succeeds, users will see ``log`` and ``err`` files created in ``land-DA_workflow`` along with a ``cycle.log`` file, which will show where the cycle has ended. 
+See the :ref:`Workflow Overview <wflow-overview>` section to learn more about the workflow process.
 
-.. _CheckProgress:
+.. _TrackProgress:
 
-Check Progress
+Track Progress
 ----------------
 
-To check on the experiment status, users on a system with a Slurm job scheduler may run: 
+To check on the job status, users on a system with a Slurm job scheduler may run: 
 
 .. code-block:: console
 
    squeue -u $USER
 
-To view progress, users can open the ``log*`` and ``err*`` files once they have been generated:
+To view the experiment status, run:
 
 .. code-block:: console
 
-   tail -f log* err*
+   rocotostat -w land_analysis.xml -d land_analysis.db
 
-Users will need to type ``Ctrl+C`` to exit the files. For examples of what the log and error files should look like in a successful experiment, reference :ref:`ERA5 Experiment Logs <era5-log-output>` or :ref:`GSWP3 Experiment Logs <gswp3-log-output>` below. 
+See the :ref:`Track Experiment Status <VerifySuccess>` section to learn more about the ``rocotostat`` output.
 
-.. attention::
+.. _CheckExptOutput:
 
-   If the log file contains a NetCDF error (e.g., ``ModuleNotFoundError: No module named 'netCDF4'``), run:
-      
-   .. code-block:: console
-         
-      python -m pip install netCDF4
-      
-   Then, resubmit the job (``sbatch submit_cycle.sh``).
+Check Experiment Output
+-------------------------
 
-Next, check for the background and analysis files in the test directory.
+Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users should see the :ref:`experiment output structure <land-da-dir-structure>` as well as the :ref:`plotting results <plotting>` to learn more about the expected experiment outputs. 
 
-.. code-block:: console
-
-   ls -l ../landda_expts/DA_<data_source>_test/mem000/restarts/<vector|tile>``
-
-where: 
-
-   * ``<data_source>`` is either ``era5`` or ``gswp3``, and
-   * ``<vector|tile>`` is either ``vector`` or ``tile`` depending on whether ERA5 or GSWP3 forcing data were used, respectively. 
-
-The experiment should populate the ``landda_expts`` directory with data in the following locations:
-
-.. code-block:: console
-
-   landda_expts/DA_GHCN_test/DA/
-   # AND
-   landda_expts/DA_GHCN_test/mem000/restarts/vector/
-   # OR
-   landda_expts/DA_GHCN_test/mem000/restarts/tile/
-
-Depending on the experiment, either the ``vector`` or the ``tile`` directory will have data, but not both. 
-
-
-.. _era5-log-output:
-
-ERA5 Experiment Logs
-=====================
-
-For the ERA5 experiment, the ``log*`` file for a successful experiment will contain a message like:
-
-.. code-block:: console
-
-   Creating: .//ufs_land_restart.2019-12-22_00-00-00.nc
-   Searching for forcing at time: 2019-12-22 01:00:00
-   
-The ``err*`` file for a successful experiment will end with something similar to:
-
-.. code-block:: console
-
-   + THISDATE=2019122200
-   + date_count=1
-   + '[' 1 -lt 1 ']'
-   + '[' 2019122200 -lt 2019122200 ']'
-
-.. _gswp3-log-output:
-
-GSWP3 Experiment Logs
-=======================
-
-For the GSWP3 experiment, the ``log*`` file for a successful experiment will end with a list of resource statistics. For example:
-
-.. code-block:: console
-
-   Number of times filesystem performed OUTPUT          = 250544
-   Number of Voluntary Context Switches                 = 3252
-   Number of InVoluntary Context Switches               = 183
-   *****************END OF RESOURCE STATISTICS*************************
-   
-The ``err*`` file for a successful experiment will end with something similar to:
-
-.. code-block:: console
-
-   + echo 'do_landDA: calling apply snow increment'
-   + [[ '' =~ hera\.internal ]]
-   + /apps/intel-2022.1.2/intel-2022.1.2/mpi/2021.5.1/bin/mpiexec -n 6 /path/to/land-DA_workflow/build/bin/apply_incr.exe /path/to/landda_expts/DA_GSWP3_test/DA/logs//apply_incr.log
-   + [[ 0 != 0 ]]
-   + '[' YES == YES ']'
-   + '[' YES == YES ']'
-   + cp /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile1.nc /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile2.nc /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile3.nc /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile4.nc /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile5.nc /path/to/workdir/mem000/jedi/20000103.000000.xainc.sfc_data.tile6.nc /path/to/landda_expts/DA_GSWP3_test/DA/jedi_incr/
-   + [[ YES == \N\O ]]

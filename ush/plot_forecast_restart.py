@@ -50,6 +50,8 @@ def main():
         cartopy.config['data_dir']='/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
     elif yaml_data['machine']=='orion' or yaml_data['machine']=='hercules':
         cartopy.config['data_dir']='/work/noaa/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
+    elif yaml_data['machine']=='singularity':
+        cartopy.config['data_dir']='SINGULARITY_WORKING_DIR/land-DA_workflow/fix/NaturalEarth'
 
     #var_list=["snwdph","smc"]
     var_list=["snwdph"]
