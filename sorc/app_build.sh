@@ -15,8 +15,8 @@ OPTIONS
       compiler to use; default depends on platform
       (e.g. intel | gnu | cray | gccgfortran)
   -a, --app=APPLICATION
-      weather model application to build; for example, ATMAQ for RRFS-AQM
-      (e.g. ATM | ATMAQ | ATMW | S2S | S2SW)
+      weather model application to build; for example, ATML for ATM+LAND
+      (e.g. LND | ATML )
   --ccpp="CCPP_SUITE1,CCPP_SUITE2..."
       CCPP suites (CCPP_SUITES) to include in build; delimited with ','
   --remove
