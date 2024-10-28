@@ -51,7 +51,7 @@ endif()
 message(APP="${APP}")
 
 message(CCPP_SUITES="${CCPP_SUITES}")
-if(NOT CCPP_SUITES)
+if((NOT APP MATCHES "LND") AND (NOT CCPP_SUITES))
   set(CCPP_SUITES "FV3_GFS_v17_p8")
 endif()
 message(CCPP_SUITES="${CCPP_SUITES}")
