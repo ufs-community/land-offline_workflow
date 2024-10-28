@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # usage instructions
 usage () {
 cat << EOF_USAGE
@@ -359,7 +361,7 @@ if [ "${CLEAN}" = true ]; then
   fi
 else
   printf "... Generate CMAKE configuration ...\n"
-  ecbuild ${SORC_DIR} 2>&1 | tee log.ecbuild
+  ecbuild ${SORC_DIR} ${CMAKE_SETTINGS} 2>&1 | tee log.ecbuild
 
   printf "... Compile executables ...\n"
   make ${MAKE_SETTINGS} 2>&1 | tee log.make

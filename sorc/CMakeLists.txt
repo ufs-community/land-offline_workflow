@@ -44,19 +44,23 @@ include_directories( ${NETCDF_INCLUDE_DIRS} )
 ################################################################################
 set(LANDDA_LINKER_LANGUAGE CXX)
 
+message(APP="${APP}")
 if(NOT APP)
   set(APP "LND")
 endif()
+message(APP="${APP}")
 
+message(CCPP_SUITES="${CCPP_SUITES}")
 if(NOT CCPP_SUITES)
   set(CCPP_SUITES "FV3_GFS_v17_p8")
 endif()
+message(CCPP_SUITES="${CCPP_SUITES}")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-if(APP STREQUAL "ATML")
+if(APP MATCHES "ATML")
   list(APPEND UFS_MODEL_ARGS
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
