@@ -67,12 +67,26 @@ From the working directory (``$LANDDAROOT``), navigate to ``test`` and run:
 
 The CTest working directory will appear in ``build/test``, and the log file can be found in ``build/Testing/Temporary``.
 
+Method #3: Run Tests Using a Container
+============================================
+
+For containers, the CTest functionality is wrapped in a Dockerfile. Therefore, users will need to build the Dockerfile to run the CTests. Since the Land DA container is quite large, this process can a long time --- potentially hours. In the future, the development team hopes to simplify and shorten this process. 
+
+.. code-block:: console
+
+   git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
+   cd land-DA_workflow/sorc/test/ci
+   sudo systemctl start docker
+   sudo docker build -f Dockerfile -t dockerfile-ci-ctest:release .
+
+.. note::
+   
+   ``sudo`` may not be required in front of the last two commands on all systems. 
+
 Tests
 *******
 
-The CTests test the operability of four major elements of the Land DA System: ``create_ens``, ``letkfoi_snowda``, ``apply_jediincr``, and ``ufs_datm_land``. The tests and their dependencies are listed in the ``land-DA_workflow/test/CMakeLists.txt`` file. Currently, the CTests are only run on Hera, Orion, and Hercules; they cannot yet be run via container. 
-
-.. COMMENT: Is this still true?
+The CTests test the operability of four major elements of the Land DA System: ``create_ens``, ``letkfoi_snowda``, ``apply_jediincr``, and ``ufs_datm_land``. The tests and their dependencies are listed in the ``land-DA_workflow/test/CMakeLists.txt`` file. 
 
 .. list-table:: *Land DA CTests*
    :widths: 20 50
