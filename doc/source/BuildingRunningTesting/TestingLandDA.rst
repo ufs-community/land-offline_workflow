@@ -68,6 +68,10 @@ The CTest working directory will appear in ``build/test``, and the log file can 
 Method #3: Run Tests Using a Container
 ============================================
 
+.. attention::
+
+   The container CTest functionality has been tested in Jenkins. It should be able to run on a sufficiently large cloud instance. However, it is considered unsupported functionality because it has not been thoroughly tested on the cloud for use by the public. 
+
 For containers, the CTest functionality is wrapped in a Dockerfile. Therefore, users will need to build the Dockerfile to run the CTests. Since the Land DA container is quite large, this process can a long time --- potentially hours. In the future, the development team hopes to simplify and shorten this process. 
 
 .. code-block:: console
