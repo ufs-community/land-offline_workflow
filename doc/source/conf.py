@@ -64,6 +64,8 @@ user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 linkcheck_ignore = [r'https://www\.intel\.com/content/www/us/en/developer/tools/oneapi/hpc\-toolkit\-download\.html',
                     r'https://doi.org/10.1029/.*',
                     r'https://doi.org/10.1002/.*',
+                    r'https://doi.org/10.5281/zenodo.13909475', # DOI not published until release
+                    r'https://sourceforge.net/projects/xming/',
                     ]
 
 # Ignore anchor tags for Land DA data bucket. Shows Not Found even when they exist.
