@@ -6,7 +6,7 @@ Containerized Land DA Workflow
 
 These instructions will help users build and run a basic case for the Unified Forecast System (:term:`UFS`) Land Data Assimilation (DA) System using a `Singularity/Apptainer <https://apptainer.org/docs/user/latest/>`_ container. The Land DA :term:`container` packages together the Land DA System with its dependencies (e.g., :term:`spack-stack`, :term:`JEDI`) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth system models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, :term:`MPIs <MPI>`, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported :ref:`Level 1 <LevelsOfSupport>` system (e.g., Hera, Orion). 
 
-This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System using a container to run a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (:term:`DATM`) component.
+This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System sample case using a container. The sample case runs for Jan. 3-4, 2000 00z and uses :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (:term:`DATM`) component.
 
 .. attention::
 

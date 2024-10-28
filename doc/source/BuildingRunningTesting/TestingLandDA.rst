@@ -6,8 +6,6 @@ Testing the Land DA Workflow
 
 This chapter provides instructions for using the Land DA CTest suite. These steps are designed for use on :ref:`Level 1 <LevelsOfSupport>` systems (e.g., Hera and Orion) and may require significant changes on other systems. 
 
-.. COMMENT: Will they work with the container?
-
 .. attention:: 
 
    This chapter assumes that the user has already built the Land DA System according to the instructions in :numref:`Section %s <BuildRunLandDA>` and has access to the data provided in the most recent release. (See :numref:`Table %s <Level1Data>` for the locations of pre-staged data on NOAA :term:`RDHPCS`.)
@@ -105,5 +103,5 @@ The CTests test the operability of four major elements of the Land DA System: ``
 
 .. note::
 
-   There are plans to add workflow end-to-end (WE2E) tests to the Land DA System. Currently, when ``TEST: "YES"``, this functionality checks that the output from the Jan. 3-4, 2000 sample case is within the tolerance set (via the ``WE2E_ATOL`` variable) at the end of the three main tasks --- *analysis*, *forecast*, and *post_anal*. The results are logged by default in ``we2e.log``. In the future, this functionality will be expanded to encompass a full range of WE2E tests. 
+   There are plans to add workflow end-to-end (WE2E) tests to the Land DA System. Currently, when ``WE2E_TEST: "YES"``, this functionality checks that the output from the Jan. 3-4, 2000 sample case is within the tolerance set (via the ``WE2E_ATOL`` variable) at the end of the three main tasks --- *analysis*, *forecast*, and *post_anal*. The results are logged by default in ``we2e.log``. In the future, this functionality will be expanded to encompass a full range of WE2E tests. 
 

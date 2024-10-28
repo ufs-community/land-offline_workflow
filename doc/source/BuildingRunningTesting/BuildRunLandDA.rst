@@ -4,7 +4,7 @@
 Land DA Workflow (Hera/Orion/Hercules)
 ***************************************
 
-This chapter provides instructions for building and running basic Land DA cases for the Unified Forecast System (:term:`UFS`) Land DA System using a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component.
+This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System using a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (DATM) component.
 
 .. attention::
    
@@ -37,17 +37,17 @@ In this documentation, ``$LANDDAROOT`` is used, but users are welcome to choose 
 Get Code
 ***********
 
-Clone the Land DA workflow repository. To clone the ``develop`` branch, run: 
-
-.. code-block:: console
-
-   git clone -b develop --recursive https://github.com/ufs-community/land-DA_workflow.git
-
-To clone the most recent release, run the same command with |branch| in place of ``develop``: 
+Clone the Land DA workflow repository. To clone the most recent release, run: 
 
 .. code-block:: console
 
    git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
+
+To clone the ``develop`` branch, run the same command with ``develop`` in place of |branch|: 
+
+.. code-block:: console
+
+   git clone -b develop --recursive https://github.com/ufs-community/land-DA_workflow.git
 
 .. _build-land-da:
 
@@ -295,7 +295,7 @@ As the experiment progresses, it will generate a number of directories to hold i
                            ├── hofx: Directory containing the soft links to the results of the analysis task for plotting
                            └── DATA_RESTART: Directory containing the soft links to the restart files for the next cycles
 
-Each variable in parentheses and angle brackets (e.g., ``(<VAR>)``) is the name for the directory defined in the file ``land_analysis.yaml`` or in the NCO Implementation Standards. For example, the ``<envir>`` variable is set to "test" (i.e., ``envir: "test"``) in ``land_analysis.yaml``. In the future, this directory structure will be further modified to meet the :nco:`NCO Implementation Standards<>`.
+Each variable in parentheses and angle brackets (e.g., ``(<VAR>)``) is the name for the directory defined in the file ``land_analysis.yaml`` (derived from ``template.land_analysis.yaml`` or ``parm_xml.yaml``) or in the NCO Implementation Standards. For example, the ``<envir>`` variable is set to "test" (i.e., ``envir: "test"``) in ``template.land_analysis.yaml``. In the future, this directory structure will be further modified to meet the :nco:`NCO Implementation Standards<>`.
 
 Check for the output files for each cycle in the experiment directory:
 

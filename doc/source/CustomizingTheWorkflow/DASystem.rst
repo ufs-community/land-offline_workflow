@@ -667,8 +667,6 @@ GHCN
 
 GHCN files for 2000 and 2019 are already provided in IODA format for the |latestr| release. :numref:`Table %s <GetData>` indicates where users can find data on NOAA :term:`RDHPCS` platforms. Tar files containing the 2000 and 2019 data are located in the publicly-available `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Once untarred, the snow depth files are located in ``/inputs/DA/snow_depth/GHCN/data_proc/v3/${YEAR}``. The 2019 GHCN IODA files were provided by Clara Draper (NOAA PSL). Each file follows the naming convention of ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc``, where ``${YYYY}`` is the four-digit cycle year, ``${MM}`` is the two-digit cycle month, and ``${DD}`` is the two-digit cycle day. 
 
-.. COMMENT: Ensure that 2019 files are also in the tar file for the release. 
-
 In each experiment, the ``template.land_analysis.yaml`` file sets the type of observation file (e.g., ``OBS_TYPES: "GHCN"``). Before assimilation, if "GHCN" was specified as the observation type, the ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc`` file corresponding to the specified cycle date is copied to the run directory (usually ``$LANDDAROOT/ptmp/test/com/landda/$model_ver/landda.$PDY$cyc/obs`` by default --- see :numref:`Section %s <nco-dir-entities>` for more on these variables) with a naming-convention change (i.e., ``GHCN_${YYYY}${MM}${DD}${HH}.nc``). 
 
 Prior to ingesting the GHCN IODA files via the LETKF at the DA analysis time, the observations are combined into a single ``letkf_land.yaml`` file, which is a concatenation of ``letkfoi_snow.yaml`` and ``GHCN.yaml`` (see :numref:`Section %s <jedi-config-and-params>` for further explanation). The GHCN-specific observation filters, domain checks, and quality control parameters from ``GHCN.yaml`` ensure that only snow depth observations which meet specific criteria are assimilated (the rest are rejected). View the contents of ``GHCN.yaml`` are :github:`on GitHub <blob/develop/parm/jedi/GHCN.yaml>`. 
@@ -848,6 +846,4 @@ To restart the Land DA System successfully after land model execution, all param
    +--------------------------+-----------------------------------+-----------------------+
    | snow_level_liquid        | liquid content of snow levels     | "mm"                  |
    +--------------------------+-----------------------------------+-----------------------+
-
-.. COMMENT: Add info about ufs.cpld.cpl.r.2000-01-03-00000.nc and ufs.cpld.datm.r.2000-01-03-00000.nc ???
 
