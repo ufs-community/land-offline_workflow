@@ -15,6 +15,9 @@ This chapter provides instructions for using the Land DA CTest suite. These step
 Process
 *********
 
+Method #1: Run from the ``build`` Directory
+============================================
+
 From the working directory (``$LANDDAROOT``), navigate to ``build`` and run: 
 
 .. code-block:: console
@@ -47,6 +50,22 @@ If the tests are successful, a message will be printed to the console. For examp
    100% tests passed, 0 tests failed out of 4
 
    Total Test time (real) = 187.29 sec
+
+Method #2: Run from the ``test`` Directory
+============================================
+
+.. note:: 
+
+   This method works only on Hera, Orion, and Hercules and will run even if the Land DA System has not been built yet. 
+
+From the working directory (``$LANDDAROOT``), navigate to ``test`` and run: 
+
+.. code-block:: console
+   
+   cd land-DA_workflow/sorc/test
+   ./run_ctest_platform.sh
+
+The CTest working directory will appear in ``build/test``, and the log file can be found in ``build/Testing/Temporary``.
 
 Tests
 *******
