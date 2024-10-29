@@ -7,6 +7,7 @@ start_second:            0
 nhours_fcst:             {{ fcsthr }}
 fhrot:                   {{ fhrot }}
 
+{%- if app == "ATML" %}
 dt_atmos:                {{ dt_atmos }}
 restart_interval:        {{ restart_interval }}
 
@@ -36,3 +37,4 @@ imo:                     {{ imo }}
 jmo:                     {{ jmo }}
 output_fh:               1 -1
 iau_offset:              0
+{%- endif %}
