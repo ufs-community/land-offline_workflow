@@ -5,12 +5,11 @@ start_hour:              {{ hh }}
 start_minute:            0
 start_second:            0
 nhours_fcst:             {{ fcsthr }}
+dt_atmos:                {{ dt_atmos }}
 fhrot:                   {{ fhrot }}
 
 {%- if app == "ATML" %}
-dt_atmos:                {{ dt_atmos }}
 restart_interval:        {{ restart_interval }}
-
 quilting:                .true.
 quilting_restart:        .true.
 write_groups:            {{ write_groups }}
