@@ -188,7 +188,7 @@ Entities are constants that can be referred to throughout the workflow using the
    Specifies the observation type. Format is "Obs1" "Obs2". Currently, only GHCN observation data is available. 
 
 ``DAtype:`` (Default: "letkfoi_snow")
-   Type of data assimilation. Valid values: ``letkfoi_snow``. Currently, Land DA only performs snow DA using the LETKF-OI algorithm. As the application expands, more options may be added. 
+   Type of data assimilation. Valid values: ``letkfoi_snow``. Currently, Land DA only performs snow DA. As the application expands, more options may be added. 
 
 ``TSTUB:`` (Default: "oro_C96.mx100")
    Specifies the file stub/name for orography files in ``TPATH``. This file stub is named ``oro_C${RES}`` for atmosphere-only orography files and ``oro_C{RES}.mx100`` for atmosphere and ocean orography files. When Land DA is compiled with ``sorc/app_build.sh``, the subdirectories of the fix files should be linked into the ``fix`` directory, and orography files can be found in ``fix/FV3_fix_tiled/C96``. 
