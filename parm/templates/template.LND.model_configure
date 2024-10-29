@@ -6,4 +6,4 @@ start_minute:            0
 start_second:            0
 nhours_fcst:             {{ fcsthr }}
 dt_atmos:                {{ dt_atmos }}
-fhrot:                   0
+fhrot:                   {{ fhrot }}
