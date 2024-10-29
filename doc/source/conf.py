@@ -7,13 +7,13 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "UFS Offline Land DA User's Guide"
-copyright = '2023, '
+copyright = '2024, '
 author = ' '
 
 # The short X.Y version
-version = 'develop'
+version = 'v2.0.0'
 # The full version, including alpha/beta/rc tags
-release = 'develop'
+release = 'v2.0.0'
 
 numfig = True
 
@@ -47,9 +47,9 @@ pygments_style = 'sphinx'
 # Documentation-wide substitutions
 
 rst_prolog = """
-.. |latestr| replace:: v1.2.0
-.. |tag| replace:: ``ufs-land-da-v1.2.0``
-.. |branch| replace:: ``release/public-v1.2.0``
+.. |latestr| replace:: v2.0.0
+.. |tag| replace:: ``ufs-land-da-v2.0.0``
+.. |branch| replace:: ``release/public-v2.0.0``
 .. |skylabv| replace:: Skylab v7.0
 .. |spack-stack-ver| replace:: v1.6.0
 """
@@ -64,6 +64,8 @@ user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 linkcheck_ignore = [r'https://www\.intel\.com/content/www/us/en/developer/tools/oneapi/hpc\-toolkit\-download\.html',
                     r'https://doi.org/10.1029/.*',
                     r'https://doi.org/10.1002/.*',
+                    r'https://doi.org/10.5281/zenodo.13909475', # DOI not published until release
+                    r'https://sourceforge.net/projects/xming/',
                     ]
 
 # Ignore anchor tags for Land DA data bucket. Shows Not Found even when they exist.
@@ -131,5 +133,6 @@ extlinks = {'github': ('https://github.com/ufs-community/land-DA_workflow/%s', '
             'land-wflow-wiki': ('https://github.com/ufs-community/land-DA_workflow/wiki/%s','%s'),
             'spack-stack': ('https://spack-stack.readthedocs.io/en/1.6.0/%s', '%s'),
             'ufs-wm': ('https://ufs-weather-model.readthedocs.io/en/develop/%s', '%s'),
+            'ufs': ('https://ufs.epic.noaa.gov/%s', '%s'),
             'uw': ('https://uwtools.readthedocs.io/en/main/%s', '%s'),
             }

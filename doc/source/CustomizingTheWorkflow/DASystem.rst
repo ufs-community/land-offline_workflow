@@ -4,7 +4,7 @@
 Input/Output Files for the JEDI DA System 
 ******************************************
 
-This chapter describes the configuration of the offline Land :term:`Data Assimilation` (DA) System, which utilizes the UFS Noah-MP component together with the ``jedi-bundle`` (|skylabv|) to enable cycled model forecasts. The data assimilation framework applies the Local Ensemble Transform Kalman Filter-Optimal Interpolation (LETKF-OI) algorithm to combine the state-dependent background error derived from an ensemble forecast with the observations and their corresponding uncertainties to produce an analysis ensemble (:cite:t:`HuntEtAl2007`, 2007).
+This chapter describes the configuration of the offline Land :term:`Data Assimilation` (DA) System, which utilizes the UFS Noah-MP component together with the ``jedi-bundle`` (|skylabv|) to enable cycled model forecasts. The data assimilation framework applies the Local Ensemble Transform Kalman Filter (LETKF) algorithm with pseudo-ensemble error covariance.
 
 Joint Effort for Data Assimilation Integration (JEDI)
 ********************************************************
@@ -35,7 +35,7 @@ JEDI Configuration Files & Parameters
 
 The DA experiment integrates information from several YAML configuration files, which contain certain fundamental components such as geometry, time window, background, driver, local ensemble DA, output increment, and observations. These components can be implemented differently for different models and observation types, so they frequently contain distinct parameters and variable names depending on the use case. Therefore, this section of the User's Guide focuses on assisting users with understanding and customizing these top-level configuration items in order to run Land DA experiments. Users may also reference the :jedi:`JEDI Documentation <using/building_and_running/config_content.html>` for additional information. 
 
-In the Land DA workflow, ``letkfoi_snow.yaml`` contains most of the information on geometry, time window, background, driver, local ensemble DA, and output increment, while ``GHCN.yaml`` contains detailed information to configure observations. In the ``develop`` branch, :github:`these files <tree/develop/parm/jedi/>` reside in the ``land-DA_workflow/parm/jedi`` directory. Some of the variables in these files are templated, so they bring in information from other files, such as the workflow configuration file (``land_analysis.yaml``) and the actual netCDF observation file (e.g., ``ghcn_snwd_ioda_20000103.nc``). In the ``analysis`` task, this information is assembled into one ``letkf_land.yaml`` file that is used to perform the snow data assimilation. This file resides in the ``ptmp/test/tmp/analysis.${PDY}${cyc}.${jobid}/`` directory, where ``${PDY}${cyc}`` is in YYYYMMDDHH format (see :numref:`Section %s <nco-dir-entities>` for more on these variables), and the ``${jobid}`` is the job ID assigned by the system. The example below shows what the complete ``letkf_land.yaml`` file might look like for the 2000-01-03 00Z cycle. The following subsections explain the variables used within this YAML file. 
+In the Land DA workflow, ``letkfoi_snow.yaml`` contains most of the information on geometry, time window, background, driver, local ensemble DA, and output increment, while ``GHCN.yaml`` contains detailed information to configure observations. In the ``develop`` branch, :github:`these files <tree/develop/parm/jedi/>` reside in the ``land-DA_workflow/parm/jedi`` directory. Some of the variables in these files are templated, so they bring in information from other files, such as the workflow configuration files (``parm_xml.yaml`` and ``template.land_analysis.yaml``) and the actual netCDF observation file (e.g., ``ghcn_snwd_ioda_20000103.nc``). In the ``analysis`` task, this information is assembled into one ``letkf_land.yaml`` file that is used to perform the snow data assimilation. This file resides in the ``ptmp/test/tmp/analysis.${PDY}${cyc}.${jobid}/`` directory, where ``${PDY}${cyc}`` is in YYYYMMDDHH format (see :numref:`Section %s <nco-dir-entities>` for more on these variables), and the ``${jobid}`` is the job ID assigned by the system. The example below shows what the complete ``letkf_land.yaml`` file might look like for the 2000-01-03 00Z cycle. The following subsections explain the variables used within this YAML file. 
 
 .. code-block:: yaml
 
@@ -155,7 +155,7 @@ In the Land DA workflow, ``letkfoi_snow.yaml`` contains most of the information 
 
 .. note::
 
-   Any default values indicated in the sections below are the defaults set in ``letkfoi_snow.yaml``, ``GHCN.yaml``, or ``land_analysis.yaml``. 
+   Any default values indicated in the sections below are the defaults set in ``letkfoi_snow.yaml``, ``GHCN.yaml``, ``parm_xml.yaml``, or ``template.land_analysis.yaml``. 
 
 Geometry
 ^^^^^^^^^^^
@@ -568,17 +568,17 @@ The grid description files appear in :numref:`Table %s <GridInputFiles>` below:
 Observation Data
 ====================
 
-Observation data from 2000 and 2019 are provided in NetCDF format for the |latestr| release. Instructions for downloading the data are provided in :numref:`Section %s <GetDataC>`, and instructions for accessing the data on :ref:`Level 1 Systems <LevelsOfSupport>` are provided in :numref:`Section %s <GetData>`. Currently, data is taken from the `Global Historical Climatology Network <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>`_ (GHCN), but eventually, data from the U.S. National Ice Center (USNIC) Interactive Multisensor Snow and Ice Mapping System (`IMS <https://usicecenter.gov/Products/ImsHome>`_) will also be available for use. 
+Observation data from 2000 are provided in NetCDF format for the |latestr| release. Instructions for downloading the data are provided in :numref:`Section %s <GetDataC>`, and instructions for accessing the data on :ref:`Level 1 Systems <LevelsOfSupport>` are provided in :numref:`Section %s <GetData>`. Currently, data is taken from the `Global Historical Climatology Network <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>`_ (GHCN), but eventually, data from the U.S. National Ice Center (USNIC) Interactive Multisensor Snow and Ice Mapping System (`IMS <https://usicecenter.gov/Products/ImsHome>`_) will also be available for use. 
 
 Users can view file header information and notes for NetCDF formatted files using the instructions in :numref:`Section %s <view-netcdf-files>`. For example, on Orion, users can run:
 
 .. code-block:: console
 
    # Load modules:
-   module load netcdf-c/4.9.2
-   ncdump -h /work/noaa/epic/UFS_Land-DA_Dev/inputs/DA/snow_depth/GHCN/data_proc/v3/2019/ghcn_snwd_ioda_20191221.nc
+   module load netcdf/4.7.0
+   ncdump -h /work/noaa/epic/UFS_Land-DA_Dev/inputs/DA/snow_depth/GHCN/data_proc/v3/2000/ghcn_snwd_ioda_20000103.nc
 
-to see the header contents of the 2019-12-21 GHCN snow depth file. Users may need to modify the module load command and the file path to reflect module versions/file paths that are available on their system. 
+to see the header contents of the 2000-01-03 GHCN snow depth file. Users may need to modify the module load command and the file path to reflect module versions/file paths that are available on their system. 
 
 Observation Types
 --------------------
@@ -600,19 +600,20 @@ The IODA-formatted GHCN files are available in the ``inputs/DA/snow_depth/GHCN/d
 
 .. code-block:: console
    
-   netcdf ghcn_snwd_ioda_20191221 {
+
+   netcdf ghcn_snwd_ioda_20000103 {
    dimensions:
-      Location = UNLIMITED ; // (10466 currently) ;
+      Location = UNLIMITED ; // (10423 currently)
    variables:
       int64 Location(Location) ;
          Location:suggested_chunk_dim = 10000LL ;
 
    // global attributes:
-         string :_ioda_layout = "ObsGroup" ;
-         :_ioda_layout_version = 0 ;
-         string :converter = "ghcn_snod2ioda.py" ;
-         string :date_time_string = "2000-01-01T18:00:00Z" ;
-         :nlocs = 10466 ;
+		string :_ioda_layout = "ObsGroup" ;
+		:_ioda_layout_version = 0 ;
+		string :converter = "ghcn_snod2ioda.py" ;
+		string :date_time_string = "2000-01-03T18:00:00Z" ;
+		:nlocs = 10423 ;
 
    group: MetaData {
       variables:
@@ -639,7 +640,7 @@ The IODA-formatted GHCN files are available in the ``inputs/DA/snow_depth/GHCN/d
             string totalSnowDepth:coordinates = "longitude latitude" ;
             string totalSnowDepth:units = "mm" ;
       } // group ObsError
-
+   
    group: ObsValue {
       variables:
          float totalSnowDepth(Location) ;
@@ -664,9 +665,9 @@ Observation Location and Processing
 GHCN
 ^^^^^^
 
-GHCN files for 2000 and 2019 are already provided in IODA format for the |latestr| release. :numref:`Table %s <GetData>` indicates where users can find data on NOAA :term:`RDHPCS` platforms. Tar files containing the 2000 and 2019 data are located in the publicly-available `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Once untarred, the snow depth files are located in ``/inputs/DA/snow_depth/GHCN/data_proc/${YEAR}``. The 2019 GHCN IODA files were provided by Clara Draper (NOAA PSL). Each file follows the naming convention of ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc``, where ``${YYYY}`` is the four-digit cycle year, ``${MM}`` is the two-digit cycle month, and ``${DD}`` is the two-digit cycle day. 
+GHCN files for 2000 and 2019 are already provided in IODA format for the |latestr| release. :numref:`Table %s <GetData>` indicates where users can find data on NOAA :term:`RDHPCS` platforms. Tar files containing the 2000 and 2019 data are located in the publicly-available `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Once untarred, the snow depth files are located in ``/inputs/DA/snow_depth/GHCN/data_proc/v3/${YEAR}``. The 2019 GHCN IODA files were provided by Clara Draper (NOAA PSL). Each file follows the naming convention of ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc``, where ``${YYYY}`` is the four-digit cycle year, ``${MM}`` is the two-digit cycle month, and ``${DD}`` is the two-digit cycle day. 
 
-In each experiment, the ``land_analysis_*.yaml`` file sets the type of observation file (e.g., ``OBS_TYPES: "GHCN"``). Before assimilation, if "GHCN" was specified as the observation type, the ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc`` file corresponding to the specified cycle date is copied to the run directory (usually ``$LANDDAROOT/ptmp/test/com/landda/$model_ver/landda.$PDY$cyc/obs`` by default --- see :numref:`Section %s <nco-dir-entities>` for more on these variables) with a naming-convention change (i.e., ``GHCN_${YYYY}${MM}${DD}${HH}.nc``). 
+In each experiment, the ``template.land_analysis.yaml`` file sets the type of observation file (e.g., ``OBS_TYPES: "GHCN"``). Before assimilation, if "GHCN" was specified as the observation type, the ``ghcn_snwd_ioda_${YYYY}${MM}${DD}.nc`` file corresponding to the specified cycle date is copied to the run directory (usually ``$LANDDAROOT/ptmp/test/com/landda/$model_ver/landda.$PDY$cyc/obs`` by default --- see :numref:`Section %s <nco-dir-entities>` for more on these variables) with a naming-convention change (i.e., ``GHCN_${YYYY}${MM}${DD}${HH}.nc``). 
 
 Prior to ingesting the GHCN IODA files via the LETKF at the DA analysis time, the observations are combined into a single ``letkf_land.yaml`` file, which is a concatenation of ``letkfoi_snow.yaml`` and ``GHCN.yaml`` (see :numref:`Section %s <jedi-config-and-params>` for further explanation). The GHCN-specific observation filters, domain checks, and quality control parameters from ``GHCN.yaml`` ensure that only snow depth observations which meet specific criteria are assimilated (the rest are rejected). View the contents of ``GHCN.yaml`` are :github:`on GitHub <blob/develop/parm/jedi/GHCN.yaml>`. 
 
@@ -845,14 +846,4 @@ To restart the Land DA System successfully after land model execution, all param
    +--------------------------+-----------------------------------+-----------------------+
    | snow_level_liquid        | liquid content of snow levels     | "mm"                  |
    +--------------------------+-----------------------------------+-----------------------+
-
-The restart files also include one text file, ``${FILEDATE}.coupler.res``, which contains metadata for the restart.
-
-Example of ``${FILEDATE}.coupler.res``:
-
-.. code-block:: console
-
-   2        (Calendar: no_calendar=0, thirty_day_months=1, julian=2, gregorian=3, noleap=4)
-   2019     12     22     0     0     0    Model start time:   year, month, day, hour, minute, second
-   2019     12     22     0     0     0    Current model time: year, month, day, hour, minute, second
 

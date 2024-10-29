@@ -4,9 +4,9 @@
 Available Workflow Configuration Parameters
 ***************************************************
 
-To run the Land DA System, users must create an experiment configuration file (named ``land_analysis.yaml`` by default). This file contains experiment-specific information, such as forecast/cycle dates, grid and physics suite choices, data directories, and other relevant settings. To help the user, two sample ``land_analysis_<machine>.yaml`` configuration files have been included in the ``parm`` directory for use on Hera and Orion. They contain reasonable experiment default values that work on those machines. The content of these files can be copied into ``land_analysis.yaml`` and used as the starting point from which to generate a variety of experiment configurations for Land DA. 
+To run the Land DA System, users must create an experiment configuration file (named ``land_analysis.yaml`` by default) that combines the default values in ``template.land_analysis.yaml`` with user-specified values from ``parm_xml.yaml``. Currently, ``template.land_analysis.yaml`` contains most of the experiment-specific information, such as forecast/cycle dates, while ``parm_xml.yaml`` contains user/machine-specific settings, such as data directory locations. To help the user, sample ``parm_xml_<machine>.yaml`` configuration files have been included in the ``parm`` directory for use on Hera, Orion, and Hercules. The ``template.land_analysis.yaml`` contains reasonable experiment default values that work on those machines. The contents of these files can be used as the starting point from which to generate a variety of experiment configurations for Land DA. 
 
-The following is a list of the parameters in the ``land_analysis_<machine>.yaml`` files. For each parameter, the default value and a brief description are provided. 
+The following is a list of the parameters included in the ``land_analysis.yaml`` file (and derived from ``template.land_analysis.yaml`` and ``parm_xml.yaml``). For each parameter, the default value and a brief description are provided. 
 
 .. _wf-attributes:
 
@@ -66,7 +66,7 @@ Cycling information is defined in the ``cycledef:`` section under ``workflow:``.
 Workflow Entities
 ===================
 
-Entities are constants that can be referred to throughout the workflow using the ampersand (``&``) prefix and semicolon (``;``) suffix (e.g., ``&MACHINE;``) to avoid defining the same constants repetitively in each workflow task. For example, in ``land_analysis_orion.yaml``, the following entities are defined: 
+Entities are constants that can be referred to throughout the workflow using the ampersand (``&``) prefix and semicolon (``;``) suffix (e.g., ``&MACHINE;``) to avoid defining the same constants repetitively in each workflow task. For example, in a ``land_analysis.yaml`` created on Orion, the following entities are defined: 
 
 .. code-block:: console 
 
@@ -80,18 +80,29 @@ Entities are constants that can be referred to throughout the workflow using the
        WARMSTART_DIR: "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
        ATMOS_FORC: "gswp3"
        RES: "96"
-       FCSTHR: "24"
        NPROCS_ANALYSIS: "6"
-       NPROCS_FORECAST: "7"
+       FCSTHR: "24"
+       DT_ATMOS: "900"
+       DT_RUNSEQ: "3600"
+       NPROCS_FORECAST: "26"
+       NPROCS_FORECAST_ATM: "12"
+       NPROCS_FORECAST_LND: "12"
+       LND_LAYOUT_X: "1"
+       LND_LAYOUT_Y: "2"
+       LND_OUTPUT_FREQ_SEC: "21600"
+       NNODES_FORECAST: "1"
+       NPROCS_PER_NODE: "26"
        OBSDIR: ""
        OBSDIR_SUBDIR: ""
        OBS_TYPES: "GHCN"
        DAtype: "letkfoi_snow"
-       SNOWDEPTHVAR: "snwdph"
        TSTUB: "oro_C96.mx100"
+       WE2E_TEST: "YES"
+       WE2E_ATOL: "1e-7"
+       WE2E_LOG_FN: "we2e.log"
        NET: "landda"
        envir: "test"
-       model_ver: "v1.2.1"
+       model_ver: "v2.0.0"
        RUN: "landda"
        HOMElandda: "&EXP_BASEDIR;/land-DA_workflow"
        PTMP: "&EXP_BASEDIR;/ptmp"
@@ -107,27 +118,23 @@ Entities are constants that can be referred to throughout the workflow using the
        DATADEP_FILE3: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>"
        DATADEP_FILE4: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.nc</cyclestr>"
 
-.. note:: 
-
-   When two defaults are listed, one is the default on Hera, and one is the default on Orion, depending on the ``land_analysis_<machine>.yaml`` file used. The default on Hera is listed first, followed by the default on Orion. 
-
-``MACHINE:`` (Default: "hera" or "orion")
-   The machine (a.k.a. platform or system) on which the workflow will run. Currently supported platforms are listed in :numref:`Section %s <LevelsOfSupport>`. Valid values: ``"hera"`` | ``"orion"``
+``MACHINE:`` (Default: "{{ machine }}")
+   The machine (a.k.a. platform or system) on which the workflow will run. The actual value is derived from the ``parm_xml_<machine>.yaml`` file. Currently supported platforms are listed in :numref:`Section %s <LevelsOfSupport>`. Valid values: ``"hera"`` | ``"orion"`` | ``"hercules"``
 
 ``SCHED:`` (Default: "slurm")
    The job scheduler to use (e.g., Slurm) on the specified ``MACHINE``. Valid values: ``"slurm"``. Other options may work with a container but have not been tested: ``"pbspro"`` | ``"lsf"`` | ``"lsfcray"`` | ``"none"``
 
-``ACCOUNT:`` (Default: "epic")
-   An account where users can charge their compute resources on the specified ``MACHINE``. To determine an appropriate ``ACCOUNT`` field on a system with a Slurm job scheduler, users may run the ``saccount_params`` command to display account details. On other systems, users may run the ``groups`` command, which will return a list of projects that the user has permissions for. Not all of the listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
+``ACCOUNT:`` (Default: "{{ account }}")
+   An account where users can charge their compute resources on the specified ``MACHINE``. To determine an appropriate ``ACCOUNT`` field on a system with a Slurm job scheduler, users may run the ``saccount_params`` command to display account details. On other systems, users may run the ``groups`` command, which will return a list of projects that the user has permissions for. Not all of the listed projects/groups have an HPC allocation, but those that do are potentially valid account names. The actual value used in the workflow is derived from the ``parm_xml_<machine>.yaml`` file. 
 
-``EXP_BASEDIR:`` (Default: "/scratch2/NAGAPE/epic/{USER}/landda_test" or "/work/noaa/epic/{USER}/landda_test")
-   The full path to the parent directory of ``land-DA_workflow`` (i.e., ``$LANDDAROOT`` in the documentation).
+``EXP_BASEDIR:`` (Default: "{{ exp_basedir }}")
+   The full path to the parent directory of ``land-DA_workflow`` (i.e., ``$LANDDAROOT`` in the documentation). The actual value is derived from the ``parm_xml_<machine>.yaml`` file. 
 
-``JEDI_INSTALL:`` (Default: "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7" or "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6")
-   The path to the JEDI |skylabv| installation. 
+``JEDI_INSTALL:`` (Default: "{{ jedi_install }}")
+   The path to the JEDI |skylabv| installation. Derived from the ``parm_xml_<machine>.yaml`` file. The actual value is derived from the ``parm_xml_<machine>.yaml`` file. 
 
-``WARMSTART_DIR:`` (Default: "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART" or "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART")
-   The path to restart files for a warmstart experiment. 
+``WARMSTART_DIR:`` (Default: "{{ warmstart_dir }}")
+   The path to restart files for a warmstart experiment. The actual value is derived from the ``parm_xml_<machine>.yaml`` file. 
 
 ``ATMOS_FORC:`` (Default: "gswp3")
    Type of atmospheric forcing data used. Valid values: ``"gswp3"``
@@ -141,11 +148,38 @@ Entities are constants that can be referred to throughout the workflow using the
 ``NPROCS_ANALYSIS:`` (Default: "6")
    Number of processors for the analysis task. 
 
-``NPROCS_FORECAST:`` (Default: "7")
-   Number of processors for the forecast task. 
+``DT_ATMOS:`` (Default: "900")
+   The main integration time step of the atmospheric component of the UFS Weather Model (in seconds). This is the time step for the outermost atmospheric model loop and must be a positive integer value. It corresponds to the frequency at which the physics routines and the top level dynamics routine are called. (Note that one call to the top-level dynamics routine results in multiple calls to the horizontal dynamics, tracer transport, and vertical dynamics routines; see the `FV3 dycore scientific documentation <https://repository.library.noaa.gov/view/noaa/30725>`_ for details.) 
+   
+``DT_RUNSEQ:`` (Default: "6")
+   Time interval of run sequence (coupling interval) between the model components of the UFS Weather Model (in seconds).
 
+``NPROCS_FORECAST:`` (Default: "26")
+   Total number of processes for the FORECAST task.
+
+``NPROCS_FORECAST_ATM:`` (Default: "12")
+   Number of processes for the atmospheric model component (DATM) in the FORECAST task.
+
+``NPROCS_FORECAST_LND:`` (Default: "12")
+   Number of processes for the land model component (Noah-MP) in the FORECAST task.
+
+``LND_LAYOUT_X:`` (Default: "1")
+   Number of processes in the x direction per tile for the land model component.
+
+``LND_LAYOUT_Y:`` (Default: "2")
+   Number of processes in the y direction per tile for the land model component.
+
+``LND_OUTPUT_FREQ_SEC:`` (Default: "21600")
+   Output frequency of the land model component (in seconds).
+
+``NNODES_FORECAST:`` (Default: "1")
+   Number of nodes for the FORECAST task.
+
+``NPROCS_PER_NODE:`` (Default: "26")
+   Number of processes per node for the FORECAST task.
+ 
 ``OBSDIR:`` (Default: "")
-   The path to the directory where DA fix files are located. In ``scripts/exlandda_prep_obs.sh``, this value is set to ``${FIXlandda}/DA`` unless the user specifies a different path in ``land_analysis.yaml``. 
+   The path to the directory where DA fix files are located. In ``scripts/exlandda_prep_obs.sh``, this value is set to ``${FIXlandda}/DA`` unless the user specifies a different path in ``template.land_analysis.yaml``. 
 
 ``OBSDIR_SUBDIR:`` (Default: "")
    The path to the directories where different types of fix data (e.g., ERA5, GSWP3, GTS, NOAH-MP) are located. In ``scripts/exlandda_prep_obs.sh``, this value is set based on the type(s) of data requested. The user may choose to set a different value. 
@@ -154,13 +188,19 @@ Entities are constants that can be referred to throughout the workflow using the
    Specifies the observation type. Format is "Obs1" "Obs2". Currently, only GHCN observation data is available. 
 
 ``DAtype:`` (Default: "letkfoi_snow")
-   Type of data assimilation. Valid values: ``letkfoi_snow``. Currently, Land DA only performs snow DA using the LETKF-OI algorithm. As the application expands, more options may be added. 
-
-``SNOWDEPTHVAR:`` (Default: "snwdph")
-   Placeholder --- currently not used in workflow. This value is currently hard-coded into ``scripts/exlandda_analysis.sh``.
+   Type of data assimilation. Valid values: ``letkfoi_snow``. Currently, Land DA only performs snow DA. As the application expands, more options may be added. 
 
 ``TSTUB:`` (Default: "oro_C96.mx100")
    Specifies the file stub/name for orography files in ``TPATH``. This file stub is named ``oro_C${RES}`` for atmosphere-only orography files and ``oro_C{RES}.mx100`` for atmosphere and ocean orography files. When Land DA is compiled with ``sorc/app_build.sh``, the subdirectories of the fix files should be linked into the ``fix`` directory, and orography files can be found in ``fix/FV3_fix_tiled/C96``. 
+
+``WE2E_TEST:`` (Default: "{{ we2e_test }}"/"NO")
+   Flag to turn on the workflow end-to-end (WE2E) test. When WE2E_TEST="YES", the result files from the experiment are compared to the test baseline files, located in ``fix/test_base/we2e_com``. If the results are within the tolerance set (via ``WE2E_ATOL``) at the end of the three main tasks --- ``analysis``, ``forecast``, and ``post_anal`` --- then the experiment passes. The actual value is derived from the ``parm_xml_<machine>.yaml`` file but preset to "NO" in that file. Valid values: ``"YES"`` | ``"NO"``
+
+``WE2E_ATOL:`` (Default: "1e-7")
+   Tolerance of the WE2E test
+
+``WE2E_LOG_FN:`` (Default: "we2e.log")
+   Name of the WE2E test log file
 
 ``DATADEP_FILE1:`` (Default: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>")
    File name for the dependency check for the task ``pre_anal``. The ``pre_anal`` task is triggered only when one or more of the ``DATADEP_FILE#`` files exists. Otherwise, the task will not be submitted.
@@ -196,7 +236,7 @@ Standard environment variables are defined in the NCEP Central Operations :nco:`
 ``NET:`` (Default: "landda")
    Model name (first level of ``com`` directory structure)
 
-``model_ver:`` (Default: "v1.2.1")
+``model_ver:`` (Default: "v2.0.0")
    Version number of package in three digits (e.g., v#.#.#); second level of ``com`` directory
 
 ``RUN:`` (Default: "landda")
@@ -262,9 +302,9 @@ The following subsections explain any variables that have not already been expla
 Sample Task: Analysis Task (``task_analysis``)
 ------------------------------------------------
 
-This section walks users through the structure of the analysis task (``task_analysis``) to explain how configuration information is provided in the ``land_analysis_<machine>.yaml`` file for each task. Since each task has a similar structure, common information is explained in this section. Variables unique to a particular task are defined in their respective ``task_`` sections below. 
+This section walks users through the structure of the analysis task (``task_analysis``) to explain how configuration information is provided to the ``land_analysis.yaml`` file for each task. Since each task has a similar structure, common information is explained in this section. Variables unique to a particular task are defined in their respective ``task_`` sections below. 
 
-Parameters for a particular task are set in the ``workflow.tasks.task_<name>:`` section of the ``land_analysis_<machine>.yaml`` file. For example, settings for the analysis task are provided in the ``task_analysis:`` section of ``land_analysis_<machine>.yaml``. The following is an excerpt of the ``task_analysis:`` section of ``land_analysis_<machine>.yaml``:
+Parameters for a particular task are set in the ``workflow.tasks.task_<name>:`` section of the ``template.land_analysis.yaml`` file. For example, settings for the analysis task are provided in the ``task_analysis:`` section of ``template.land_analysis.yaml``. The following is an excerpt of the ``task_analysis:`` section of ``template.land_analysis.yaml``:
 
 .. code-block:: console
 
@@ -282,6 +322,10 @@ Parameters for a particular task are set in the ``workflow.tasks.task_<name>:`` 
            EXP_NAME: "&EXP_NAME;"
            RES: "&RES;"
            TSTUB: "&TSTUB;"
+           WE2E_TEST: "&WE2E_TEST;"
+           WE2E_ATOL: "&WE2E_ATOL;"
+           WE2E_LOG_FN: "&WE2E_LOG_FN;"
+           LOGDIR: "&LOGDIR;
            model_ver: "&model_ver;"
            HOMElandda: "&HOMElandda;"
            COMROOT: "&COMROOT;"
@@ -290,7 +334,6 @@ Parameters for a particular task are set in the ``workflow.tasks.task_<name>:`` 
            PDY: "&PDY;"
            cyc: "&cyc;"
            DAtype: "&DAtype;"
-           SNOWDEPTHVAR: "&SNOWDEPTHVAR;"
            NPROCS_ANALYSIS: "&NPROCS_ANALYSIS;"
            JEDI_INSTALL: "&JEDI_INSTALL;"
          account: "&ACCOUNT;"
@@ -314,8 +357,6 @@ The ``attrs:`` section for each task includes the ``cycledefs:`` attribute and t
 
 ``cycledefs:`` (Default: cycled)
    A comma-separated list of ``cycledef:`` group names. A task with a ``cycledefs:`` group ID will be run only if its group ID matches one of the workflow's ``cycledef:`` group IDs. 
-
-.. COMMENT: Clarify!
 
 ``maxtries:`` (Default: 2)
    The maximum number of times Rocoto can resumbit a failed task. 
@@ -444,14 +485,14 @@ Other tasks may list data or time dependencies. For example, the pre-analysis ta
                  age: 5
                value: "&DATADEP_FILE4;"
 
-For details on the dependency details (e.g., ``attrs:``, ``age:``, ``value:`` tags), view the authoritative :rocoto:`Rocoto documentation <>`.
+For details on dependencies (e.g., ``attrs:``, ``age:``, ``value:`` tags), view the authoritative :rocoto:`Rocoto documentation <>`.
 
 .. _prep-obs:
 
 Observation Preparation Task (``task_prep_obs``)
 --------------------------------------------------
 
-Parameters for the observation preparation task are set in the ``task_prep_obs:`` section of the ``land_analysis_<machine>.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
+Parameters for the observation preparation task are set in the ``task_prep_obs:`` section of the ``template.land_analysis.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
 
 .. code-block:: console
 
@@ -489,7 +530,7 @@ Parameters for the observation preparation task are set in the ``task_prep_obs:`
 Pre-Analysis Task (``task_pre_anal``)
 ---------------------------------------
 
-Parameters for the pre-analysis task are set in the ``task_pre_anal:`` section of the ``land_analysis_<machine>.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
+Parameters for the pre-analysis task are set in the ``task_pre_anal:`` section of the ``template.land_analysis.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
 
 .. code-block:: console
 
@@ -546,14 +587,14 @@ Parameters for the pre-analysis task are set in the ``task_pre_anal:`` section o
 Analysis Task (``task_analysis``)
 -----------------------------------
 
-Parameters for the analysis task are set in the ``task_analysis:`` section of the ``land_analysis_<machine>.yaml`` file. Most are the same as the defaults set in the :ref:`Workflow Entities <wf-entities>` section. The ``task_analysis:`` task is explained fully in the :ref:`Sample Task <sample-task>` section. 
+Parameters for the analysis task are set in the ``task_analysis:`` section of the ``template.land_analysis.yaml`` file. Most are the same as the defaults set in the :ref:`Workflow Entities <wf-entities>` section. The ``task_analysis:`` task is explained fully in the :ref:`Sample Task <sample-task>` section. 
 
 .. _post-analysis:
 
 Post-Analysis Task (``task_post_anal``)
 -----------------------------------------
 
-Parameters for the post analysis task are set in the ``task_post_anal:`` section of the ``land_analysis_<machine>.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ.
+Parameters for the post analysis task are set in the ``task_post_anal:`` section of the ``template.land_analysis.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ.
 
 .. code-block:: console
 
@@ -595,7 +636,7 @@ Parameters for the post analysis task are set in the ``task_post_anal:`` section
 Plotting Task (``task_plot_stats``)
 -------------------------------------
 
-Parameters for the plotting task are set in the ``task_plot_stats:`` section of the ``land_analysis_<machine>.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
+Parameters for the plotting task are set in the ``task_plot_stats:`` section of the ``template.land_analysis.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
 
 .. code-block:: console
 
@@ -634,7 +675,7 @@ Parameters for the plotting task are set in the ``task_plot_stats:`` section of 
 Forecast Task (``task_forecast``)
 ----------------------------------
 
-Parameters for the forecast task are set in the ``task_forecast:`` section of the ``land_analysis_<machine>.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
+Parameters for the forecast task are set in the ``task_forecast:`` section of the ``template.land_analysis.yaml`` file. Most task variables are the same as the defaults set and defined in the :ref:`Workflow Entities <wf-entities>` section. Variables common to all tasks are discussed in more detail in the :ref:`Sample Task <sample-task>` section, although the default values may differ. 
 
 .. code-block:: console
 
@@ -662,16 +703,24 @@ Parameters for the forecast task are set in the ``task_forecast:`` section of th
            cyc: "&cyc;"
            DAtype: "&DAtype;"
            FCSTHR: "&FCSTHR;"
-           NPROCS_FORECAST: "&NPROCS_FORECAST;"          
+           DT_ATMOS: "&DT_ATMOS;"
+           DT_RUNSEQ: "&DT_RUNSEQ;"
+           NPROCS_FORECAST: "&NPROCS_FORECAST;"
+           NPROCS_FORECAST_ATM: "&NPROCS_FORECAST_ATM;"
+           NPROCS_FORECAST_LND: "&NPROCS_FORECAST_LND;"
+           LND_LAYOUT_X: "&LND_LAYOUT_X;"
+           LND_LAYOUT_Y: "&LND_LAYOUT_Y;"
+           LND_OUTPUT_FREQ_SEC: "&LND_OUTPUT_FREQ_SEC;"
+           NNODES_FORECAST: "&NNODES_FORECAST;"
+           NPROCS_PER_NODE: "&NPROCS_PER_NODE;"
          account: "&ACCOUNT;"
          command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "forecast" "&HOMElandda;" "&MACHINE;"'
          jobname: forecast
-         nodes: "1:ppn=&NPROCS_FORECAST;"
-         walltime: 01:00:00
+         nodes: "1:ppn=&NPROCS_FORECAST;:ppn=&NPROCS_PER_NODE;"
+         walltime: 00:30:00
          queue: batch
          join: "&LOGDIR;/forecast&LOGFN_SUFFIX;"
          dependency:
            taskdep:
              attrs:
                task: post_anal
-

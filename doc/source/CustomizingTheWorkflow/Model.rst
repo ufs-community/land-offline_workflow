@@ -4,7 +4,7 @@
 Input/Output Files for the Noah-MP Model
 *****************************************
 
-This chapter provides practical information on input files and parameters for the Noah-MP Land Surface Model (LSM) and its Vector-to-Tile Converter component.
+This chapter provides practical information on input files and parameters for the Noah-MP Land Surface Model (LSM).
 For background information on the Noah-MP LSM, see :numref:`Section %s <NoahMP>` of the Introduction. 
 
 .. _InputFiles:
@@ -13,9 +13,9 @@ Input Files
 **************
 
 The UFS land model requires multiple input files to run, including static datasets (fix files containing climatological information, terrain, and land use data), initial conditions files, and forcing files. 
-Users may reference the `Community Noah-MP Land Surface Modeling System Technical Description Version 5.0 <https://opensky.ucar.edu/islandora/object/technotes:599>`_ (2023) and the `Community Noah-MP User's Guide <https://www.jsg.utexas.edu/noah-mp/files/Users_Guide_v0.pdf>`_ (2011) for a detailed technical description of certain elements of the Noah-MP model.
+Users may reference the `Community Noah-MP Land Surface Modeling System Technical Description Version 5.0 <https://opensky.ucar.edu/islandora/object/technotes:599>`_ (2023) for a detailed technical description of certain elements of the Noah-MP model.
 
-In both the land component and land driver implementations of Noah-MP, static file(s) and initial conditions file(s) specify model parameters. 
+In Noah-MP, the static file(s) and initial conditions file(s) specify model parameters. 
 These files are publicly available in the `Land DA data bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. 
 Users can download the data and untar the file via the command line:
 
@@ -30,8 +30,8 @@ For data specific to the latest release (|latestr|), users can run:
 
 .. code-block:: console
    
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v1.2.0/Landdav1.2.0_input_data.tar.gz
-   tar xvfz Landdav1.2.0_input_data.tar.gz
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/LandDAInputDatav2.0.0.tar.gz
+   tar xvfz LandDAInputDatav2.0.0.tar.gz
 
 These files and their parameters are described in the following subsections.
 
@@ -43,11 +43,13 @@ Viewing netCDF Files
 
 Users can view file information, variables, and notes for NetCDF files using the ``ncdump`` module. On Level 1 platforms, users can load the Land DA environment from ``land-DA_workflow`` as described in :numref:`Section %s <config-wflow>`. 
 
+.. include:: ../doc-snippets/load-env.rst
+
 Then, users can run ``ncdump -h path/to/filename.nc``, where ``path/to/filename.nc`` is replaced with the path to the file. For example, on Orion, users might run: 
 
 .. code-block:: console
 
-   module load netcdf-c/4.9.2
+   module load netcdf/4.7.0
    ncdump -h /work/noaa/epic/UFS_Land-DA_Dev/inputs/NOAHMP_IC/ufs-land_C96_init_fields.tile1.nc
 
 
@@ -55,7 +57,7 @@ On other systems, users can load a compiler, MPI, and NetCDF modules before runn
 
 .. code-block:: console
 
-   module load intel/2022.1.2 impi/2022.1.2 netcdf-c/4.9.2
+   module load intel/2022.1.2 impi/2022.1.2 netcdf/4.7.0
    ncdump -h /path/to/inputs/NOAHMP_IC/ufs-land_C96_init_fields.tile1.nc
 
 Users may need to modify the ``module load`` command to reflect modules that are available on their system. 
@@ -65,13 +67,9 @@ Users may need to modify the ``module load`` command to reflect modules that are
 Input Files for the ``DATM`` + ``LND`` Configuration with GSWP3 data
 ======================================================================
 
-With the integration of the UFS Noah-MP land component into the Land DA System in the v1.2.0 release, model forcing options have been enhanced so that users can run the UFS land component (:term:`LND`) with the data atmosphere component (:term:`DATM`). Updates provide a new analysis option on the cubed-sphere native grid using :term:`GSWP3` forcing data to run a cycled experiment for 2000-01-03 to 2000-01-04. An artificial GHCN snow depth observation is provided for data assimilation (see :numref:`Section %s <observation-data>` for more on GHCN files). The GHCN observations will be extended in the near future. 
+With the integration of the UFS Noah-MP land component into the Land DA System, model forcing options have been enhanced so that users can run the UFS land component (:term:`LND`) with the data atmosphere component (:term:`DATM`). Updates provide a new analysis option on the cubed-sphere native grid using :term:`GSWP3` forcing data to run a cycled experiment for 2000-01-03 to 2000-01-04. An artificial GHCN snow depth observation is provided for data assimilation (see :numref:`Section %s <observation-data>` for more on GHCN files). The GHCN observations will be extended in the near future. 
 
 On Level 1 platforms, the requisite data are pre-staged at the locations listed in :numref:`Section %s <Level1Data>`. The data are also publicly available via the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. 
-
-.. attention::
-
-   The DATM + LND option is only supported on Level 1 systems (i.e., Hera and Orion). It is not tested or supported using a container except on Hera and Orion. 
 
 Forcing Files
 ---------------
