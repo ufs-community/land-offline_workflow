@@ -15,9 +15,6 @@ help:
 
 .PHONY: help Makefile linkcheck
 
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
-
 doc:
 	make clean
 	$(MAKE) linkcheck

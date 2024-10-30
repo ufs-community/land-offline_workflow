@@ -1,7 +1,7 @@
-.. UFS Offline LandDA documentation master file, created by
+.. UFS Land DA documentation master file, created by
    sphinx-quickstart on Fri Jan 20 10:35:26 2023.
 
-UFS Offline Land DA User's Guide |release|
+UFS Land DA User's Guide |release|
 ============================================
 
 .. toctree::
