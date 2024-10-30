@@ -23,8 +23,8 @@ Users can download the data and untar the file via the command line:
 
 .. code-block:: console
 
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20240501/Landda_develop_data.tar.gz
-   tar xvfz Landda_develop_data.tar.gz
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20241024/inputs.tar.gz
+   tar xvfz inputs.tar.gz
 
 For data specific to the latest release (|latestr|), users can run: 
 
