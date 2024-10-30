@@ -37,17 +37,17 @@ In this documentation, ``$LANDDAROOT`` is used, but users are welcome to choose 
 Get Code
 ***********
 
-Clone the Land DA workflow repository. To clone the most recent release, run: 
-
-.. code-block:: console
-
-   git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
-
-To clone the ``develop`` branch, run the same command with ``develop`` in place of |branch|: 
+Clone the Land DA workflow repository. To clone the ``develop`` branch, run:
 
 .. code-block:: console
 
    git clone -b develop --recursive https://github.com/ufs-community/land-DA_workflow.git
+
+To clone the most recent release, run the same command with |branch| in place of ``develop``:
+
+.. code-block:: console
+
+   git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
 
 .. _build-land-da:
 
@@ -120,7 +120,7 @@ Users will need to configure the ``account`` and ``exp_basedir`` variables in ``
 
    To determine an appropriate ``account`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
 
-Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this file using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
+Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` file contains reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this file using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
 
 .. _GetData:
 

@@ -9,7 +9,7 @@ This User's Guide provides guidance for running the Unified Forecast System
 the Joint Effort for Data assimilation Integration (:term:`JEDI`) software. Currently, the offline UFS Land DA System only works with snow data. 
 Thus, this User's Guide focuses primarily on the snow DA process.
 
-The following improvements have been made to the Land DA System ahead of the |latestr| release:
+The following improvements were made to the Land DA System ahead of the |latestr| release:
 
 * Added cycled run capability (:land-wflow-repo:`PR #101 <pull/101/>`)
 * Provided automated run option using cron (:land-wflow-repo:`PR #110 <pull/110>`)
