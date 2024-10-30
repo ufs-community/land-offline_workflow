@@ -19,8 +19,8 @@ Minimum System Requirements
 
 Additionally, users will need:
 
-   * Disk space: ~23GB (11GB for Land DA System [or 6.5GB for Land DA container], 11GB for Land DA data, and ~1GB for staging and output) 
-   * 7 CPU cores (or option to run with "oversubscribe")
+   * Disk space: ~24GB (11GB for Land DA System [or 6.5GB for Land DA container], 12GB for Land DA data, and ~1GB for staging and output) 
+   * 26 CPU cores (13 CPUs may be possible, but it has not been tested)
 
 Software Prerequisites
 ========================
@@ -47,14 +47,14 @@ Supported Systems for Running Land DA
 
 Four levels of support have been defined for :term:`UFS` applications, and the Land DA System operates under this paradigm: 
 
-* **Level 1** *(Pre-configured)*: Prerequisite software libraries are pre-built and available in a central location; code builds; full testing of model.
+* **Level 1** *(Preconfigured)*: Prerequisite software libraries are pre-built and available in a central location; code builds; full testing of model.
 * **Level 2** *(Configurable)*: Prerequisite libraries are not available in a centralized location but are expected to install successfully; code builds; full testing of model.
 * **Level 3** *(Limited-test platforms)*: Libraries and code build on these systems, but there is limited testing of the model.
 * **Level 4** *(Build-only platforms)*: Libraries and code build, but running the model is not tested.
 
 Level 1 Systems
 ==================
-Preconfigured (Level 1) systems for Land DA already have the required external libraries available in a central location via :term:`spack-stack` and the :term:`jedi-bundle` (Skylab |skylabv|). Land DA is expected to build and run out-of-the-box on these systems, and users can download the Land DA code without first installing prerequisite software. With the exception of the Land DA container, users must have access to these Level 1 systems in order to use them. For the most updated information on stack locations, compilers, and MPI, users can check the :land-wflow-repo:`build and run version files <tree/develop/versions>` for their machine of choice. 
+Preconfigured (Level 1) systems for Land DA already have the required external libraries available in a central location via :term:`spack-stack` and the :term:`jedi-bundle` (|skylabv|). Land DA is expected to build and run out-of-the-box on these systems, and users can download the Land DA code without first installing prerequisite software. With the exception of the Land DA container, users must have access to these Level 1 systems in order to use them. For the most updated information on stack locations, compilers, and MPI, users can check the :land-wflow-repo:`build and run version files <tree/develop/versions>` for their machine of choice. 
 
 .. _stack-compiler-locations:
 
@@ -70,18 +70,18 @@ Preconfigured (Level 1) systems for Land DA already have the required external l
    * - Hera
      - intel/2021.5.0
      - impi/2021.5.1
-     - /scratch1/NCEPDEV/nems/role.epic/spack-stack/spack-stack-1.6.0/envs/unified-env-rocky8/install/modulefiles/Core
+     - /scratch1/NCEPDEV/nems/role.epic/spack-stack/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core
      - /scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7
    * - Orion
      - intel/2021.9.0
      - impi/2021.9.0
-     - /work/noaa/epic/role-epic/spack-stack/orion/spack-stack-1.6.0/envs/unified-env-rocky9/install/modulefiles/Core
+     - /work/noaa/epic/role-epic/spack-stack/orion/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core
      - /work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6
    * - Hercules
      - intel/2021.9.0
      - impi/2021.9.0
-     - /work/noaa/epic/role-epic/spack-stack/hercules/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core
-     - /work2/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules
+     - /work/noaa/epic/role-epic/spack-stack/hercules/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core
+     - /work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules
    * - Container
      - intel-oneapi-compilers/2021.10.0
      - intel-oneapi-mpi/2021.9.0
@@ -105,7 +105,7 @@ Hierarchical Repository Structure
 
 The main repository for the Land DA System is named ``land-DA_workflow``; 
 it is available on GitHub at https://github.com/ufs-community/land-DA_workflow. 
-This :term:`umbrella repository` uses Git submodules and an ``app_build.sh`` file to pull in the appropriate versions of external repositories associated with the Land DA System. :numref:`Table %s <LandDAComponents>` describes the various subrepositories that form the UFS Land DA System. 
+This :term:`umbrella repository` uses Git submodules and an ``app_build.sh`` file to pull in code from the appropriate versions of external repositories associated with the Land DA System. :numref:`Table %s <LandDAComponents>` describes the various subrepositories that form the UFS Land DA System. 
 
 .. _LandDAComponents:
 
@@ -133,7 +133,7 @@ This :term:`umbrella repository` uses Git submodules and an ``app_build.sh`` fil
 File & Directory Structure
 ============================
 
-The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operations (NCO) :nco:`WCOSS Implementation Standards <ImplementationStandards.v11.0.0.pdf>`. When the ``develop`` branch of the ``land-DA_workflow`` repository is cloned with the ``--recursive`` argument, the specific GitHub repositories described in ``/sorc/app_build.sh`` are cloned into ``sorc``. The diagram below illustrates the file and directory structure of the Land DA System. Directories in parentheses () are only visible after the build step. Some files and directories have been removed for brevity. 
+The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operations (NCO) :nco:`WCOSS Implementation Standards <ImplementationStandards.v11.0.0.pdf>`. When the ``land-DA_workflow`` repository is cloned with the ``--recursive`` argument, the specific GitHub repositories described in ``/sorc/app_build.sh`` are cloned into ``sorc``. The diagram below illustrates the file and directory structure of the Land DA System. Directories in parentheses () are only visible after the build step. Some files and directories have been removed for brevity. 
 
 .. code-block:: console
 
@@ -145,31 +145,41 @@ The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operatio
     ├── (lib*)
     ├── modulefiles
     ├── parm
+    │     ├── jedi
+    │     ├── templates
+    │     │     └── template.land_analysis.yaml
     │     ├── check_release_outputs.sh
-    │     ├── land_analysis_<forcing>_<platform>.yaml
-    │     └── run_without_rocoto.sh
+    │     ├── detect_platform.sh
+    │     ├── parm_xml_<platform>.yaml
+    │     └── launch_rocoto_wflow.sh
     ├── scripts
     ├── sorc
     |     ├── apply_incr.fd
-    |     |     ├── apply_incr_noahmp_snow.f90
-    |     |     └── NoahMPdisag_module.f90
+    |     |     └── sorc
+    |     |           ├── apply_incr_noahmp_snow.f90
+    |     |           └── NoahMPdisag_module.f90
     │     ├── (build)
     │     ├── cmake
-    │     │     └── compiler_flags_*.cmake
     │     ├── (conda)
+    |     |     └── envs
+    |     |           └── land_da 
     │     ├── test
+    │     │     ├── <platform>_ctest.sh
+    │     │     └── run_<platform>_ctest.sh
     │     ├── tile2tile_converter.fd
     │     ├── ufs_model.fd
     │     ├── CMakeLists.txt
     │     └── app_build.sh
     ├── ush
+    |     ├── fill_jinja_template.py
     |     ├── hofx_analysis_stats.py
-    |     └── letkf_create_ens.py
+    |     ├── letkf_create_ens.py
+    |     └── plot_forecast_restart.py
     ├── versions
     ├── LICENSE
     └── README.md
 
-:numref:`Table %s <Subdirectories>` describes the contents of the most important Land DA subdirectories. :numref:`Section %s <components>` describes the Land DA System components. Users can reference the :nco:`NCO Implementation Standards <ImplementationStandards.v11.0.0.pdf>` (p. 19) for additional details on repository structure in NCO-compliant repositories. 
+:numref:`Table %s <Subdirectories>` describes the contents of the most important Land DA subdirectories. :numref:`Section %s <components>` describes the Land DA System components. Users may reference the :nco:`NCO Implementation Standards <ImplementationStandards.v11.0.0.pdf>` (p. 19) for additional details on repository structure in NCO-compliant repositories. 
 
 .. _Subdirectories:
 
@@ -207,12 +217,9 @@ The ``land-DA_workflow`` is evolving to follow the :term:`NCEP` Central Operatio
 The UFS Land Component
 =========================
 
-The UFS Land DA System has been updated to build the UFS Noah-MP land component as part of the build process. 
-Updates allowing the Land DA System to run with the land component are underway. 
-
-The land component makes use of a National Unified Operational Prediction Capability (:term:`NUOPC`) cap to interface with a coupled modeling system. 
-Unlike the standalone Noah-MP land driver, the Noah-MP :term:`NUOPC cap` is able to create an :term:`ESMF` multi-tile grid by reading in a mosaic grid file. For the domain, the :term:`FMS` initializes reading and writing of the cubed-sphere tiled output. Then, the Noah-MP land component reads static information and initial conditions (e.g., surface albedo) and interpolates the data to the date of the simulation. The solar zenith angle is calculated based on the time information. 
+The UFS Land DA System has been updated to build and run the UFS Noah-MP land component. The land component makes use of a National Unified Operational Prediction Capability (:term:`NUOPC`) cap to interface with a coupled modeling system. 
+This Noah-MP :term:`NUOPC cap` is able to create an :term:`ESMF` multi-tile grid by reading in a mosaic grid file. For the domain, the :term:`FMS` initializes reading and writing of the cubed-sphere tiled output. Then, the Noah-MP land component reads static information and initial conditions (e.g., surface albedo) and interpolates the data to the date of the simulation. The solar zenith angle is calculated based on the time information. 
 
 Unified Workflow (UW) Tools
 ============================
-The Unified Workflow (UW) is a set of tools intended to unify the workflow for various UFS applications under one framework. The UW toolkit currently includes rocoto, template, and configuration (config) tools, which are being incorporated into the Land DA workflow. Additional tools are under development. More details about UW tools can be found in the `uwtools <https://github.com/ufs-community/uwtools>`_ GitHub repository and in the :uw:`UW Documentation <>`.
+The Unified Workflow (UW) is a set of tools intended to unify the workflow for various UFS applications under one framework. The UW toolkit includes rocoto, template, and configuration (config) tools, and additional tools and drivers are under development. The Land DA workflow makes use of the template tool to fill in user-specified values in the configuration file. It then uses the rocoto tool to generate a workflow XML file from the configuration file; other UW tools may be incorporated into the workflow in the future. More details about UW tools can be found in the `uwtools <https://github.com/ufs-community/uwtools>`_ GitHub repository and in the :uw:`UW Documentation <>`.

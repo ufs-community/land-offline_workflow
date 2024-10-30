@@ -102,35 +102,42 @@
              
   <section id="input-output-files-for-the-noah-mp-model">
 <span id="model"></span><h1><span class="section-number">3.2. </span>Input/Output Files for the Noah-MP Model<a class="headerlink" href="#input-output-files-for-the-noah-mp-model" title="Link to this heading"></a></h1>
-<p>This chapter provides practical information on input files and parameters for the Noah-MP Land Surface Model (LSM) and its Vector-to-Tile Converter component.
+<p>This chapter provides practical information on input files and parameters for the Noah-MP Land Surface Model (LSM).
 For background information on the Noah-MP LSM, see <a class="reference internal" href="../BackgroundInfo/Introduction.html#noahmp"><span class="std std-numref">Section 1.1.3.2</span></a> of the Introduction.</p>
 <section id="input-files">
 <span id="inputfiles"></span><h2><span class="section-number">3.2.1. </span>Input Files<a class="headerlink" href="#input-files" title="Link to this heading"></a></h2>
 <p>The UFS land model requires multiple input files to run, including static datasets (fix files containing climatological information, terrain, and land use data), initial conditions files, and forcing files.
-Users may reference the <a class="reference external" href="https://opensky.ucar.edu/islandora/object/technotes:599">Community Noah-MP Land Surface Modeling System Technical Description Version 5.0</a> (2023) and the <a class="reference external" href="https://www.jsg.utexas.edu/noah-mp/files/Users_Guide_v0.pdf">Community Noah-MP User’s Guide</a> (2011) for a detailed technical description of certain elements of the Noah-MP model.</p>
-<p>In both the land component and land driver implementations of Noah-MP, static file(s) and initial conditions file(s) specify model parameters.
+Users may reference the <a class="reference external" href="https://opensky.ucar.edu/islandora/object/technotes:599">Community Noah-MP Land Surface Modeling System Technical Description Version 5.0</a> (2023) for a detailed technical description of certain elements of the Noah-MP model.</p>
+<p>In Noah-MP, the static file(s) and initial conditions file(s) specify model parameters.
 These files are publicly available in the <a class="reference external" href="https://registry.opendata.aws/noaa-ufs-land-da/">Land DA data bucket</a>.
 Users can download the data and untar the file via the command line:</p>
-<div class="highlight-console notranslate" id="tarfile"><div class="highlight"><pre><span></span><span class="go">wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20240501/Landda_develop_data.tar.gz</span>
-<span class="go">tar xvfz Landda_develop_data.tar.gz</span>
+<div class="highlight-console notranslate" id="tarfile"><div class="highlight"><pre><span></span><span class="go">wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20241024/inputs.tar.gz</span>
+<span class="go">tar xvfz inputs.tar.gz</span>
 </pre></div>
 </div>
-<p>For data specific to the latest release (v1.2.0), users can run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v1.2.0/Landdav1.2.0_input_data.tar.gz</span>
-<span class="go">tar xvfz Landdav1.2.0_input_data.tar.gz</span>
+<p>For data specific to the latest release (v2.0.0), users can run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/LandDAInputDatav2.0.0.tar.gz</span>
+<span class="go">tar xvfz LandDAInputDatav2.0.0.tar.gz</span>
 </pre></div>
 </div>
 <p>These files and their parameters are described in the following subsections.</p>
 <section id="viewing-netcdf-files">
 <span id="view-netcdf-files"></span><h3><span class="section-number">3.2.1.1. </span>Viewing netCDF Files<a class="headerlink" href="#viewing-netcdf-files" title="Link to this heading"></a></h3>
 <p>Users can view file information, variables, and notes for NetCDF files using the <code class="docutils literal notranslate"><span class="pre">ncdump</span></code> module. On Level 1 platforms, users can load the Land DA environment from <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> as described in <a class="reference internal" href="../BuildingRunningTesting/BuildRunLandDA.html#config-wflow"><span class="std std-numref">Section 2.1.4</span></a>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd $LANDDAROOT/land-DA_workflow</span>
+<span class="go">module use modulefiles</span>
+<span class="go">module load wflow_&lt;platform&gt;</span>
+<span class="go">conda activate land_da</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code>, <code class="docutils literal notranslate"><span class="pre">orion</span></code>, or <code class="docutils literal notranslate"><span class="pre">hercules</span></code>.</p>
 <p>Then, users can run <code class="docutils literal notranslate"><span class="pre">ncdump</span> <span class="pre">-h</span> <span class="pre">path/to/filename.nc</span></code>, where <code class="docutils literal notranslate"><span class="pre">path/to/filename.nc</span></code> is replaced with the path to the file. For example, on Orion, users might run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load netcdf-c/4.9.2</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load netcdf/4.7.0</span>
 <span class="go">ncdump -h /work/noaa/epic/UFS_Land-DA_Dev/inputs/NOAHMP_IC/ufs-land_C96_init_fields.tile1.nc</span>
 </pre></div>
 </div>
 <p>On other systems, users can load a compiler, MPI, and NetCDF modules before running the <code class="docutils literal notranslate"><span class="pre">ncdump</span></code> command above. For example:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load intel/2022.1.2 impi/2022.1.2 netcdf-c/4.9.2</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load intel/2022.1.2 impi/2022.1.2 netcdf/4.7.0</span>
 <span class="go">ncdump -h /path/to/inputs/NOAHMP_IC/ufs-land_C96_init_fields.tile1.nc</span>
 </pre></div>
 </div>
@@ -138,12 +145,8 @@ Users can download the data and untar the file via the command line:</p>
 </section>
 <section id="input-files-for-the-datm-lnd-configuration-with-gswp3-data">
 <span id="datm-lnd-input-files"></span><h3><span class="section-number">3.2.1.2. </span>Input Files for the <code class="docutils literal notranslate"><span class="pre">DATM</span></code> + <code class="docutils literal notranslate"><span class="pre">LND</span></code> Configuration with GSWP3 data<a class="headerlink" href="#input-files-for-the-datm-lnd-configuration-with-gswp3-data" title="Link to this heading"></a></h3>
-<p>With the integration of the UFS Noah-MP land component into the Land DA System in the v1.2.0 release, model forcing options have been enhanced so that users can run the UFS land component (<a class="reference internal" href="../Reference/Glossary.html#term-LND"><span class="xref std std-term">LND</span></a>) with the data atmosphere component (<a class="reference internal" href="../Reference/Glossary.html#term-DATM"><span class="xref std std-term">DATM</span></a>). Updates provide a new analysis option on the cubed-sphere native grid using <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> forcing data to run a cycled experiment for 2000-01-03 to 2000-01-04. An artificial GHCN snow depth observation is provided for data assimilation (see <a class="reference internal" href="DASystem.html#observation-data"><span class="std std-numref">Section 3.3.2.2</span></a> for more on GHCN files). The GHCN observations will be extended in the near future.</p>
+<p>With the integration of the UFS Noah-MP land component into the Land DA System, model forcing options have been enhanced so that users can run the UFS land component (<a class="reference internal" href="../Reference/Glossary.html#term-LND"><span class="xref std std-term">LND</span></a>) with the data atmosphere component (<a class="reference internal" href="../Reference/Glossary.html#term-DATM"><span class="xref std std-term">DATM</span></a>). Updates provide a new analysis option on the cubed-sphere native grid using <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> forcing data to run a cycled experiment for 2000-01-03 to 2000-01-04. An artificial GHCN snow depth observation is provided for data assimilation (see <a class="reference internal" href="DASystem.html#observation-data"><span class="std std-numref">Section 3.3.2.2</span></a> for more on GHCN files). The GHCN observations will be extended in the near future.</p>
 <p>On Level 1 platforms, the requisite data are pre-staged at the locations listed in <a class="reference internal" href="../BuildingRunningTesting/BuildRunLandDA.html#level1data"><span class="std std-numref">Section 2.1</span></a>. The data are also publicly available via the <a class="reference external" href="https://registry.opendata.aws/noaa-ufs-land-da/">Land DA Data Bucket</a>.</p>
-<div class="admonition attention">
-<p class="admonition-title">Attention</p>
-<p>The DATM + LND option is only supported on Level 1 systems (i.e., Hera and Orion). It is not tested or supported using a container except on Hera and Orion.</p>
-</div>
 <section id="forcing-files">
 <h4><span class="section-number">3.2.1.2.1. </span>Forcing Files<a class="headerlink" href="#forcing-files" title="Link to this heading"></a></h4>
 <p><a class="reference internal" href="../Reference/Glossary.html#term-forcing-data"><span class="xref std std-term">Forcing files</span></a> for the land component configuration come from the Global Soil Wetness Project Phase 3 dataset. They are located in the <code class="docutils literal notranslate"><span class="pre">inputs/DATM_input_data/gswp3</span></code> directory (downloaded <a class="reference internal" href="#inputfiles"><span class="std std-ref">above</span></a>).</p>
@@ -257,7 +260,7 @@ The initial conditions files include the initial state variables that are requir
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

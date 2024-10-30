@@ -116,8 +116,8 @@
 <p>Additionally, users will need:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Disk space: ~23GB (11GB for Land DA System [or 6.5GB for Land DA container], 11GB for Land DA data, and ~1GB for staging and output)</p></li>
-<li><p>7 CPU cores (or option to run with “oversubscribe”)</p></li>
+<li><p>Disk space: ~24GB (11GB for Land DA System [or 6.5GB for Land DA container], 12GB for Land DA data, and ~1GB for staging and output)</p></li>
+<li><p>26 CPU cores (13 CPUs may be possible, but it has not been tested)</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -143,14 +143,14 @@
 <span id="levelsofsupport"></span><h2><span class="section-number">1.2.2. </span>Supported Systems for Running Land DA<a class="headerlink" href="#supported-systems-for-running-land-da" title="Link to this heading"></a></h2>
 <p>Four levels of support have been defined for <a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a> applications, and the Land DA System operates under this paradigm:</p>
 <ul class="simple">
-<li><p><strong>Level 1</strong> <em>(Pre-configured)</em>: Prerequisite software libraries are pre-built and available in a central location; code builds; full testing of model.</p></li>
+<li><p><strong>Level 1</strong> <em>(Preconfigured)</em>: Prerequisite software libraries are pre-built and available in a central location; code builds; full testing of model.</p></li>
 <li><p><strong>Level 2</strong> <em>(Configurable)</em>: Prerequisite libraries are not available in a centralized location but are expected to install successfully; code builds; full testing of model.</p></li>
 <li><p><strong>Level 3</strong> <em>(Limited-test platforms)</em>: Libraries and code build on these systems, but there is limited testing of the model.</p></li>
 <li><p><strong>Level 4</strong> <em>(Build-only platforms)</em>: Libraries and code build, but running the model is not tested.</p></li>
 </ul>
 <section id="level-1-systems">
 <h3><span class="section-number">1.2.2.1. </span>Level 1 Systems<a class="headerlink" href="#level-1-systems" title="Link to this heading"></a></h3>
-<p>Preconfigured (Level 1) systems for Land DA already have the required external libraries available in a central location via <a class="reference internal" href="../Reference/Glossary.html#term-spack-stack"><span class="xref std std-term">spack-stack</span></a> and the <a class="reference internal" href="../Reference/Glossary.html#term-jedi-bundle"><span class="xref std std-term">jedi-bundle</span></a> (Skylab Skylab v7.0). Land DA is expected to build and run out-of-the-box on these systems, and users can download the Land DA code without first installing prerequisite software. With the exception of the Land DA container, users must have access to these Level 1 systems in order to use them. For the most updated information on stack locations, compilers, and MPI, users can check the <a class="reference external" href="https://github.com/ufs-community/land-DA_workflow/tree/develop/versions">build and run version files</a> for their machine of choice.</p>
+<p>Preconfigured (Level 1) systems for Land DA already have the required external libraries available in a central location via <a class="reference internal" href="../Reference/Glossary.html#term-spack-stack"><span class="xref std std-term">spack-stack</span></a> and the <a class="reference internal" href="../Reference/Glossary.html#term-jedi-bundle"><span class="xref std std-term">jedi-bundle</span></a> (Skylab v7.0). Land DA is expected to build and run out-of-the-box on these systems, and users can download the Land DA code without first installing prerequisite software. With the exception of the Land DA container, users must have access to these Level 1 systems in order to use them. For the most updated information on stack locations, compilers, and MPI, users can check the <a class="reference external" href="https://github.com/ufs-community/land-DA_workflow/tree/develop/versions">build and run version files</a> for their machine of choice.</p>
 <span id="stack-compiler-locations"></span><table class="docutils align-default" id="id3">
 <caption><span class="caption-number">Table 1.1 </span><span class="caption-text"><em>Software Prerequisites &amp; Locations</em></span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <colgroup>
@@ -172,20 +172,20 @@
 <tr class="row-even"><td><p>Hera</p></td>
 <td><p>intel/2021.5.0</p></td>
 <td><p>impi/2021.5.1</p></td>
-<td><p>/scratch1/NCEPDEV/nems/role.epic/spack-stack/spack-stack-1.6.0/envs/unified-env-rocky8/install/modulefiles/Core</p></td>
+<td><p>/scratch1/NCEPDEV/nems/role.epic/spack-stack/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core</p></td>
 <td><p>/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7</p></td>
 </tr>
 <tr class="row-odd"><td><p>Orion</p></td>
 <td><p>intel/2021.9.0</p></td>
 <td><p>impi/2021.9.0</p></td>
-<td><p>/work/noaa/epic/role-epic/spack-stack/orion/spack-stack-1.6.0/envs/unified-env-rocky9/install/modulefiles/Core</p></td>
+<td><p>/work/noaa/epic/role-epic/spack-stack/orion/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core</p></td>
 <td><p>/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6</p></td>
 </tr>
 <tr class="row-even"><td><p>Hercules</p></td>
 <td><p>intel/2021.9.0</p></td>
 <td><p>impi/2021.9.0</p></td>
-<td><p>/work/noaa/epic/role-epic/spack-stack/hercules/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core</p></td>
-<td><p>/work2/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules</p></td>
+<td><p>/work/noaa/epic/role-epic/spack-stack/hercules/spack-stack-1.6.0/envs/fms-2024.01/install/modulefiles/Core</p></td>
+<td><p>/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules</p></td>
 </tr>
 <tr class="row-odd"><td><p>Container</p></td>
 <td><p>intel-oneapi-compilers/2021.10.0</p></td>
@@ -207,7 +207,7 @@
 <span id="components"></span><h3><span class="section-number">1.2.3.1. </span>Hierarchical Repository Structure<a class="headerlink" href="#hierarchical-repository-structure" title="Link to this heading"></a></h3>
 <p>The main repository for the Land DA System is named <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code>;
 it is available on GitHub at <a class="reference external" href="https://github.com/ufs-community/land-DA_workflow">https://github.com/ufs-community/land-DA_workflow</a>.
-This <a class="reference internal" href="../Reference/Glossary.html#term-Umbrella-repository"><span class="xref std std-term">umbrella repository</span></a> uses Git submodules and an <code class="docutils literal notranslate"><span class="pre">app_build.sh</span></code> file to pull in the appropriate versions of external repositories associated with the Land DA System. <a class="reference internal" href="#landdacomponents"><span class="std std-numref">Table 1.2</span></a> describes the various subrepositories that form the UFS Land DA System.</p>
+This <a class="reference internal" href="../Reference/Glossary.html#term-Umbrella-repository"><span class="xref std std-term">umbrella repository</span></a> uses Git submodules and an <code class="docutils literal notranslate"><span class="pre">app_build.sh</span></code> file to pull in code from the appropriate versions of external repositories associated with the Land DA System. <a class="reference internal" href="#landdacomponents"><span class="std std-numref">Table 1.2</span></a> describes the various subrepositories that form the UFS Land DA System.</p>
 <span id="landdacomponents"></span><table class="docutils align-default" id="id4">
 <caption><span class="caption-number">Table 1.2 </span><span class="caption-text">UFS Land DA System Components</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
 <thead>
@@ -237,7 +237,7 @@ This <a class="reference internal" href="../Reference/Glossary.html#term-Umbrell
 </section>
 <section id="file-directory-structure">
 <span id="file-dir-structure"></span><h3><span class="section-number">1.2.3.2. </span>File &amp; Directory Structure<a class="headerlink" href="#file-directory-structure" title="Link to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> is evolving to follow the <a class="reference internal" href="../Reference/Glossary.html#term-NCEP"><span class="xref std std-term">NCEP</span></a> Central Operations (NCO) <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/ImplementationStandards.v11.0.0.pdf">WCOSS Implementation Standards</a>. When the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> repository is cloned with the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> argument, the specific GitHub repositories described in <code class="docutils literal notranslate"><span class="pre">/sorc/app_build.sh</span></code> are cloned into <code class="docutils literal notranslate"><span class="pre">sorc</span></code>. The diagram below illustrates the file and directory structure of the Land DA System. Directories in parentheses () are only visible after the build step. Some files and directories have been removed for brevity.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> is evolving to follow the <a class="reference internal" href="../Reference/Glossary.html#term-NCEP"><span class="xref std std-term">NCEP</span></a> Central Operations (NCO) <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/ImplementationStandards.v11.0.0.pdf">WCOSS Implementation Standards</a>. When the <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> repository is cloned with the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> argument, the specific GitHub repositories described in <code class="docutils literal notranslate"><span class="pre">/sorc/app_build.sh</span></code> are cloned into <code class="docutils literal notranslate"><span class="pre">sorc</span></code>. The diagram below illustrates the file and directory structure of the Land DA System. Directories in parentheses () are only visible after the build step. Some files and directories have been removed for brevity.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">land-offline_workflow</span>
 <span class="go"> ├── doc</span>
 <span class="go"> ├── (exec)</span>
@@ -246,32 +246,42 @@ This <a class="reference internal" href="../Reference/Glossary.html#term-Umbrell
 <span class="go"> ├── (lib*)</span>
 <span class="go"> ├── modulefiles</span>
 <span class="go"> ├── parm</span>
+<span class="go"> │     ├── jedi</span>
+<span class="go"> │     ├── templates</span>
+<span class="go"> │     │     └── template.land_analysis.yaml</span>
 <span class="go"> │     ├── check_release_outputs.sh</span>
-<span class="go"> │     ├── land_analysis_&lt;forcing&gt;_&lt;platform&gt;.yaml</span>
-<span class="go"> │     └── run_without_rocoto.sh</span>
+<span class="go"> │     ├── detect_platform.sh</span>
+<span class="go"> │     ├── parm_xml_&lt;platform&gt;.yaml</span>
+<span class="go"> │     └── launch_rocoto_wflow.sh</span>
 <span class="go"> ├── scripts</span>
 <span class="go"> ├── sorc</span>
 <span class="go"> |     ├── apply_incr.fd</span>
-<span class="go"> |     |     ├── apply_incr_noahmp_snow.f90</span>
-<span class="go"> |     |     └── NoahMPdisag_module.f90</span>
+<span class="go"> |     |     └── sorc</span>
+<span class="go"> |     |           ├── apply_incr_noahmp_snow.f90</span>
+<span class="go"> |     |           └── NoahMPdisag_module.f90</span>
 <span class="go"> │     ├── (build)</span>
 <span class="go"> │     ├── cmake</span>
-<span class="go"> │     │     └── compiler_flags_*.cmake</span>
 <span class="go"> │     ├── (conda)</span>
+<span class="go"> |     |     └── envs</span>
+<span class="go"> |     |           └── land_da</span>
 <span class="go"> │     ├── test</span>
+<span class="go"> │     │     ├── &lt;platform&gt;_ctest.sh</span>
+<span class="go"> │     │     └── run_&lt;platform&gt;_ctest.sh</span>
 <span class="go"> │     ├── tile2tile_converter.fd</span>
 <span class="go"> │     ├── ufs_model.fd</span>
 <span class="go"> │     ├── CMakeLists.txt</span>
 <span class="go"> │     └── app_build.sh</span>
 <span class="go"> ├── ush</span>
+<span class="go"> |     ├── fill_jinja_template.py</span>
 <span class="go"> |     ├── hofx_analysis_stats.py</span>
-<span class="go"> |     └── letkf_create_ens.py</span>
+<span class="go"> |     ├── letkf_create_ens.py</span>
+<span class="go"> |     └── plot_forecast_restart.py</span>
 <span class="go"> ├── versions</span>
 <span class="go"> ├── LICENSE</span>
 <span class="go"> └── README.md</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="#subdirectories"><span class="std std-numref">Table 1.3</span></a> describes the contents of the most important Land DA subdirectories. <a class="reference internal" href="#components"><span class="std std-numref">Section 1.2.3.1</span></a> describes the Land DA System components. Users can reference the <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/ImplementationStandards.v11.0.0.pdf">NCO Implementation Standards</a> (p. 19) for additional details on repository structure in NCO-compliant repositories.</p>
+<p><a class="reference internal" href="#subdirectories"><span class="std std-numref">Table 1.3</span></a> describes the contents of the most important Land DA subdirectories. <a class="reference internal" href="#components"><span class="std std-numref">Section 1.2.3.1</span></a> describes the Land DA System components. Users may reference the <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/ImplementationStandards.v11.0.0.pdf">NCO Implementation Standards</a> (p. 19) for additional details on repository structure in NCO-compliant repositories.</p>
 <span id="subdirectories"></span><table class="docutils align-default" id="id5">
 <caption><span class="caption-number">Table 1.3 </span><span class="caption-text"><em>Subdirectories of the land-DA_workflow repository</em></span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <colgroup>
@@ -322,14 +332,12 @@ This <a class="reference internal" href="../Reference/Glossary.html#term-Umbrell
 </section>
 <section id="the-ufs-land-component">
 <span id="land-component"></span><h3><span class="section-number">1.2.3.3. </span>The UFS Land Component<a class="headerlink" href="#the-ufs-land-component" title="Link to this heading"></a></h3>
-<p>The UFS Land DA System has been updated to build the UFS Noah-MP land component as part of the build process.
-Updates allowing the Land DA System to run with the land component are underway.</p>
-<p>The land component makes use of a National Unified Operational Prediction Capability (<a class="reference internal" href="../Reference/Glossary.html#term-NUOPC"><span class="xref std std-term">NUOPC</span></a>) cap to interface with a coupled modeling system.
-Unlike the standalone Noah-MP land driver, the Noah-MP <a class="reference internal" href="../Reference/Glossary.html#term-NUOPC-Cap"><span class="xref std std-term">NUOPC cap</span></a> is able to create an <a class="reference internal" href="../Reference/Glossary.html#term-ESMF"><span class="xref std std-term">ESMF</span></a> multi-tile grid by reading in a mosaic grid file. For the domain, the <a class="reference internal" href="../Reference/Glossary.html#term-FMS"><span class="xref std std-term">FMS</span></a> initializes reading and writing of the cubed-sphere tiled output. Then, the Noah-MP land component reads static information and initial conditions (e.g., surface albedo) and interpolates the data to the date of the simulation. The solar zenith angle is calculated based on the time information.</p>
+<p>The UFS Land DA System has been updated to build and run the UFS Noah-MP land component. The land component makes use of a National Unified Operational Prediction Capability (<a class="reference internal" href="../Reference/Glossary.html#term-NUOPC"><span class="xref std std-term">NUOPC</span></a>) cap to interface with a coupled modeling system.
+This Noah-MP <a class="reference internal" href="../Reference/Glossary.html#term-NUOPC-Cap"><span class="xref std std-term">NUOPC cap</span></a> is able to create an <a class="reference internal" href="../Reference/Glossary.html#term-ESMF"><span class="xref std std-term">ESMF</span></a> multi-tile grid by reading in a mosaic grid file. For the domain, the <a class="reference internal" href="../Reference/Glossary.html#term-FMS"><span class="xref std std-term">FMS</span></a> initializes reading and writing of the cubed-sphere tiled output. Then, the Noah-MP land component reads static information and initial conditions (e.g., surface albedo) and interpolates the data to the date of the simulation. The solar zenith angle is calculated based on the time information.</p>
 </section>
 <section id="unified-workflow-uw-tools">
 <h3><span class="section-number">1.2.3.4. </span>Unified Workflow (UW) Tools<a class="headerlink" href="#unified-workflow-uw-tools" title="Link to this heading"></a></h3>
-<p>The Unified Workflow (UW) is a set of tools intended to unify the workflow for various UFS applications under one framework. The UW toolkit currently includes rocoto, template, and configuration (config) tools, which are being incorporated into the Land DA workflow. Additional tools are under development. More details about UW tools can be found in the <a class="reference external" href="https://github.com/ufs-community/uwtools">uwtools</a> GitHub repository and in the <a class="reference external" href="https://uwtools.readthedocs.io/en/main/">UW Documentation</a>.</p>
+<p>The Unified Workflow (UW) is a set of tools intended to unify the workflow for various UFS applications under one framework. The UW toolkit includes rocoto, template, and configuration (config) tools, and additional tools and drivers are under development. The Land DA workflow makes use of the template tool to fill in user-specified values in the configuration file. It then uses the rocoto tool to generate a workflow XML file from the configuration file; other UW tools may be incorporated into the workflow in the future. More details about UW tools can be found in the <a class="reference external" href="https://github.com/ufs-community/uwtools">uwtools</a> GitHub repository and in the <a class="reference external" href="https://uwtools.readthedocs.io/en/main/">UW Documentation</a>.</p>
 </section>
 </section>
 </section>
@@ -345,7 +353,7 @@ Unlike the standalone Noah-MP land driver, the Noah-MP <a class="reference inter
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

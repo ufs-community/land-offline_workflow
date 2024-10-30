@@ -58,7 +58,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Rocoto.html">4.1. Rocoto Introductory Information</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. Frequently Asked Questions (FAQ)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#how-do-i-restart-a-dead-task">4.2.1. How do I restart a DEAD task?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#my-tasks-went-dead-why-might-this-be">4.2.1. My tasks went DEAD. Why might this be?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-do-i-restart-a-dead-task">4.2.2. How do I restart a DEAD task?</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Glossary.html">4.3. Glossary</a></li>
@@ -95,11 +96,23 @@
 <span id="faq"></span><h1><span class="section-number">4.2. </span>Frequently Asked Questions (FAQ)<a class="headerlink" href="#frequently-asked-questions-faq" title="Link to this heading"></a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#how-do-i-restart-a-dead-task" id="id1">How do I restart a DEAD task?</a></p></li>
+<li><p><a class="reference internal" href="#my-tasks-went-dead-why-might-this-be" id="id1">My tasks went DEAD. Why might this be?</a></p></li>
+<li><p><a class="reference internal" href="#how-do-i-restart-a-dead-task" id="id2">How do I restart a DEAD task?</a></p></li>
 </ul>
 </nav>
+<section id="my-tasks-went-dead-why-might-this-be">
+<span id="deadtask"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">4.2.1. </span>My tasks went DEAD. Why might this be?</a><a class="headerlink" href="#my-tasks-went-dead-why-might-this-be" title="Link to this heading"></a></h2>
+<p>The most common reason for the first few tasks to go DEAD is an improper path in the <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code> configuration file.
+In particular, <code class="docutils literal notranslate"><span class="pre">exp_basedir</span></code> must be set to the directory above <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code>. For example, if <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> resides at <code class="docutils literal notranslate"><span class="pre">Users/Jane.Doe/landda/land-DA_workflow</span></code>, then <code class="docutils literal notranslate"><span class="pre">exp_basedir</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">Users/Jane.Doe/landda</span></code>. After correcting <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code>, users will need to regenerate the workflow XML by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml</span>
+<span class="go">uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml</span>
+</pre></div>
+</div>
+<p>Then, rewind the DEAD tasks as described <a class="reference internal" href="#restarttask"><span class="std std-ref">below</span></a> using <code class="docutils literal notranslate"><span class="pre">rocotorewind</span></code>, and use <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code>/<code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> to advance/check on the workflow (see <a class="reference internal" href="../BuildingRunningTesting/BuildRunLandDA.html#run-w-rocoto"><span class="std std-numref">Section 2.1.5.2</span></a> for how to do this).</p>
+<p>If the first few tasks run successfully, but future tasks go DEAD, users will need to check the experiment log files, located at <code class="docutils literal notranslate"><span class="pre">$EXP_BASEDIR/ptmp/test/com/output/logs</span></code>. It may also be useful to check that the JEDI directory and other paths and values are correct in <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code>.</p>
+</section>
 <section id="how-do-i-restart-a-dead-task">
-<span id="restarttask"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">4.2.1. </span>How do I restart a DEAD task?</a><a class="headerlink" href="#how-do-i-restart-a-dead-task" title="Link to this heading"></a></h2>
+<span id="restarttask"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">4.2.2. </span>How do I restart a DEAD task?</a><a class="headerlink" href="#how-do-i-restart-a-dead-task" title="Link to this heading"></a></h2>
 <p>On platforms that utilize Rocoto workflow software (including Hera and Orion), if something goes wrong with the workflow, a task may end up in the DEAD state:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>rocotostat<span class="w"> </span>-w<span class="w"> </span>land_analysis.xml<span class="w"> </span>-d<span class="w"> </span>land_analysis.db
 
@@ -111,15 +124,15 @@
 <span class="go">200001030000    post_anal  61746109    SUCCEEDED             0       1        4.0</span>
 <span class="go">200001030000   plot_stats  61746110    SUCCEEDED             0       1       70.0</span>
 <span class="go">200001030000     forecast  61746128         DEAD           256       1          -</span>
+<span class="go">200001030000   plot_stats         -            -             -       -          -</span>
 </pre></div>
 </div>
-<p>This means that the dead task has not completed successfully, so the workflow has stopped. Once the issue has been identified and fixed (by referencing the log files in <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT/ptmp/test/com/output/logs</span></code>), users can re-run the failed task using the <code class="docutils literal notranslate"><span class="pre">rocotorewind</span></code> command:</p>
+<p>This means that the DEAD task has not completed successfully, so the workflow has stopped. Once the issue has been identified and fixed (e.g., by referencing the log files in <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT/ptmp/test/com/output/logs</span></code>), users can rewind, or “undo,” the failed task using the <code class="docutils literal notranslate"><span class="pre">rocotorewind</span></code> command:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rocotorewind -w land_analysis.xml -d land_analysis.db -v 10 -c 200001030000 -t forecast</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">-c</span></code> specifies the cycle date (first column of <code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> output) and <code class="docutils literal notranslate"><span class="pre">-t</span></code> represents the task name
-(second column of <code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> output). After using <code class="docutils literal notranslate"><span class="pre">rocotorewind</span></code>, the next time <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> is used to
-advance the workflow, the job will be resubmitted.</p>
+(second column of <code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> output). This will set the number of tries to 0, as though the task has not been run. After using <code class="docutils literal notranslate"><span class="pre">rocotorewind</span></code>, the next time <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> is used to advance the workflow, the job will be resubmitted.</p>
 </section>
 </section>
 
@@ -134,7 +147,7 @@ advance the workflow, the job will be resubmitted.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

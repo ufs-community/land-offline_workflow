@@ -4,9 +4,9 @@
 Containerized Land DA Workflow
 **********************************
 
-These instructions will help users build and run a basic case for the Unified Forecast System (:term:`UFS`) Land Data Assimilation (DA) System using a `Singularity/Apptainer <https://apptainer.org/docs/user/latest/>`_ container. The Land DA :term:`container` packages together the Land DA System with its dependencies (e.g., :term:`spack-stack`, :term:`JEDI`) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth systems models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, :term:`MPIs <MPI>`, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported :ref:`Level 1 <LevelsOfSupport>` system (i.e., Hera, Orion). 
+These instructions will help users build and run a basic case for the Unified Forecast System (:term:`UFS`) Land Data Assimilation (DA) System using a `Singularity/Apptainer <https://apptainer.org/docs/user/latest/>`_ container. The Land DA :term:`container` packages together the Land DA System with its dependencies (e.g., :term:`spack-stack`, :term:`JEDI`) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth system models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, :term:`MPIs <MPI>`, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported :ref:`Level 1 <LevelsOfSupport>` system (e.g., Hera, Orion). 
 
-This chapter provides instructions for building and running basic Land DA case for the UFS Land DA System using a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component in a container.  
+This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System sample case using a container. The sample case runs for Jan. 3-4, 2000 00z and uses :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (:term:`DATM`) component.
 
 .. attention::
 
@@ -19,22 +19,23 @@ Prerequisites
 
 The containerized version of Land DA requires: 
 
-   * `Installation of Apptainer <https://apptainer.org/docs/admin/latest/installation.html>`_
-   * At least 6 CPU cores
+   * `Installation of Apptainer <https://apptainer.org/docs/admin/latest/installation.html>`_ (or its predecessor, Singularity)
+   * At least 26 CPU cores (may be possible to run with 13, but this has not been tested)
    * An **Intel** compiler and :term:`MPI` (available for `free here <https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit-download.html>`_) 
+   * The `Slurm <https://slurm.schedmd.com/quickstart.html>`_ job scheduler
 
 
-Install Singularity/Apptainer
-===============================
+Install Apptainer
+==================
 
 .. note::
 
    As of November 2021, the Linux-supported version of Singularity has been `renamed <https://apptainer.org/news/community-announcement-20211130/>`_ to *Apptainer*. Apptainer has maintained compatibility with Singularity, so ``singularity`` commands should work with either Singularity or Apptainer (see `compatibility details here <https://apptainer.org/docs/user/1.2/introduction.html>`_.)
 
-To build and run Land DA using a Singularity/Apptainer container, first install the software according to the `Apptainer Installation Guide <https://apptainer.org/docs/admin/1.2/installation.html>`_. This will include the installation of all dependencies. 
+To build and run Land DA using a Apptainer container, first install the software according to the `Apptainer Installation Guide <https://apptainer.org/docs/admin/1.2/installation.html>`_. This will include the installation of all dependencies. 
 
 .. attention:: 
-   Docker containers can only be run with root privileges, and users generally do not have root privileges on :term:`HPCs <HPC>`. However, a Singularity image may be built directly from a Docker image for use on the system.
+   Docker containers can only be run with root privileges, and users generally do not have root privileges on :term:`HPCs <HPC>`. However, an Apptainer image may be built directly from a Docker image for use on the system.
 
 .. _DownloadContainer:
 
@@ -99,13 +100,11 @@ On many NOAA :term:`RDHPCS`, a container named ``ubuntu22.04-intel-landda-releas
    +-----------------+--------------------------------------------------------+
    | Machine         | File location                                          |
    +=================+========================================================+
-   | Derecho         | /glade/work/epicufsrt/contrib/containers               |
-   +-----------------+--------------------------------------------------------+
    | Gaea            | /gpfs/f5/epic/world-shared/containers                  |
    +-----------------+--------------------------------------------------------+
    | Hera            | /scratch1/NCEPDEV/nems/role.epic/containers            |
    +-----------------+--------------------------------------------------------+
-   | Jet             | /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers            |
+   | Jet             | /mnt/lfs5/HFIP/hfv3gfs/role.epic/containers            |
    +-----------------+--------------------------------------------------------+
    | NOAA Cloud      | /contrib/EPIC/containers                               |
    +-----------------+--------------------------------------------------------+
@@ -122,12 +121,12 @@ If users prefer, they may copy the container to their local working directory. F
 
 .. code-block:: console
 
-   cp /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers/ubuntu22.04-intel-landda-release-public-v2.0.0.img .
+   cp /mnt/lfs5/HFIP/hfv3gfs/role.epic/containers/ubuntu22.04-intel-landda-release-public-v2.0.0.img .
 
 Other Systems
 ----------------
 
-On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. However, the container in the data bucket is the ``release/v2.0.0`` container rather than the updated ``develop`` branch container. 
+On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. However, the container in the data bucket is the ``release/public-v2.0.0`` container rather than an updated ``develop`` branch container.
 
 To download from the data bucket, users can run:
 
@@ -221,10 +220,6 @@ The ``setup_container.sh`` script should now be in the ``$LANDDAROOT`` directory
 
 where ``<local_base_dir>`` and ``<container_dir>`` are replaced with a top-level directory on the local system and in the container, respectively. Additional directories can be bound by adding another ``-B /<local_base_dir>:/<container_dir>`` argument before the container location (``$img``). Note that if previous steps included a ``sudo`` command, ``sudo`` may be required in front of this command. 
 
-.. attention::
-   
-   Be sure to bind the directory that contains the experiment data! 
-
 .. note::
 
    Sometimes binding directories with different names can cause problems. In general, it is recommended that the local base directory and the container directory have the same name. For example, if the host system's top-level directory is ``/user1234``, the user may want to convert the ``.img`` file to a writable sandbox and create a ``user1234`` directory in the sandbox to bind to. 
@@ -256,7 +251,7 @@ Because of a conda conflict between the container and the host system, it is bes
 
    module load rocoto
    
-The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_xml_singularity.yaml`` file. Update any relevant variables in this file (e.g. ``ACCOUNT`` or ``cycledef/spec``) before creating the Rocoto XML file.
+The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_xml_singularity.yaml`` file. Update any relevant variables in this file (e.g., ``account`` or ``exp_basedir``) before creating the Rocoto XML file.
 
 .. code-block:: console
 
@@ -265,14 +260,14 @@ The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_
 
 Save and close the file.
 
-Once everything looks good, run the uwtools scripts to create the Rocoto XML file:
+Once everything looks good, run the `uwtools <https://github.com/ufs-community/uwtools>`_ scripts to create the Rocoto XML file:
 
 .. code-block:: console
 
    ../sorc/conda/envs/land_da/bin/uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml
    ../sorc/conda/envs/land_da/bin/uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
-A successful run of this command will output a “0 errors found” message.
+A successful run of these commands will output a “0 errors found” message.
 
 .. _RunExptC:
 
@@ -285,7 +280,9 @@ To start the experiment, run:
    
    rocotorun -w land_analysis.xml -d land_analysis.db
 
-See the :ref:`Workflow Overview <wflow-overview>` section to learn more about the workflow process.
+Users will need to issue the ``rocotorun`` command multiple times. The tasks must be run in order, and ``rocotorun`` initiates the next task once its dependencies have completed successfully. 
+
+See the :ref:`Workflow Overview <wflow-overview>` section to learn more about the steps in the workflow process.
 
 .. _TrackProgress:
 
@@ -311,5 +308,5 @@ See the :ref:`Track Experiment Status <VerifySuccess>` section to learn more abo
 Check Experiment Output
 -------------------------
 
-Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users should see the :ref:`experiment output structure <land-da-dir-structure>` as well as the :ref:`plotting results <plotting>` to learn more about the expected experiment outputs. 
+Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users view the :ref:`experiment output structure <land-da-dir-structure>` and :ref:`plotting results <plotting>` sections to learn more about the expected experiment output. 
 

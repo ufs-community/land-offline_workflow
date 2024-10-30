@@ -57,7 +57,12 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildRunLandDA.html">2.1. Land DA Workflow (Hera/Orion/Hercules)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Container.html">2.2. Containerized Land DA Workflow</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">2.3. Testing the Land DA Workflow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#process">2.3.1. Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#process">2.3.1. Process</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#method-1-run-from-the-build-directory">2.3.1.1. Method #1: Run from the <code class="docutils literal notranslate"><span class="pre">build</span></code> Directory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#method-2-run-from-the-test-directory">2.3.1.2. Method #2: Run from the <code class="docutils literal notranslate"><span class="pre">test</span></code> Directory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#method-3-run-tests-using-a-container">2.3.1.3. Method #3: Run Tests Using a Container</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#tests">2.3.2. Tests</a></li>
 </ul>
 </li>
@@ -94,23 +99,25 @@
              
   <section id="testing-the-land-da-workflow">
 <span id="testinglandda"></span><h1><span class="section-number">2.3. </span>Testing the Land DA Workflow<a class="headerlink" href="#testing-the-land-da-workflow" title="Link to this heading"></a></h1>
-<p>This chapter provides instructions for using the Land DA CTest suite. These steps are designed for use on <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> systems (i.e., Hera and Orion) and may require significant changes on other systems.</p>
+<p>This chapter provides instructions for using the Land DA CTest suite. These steps are designed for use on <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> systems (e.g., Hera and Orion) and may require significant changes on other systems.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>This chapter assumes that the user has already built the Land DA System according to the instructions in <a class="reference internal" href="BuildRunLandDA.html#buildrunlandda"><span class="std std-numref">Section 2.1</span></a> and has access to the data provided in the most recent release. (See <a class="reference internal" href="BuildRunLandDA.html#level1data"><span class="std std-numref">Table 2.1</span></a> for the locations of pre-staged data on NOAA <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a> [i.e., Hera and Orion].)</p>
+<p>This chapter assumes that the user has already built the Land DA System according to the instructions in <a class="reference internal" href="BuildRunLandDA.html#buildrunlandda"><span class="std std-numref">Section 2.1</span></a> and has access to the data provided in the most recent release. (See <a class="reference internal" href="BuildRunLandDA.html#level1data"><span class="std std-numref">Table 2.1</span></a> for the locations of pre-staged data on NOAA <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a>.)</p>
 </div>
 <section id="process">
 <h2><span class="section-number">2.3.1. </span>Process<a class="headerlink" href="#process" title="Link to this heading"></a></h2>
-<p>From the working directory (<code class="docutils literal notranslate"><span class="pre">$LANDDAROOT</span></code>), navigate to <code class="docutils literal notranslate"><span class="pre">build</span></code>. Then run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">salloc --ntasks 8 --exclusive --qos=debug --partition=&lt;partition&gt; --time=00:30:00 --account=&lt;account_name&gt;</span>
-<span class="go">cd land-DA_workflow/sorc/build</span>
+<section id="method-1-run-from-the-build-directory">
+<h3><span class="section-number">2.3.1.1. </span>Method #1: Run from the <code class="docutils literal notranslate"><span class="pre">build</span></code> Directory<a class="headerlink" href="#method-1-run-from-the-build-directory" title="Link to this heading"></a></h3>
+<p>From the working directory (<code class="docutils literal notranslate"><span class="pre">$LANDDAROOT</span></code>), navigate to <code class="docutils literal notranslate"><span class="pre">build</span></code> and run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd land-DA_workflow/sorc/build</span>
+<span class="go">salloc --ntasks 8 --exclusive --qos=debug --partition=&lt;partition&gt; --time=00:30:00 --account=&lt;account_name&gt;</span>
 <span class="go">source ../../versions/build.ver_&lt;platform&gt;</span>
 <span class="go">module use ../../modulefiles</span>
 <span class="go">module load build_&lt;platform&gt;_intel</span>
 <span class="go">ctest</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;account_name&gt;</span></code> corresponds to the user’s actual account name, <code class="docutils literal notranslate"><span class="pre">&lt;partition&gt;</span></code> is a valid partition on the platform of choice (e.g., <code class="docutils literal notranslate"><span class="pre">debug</span></code> or <code class="docutils literal notranslate"><span class="pre">orion</span></code>), and <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code> or <code class="docutils literal notranslate"><span class="pre">orion</span></code>.</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;account_name&gt;</span></code> corresponds to the user’s actual account name, <code class="docutils literal notranslate"><span class="pre">&lt;partition&gt;</span></code> is a valid partition on the platform of choice (e.g., <code class="docutils literal notranslate"><span class="pre">debug</span></code> or <code class="docutils literal notranslate"><span class="pre">orion</span></code>), and <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code>, <code class="docutils literal notranslate"><span class="pre">orion</span></code>, or <code class="docutils literal notranslate"><span class="pre">hercules</span></code>.</p>
 <p>This will submit an interactive job, load the appropriate modulefiles, and run the CTests.</p>
 <p>If the tests are successful, a message will be printed to the console. For example:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Test project /work/noaa/epic/${USER}/landda/land-DA_workflow/sorc/build</span>
@@ -129,9 +136,41 @@
 </pre></div>
 </div>
 </section>
+<section id="method-2-run-from-the-test-directory">
+<h3><span class="section-number">2.3.1.2. </span>Method #2: Run from the <code class="docutils literal notranslate"><span class="pre">test</span></code> Directory<a class="headerlink" href="#method-2-run-from-the-test-directory" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method works only on Hera, Orion, and Hercules and will run even if the Land DA System has not been built yet.</p>
+</div>
+<p>From the working directory (<code class="docutils literal notranslate"><span class="pre">$LANDDAROOT</span></code>), navigate to <code class="docutils literal notranslate"><span class="pre">test</span></code> and run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd land-DA_workflow/sorc/test</span>
+<span class="go">./run_ctest_platform.sh</span>
+</pre></div>
+</div>
+<p>The CTest working directory will appear in <code class="docutils literal notranslate"><span class="pre">build/test</span></code>, and the log file can be found in <code class="docutils literal notranslate"><span class="pre">build/Testing/Temporary</span></code>.</p>
+</section>
+<section id="method-3-run-tests-using-a-container">
+<h3><span class="section-number">2.3.1.3. </span>Method #3: Run Tests Using a Container<a class="headerlink" href="#method-3-run-tests-using-a-container" title="Link to this heading"></a></h3>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The container CTest functionality has been tested in Jenkins. It should be able to run on a sufficiently large cloud instance. However, it is considered unsupported functionality because it has not been thoroughly tested on the cloud for use by the public.</p>
+</div>
+<p>For containers, the CTest functionality is wrapped in a Dockerfile. Therefore, users will need to build the Dockerfile to run the CTests. Since the Land DA container is quite large, this process can take a long time — potentially hours. In the future, the development team hopes to simplify and shorten this process.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git</span>
+<span class="go">cd land-DA_workflow/sorc/test/ci</span>
+<span class="go">sudo systemctl start docker</span>
+<span class="go">sudo docker build -f Dockerfile -t dockerfile-ci-ctest:release .</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">sudo</span></code> may not be required in front of the last two commands on all systems.</p>
+</div>
+</section>
+</section>
 <section id="tests">
 <h2><span class="section-number">2.3.2. </span>Tests<a class="headerlink" href="#tests" title="Link to this heading"></a></h2>
-<p>The CTests test the operability of four major elements of the Land DA System: <code class="docutils literal notranslate"><span class="pre">create_ens</span></code>, <code class="docutils literal notranslate"><span class="pre">letkfoi_snowda</span></code>, <code class="docutils literal notranslate"><span class="pre">apply_jediincr</span></code>, and <code class="docutils literal notranslate"><span class="pre">ufs_datm_land</span></code>. The tests and their dependencies are listed in the <code class="docutils literal notranslate"><span class="pre">land-DA_workflow/test/CMakeLists.txt</span></code> file. Currently, the CTests are only run on Hera and Orion; they cannot yet be run via container.</p>
+<p>The CTests test the operability of four major elements of the Land DA System: <code class="docutils literal notranslate"><span class="pre">create_ens</span></code>, <code class="docutils literal notranslate"><span class="pre">letkfoi_snowda</span></code>, <code class="docutils literal notranslate"><span class="pre">apply_jediincr</span></code>, and <code class="docutils literal notranslate"><span class="pre">ufs_datm_land</span></code>. The tests and their dependencies are listed in the <code class="docutils literal notranslate"><span class="pre">land-DA_workflow/test/CMakeLists.txt</span></code> file.</p>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-number">Table 2.5 </span><span class="caption-text"><em>Land DA CTests</em></span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <colgroup>
@@ -145,7 +184,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">test_create_ens</span></code></p></td>
-<td><p>Tests creation of a pseudo-ensemble for use in LETKF-OI.</p></td>
+<td><p>Tests creation of a pseudo-ensemble for use in <a class="reference internal" href="../Reference/Glossary.html#term-LETKF-OI"><span class="xref std std-term">LETKF-OI</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">test_letkfoi_snowda</span></code></p></td>
 <td><p>Tests the use of LETKF-OI to assimilate snow data.</p></td>
@@ -158,6 +197,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are plans to add workflow end-to-end (WE2E) tests to the Land DA System. Currently, when <code class="docutils literal notranslate"><span class="pre">WE2E_TEST:</span> <span class="pre">&quot;YES&quot;</span></code>, this functionality checks that the output from the Jan. 3-4, 2000 sample case is within the tolerance set (via the <code class="docutils literal notranslate"><span class="pre">WE2E_ATOL</span></code> variable) at the end of the three main tasks — <em>analysis</em>, <em>forecast</em>, and <em>post_anal</em>. The results are logged by default in <code class="docutils literal notranslate"><span class="pre">we2e.log</span></code>. In the future, this functionality will be expanded to encompass a full range of WE2E tests.</p>
+</div>
 </section>
 </section>
 
@@ -172,7 +215,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

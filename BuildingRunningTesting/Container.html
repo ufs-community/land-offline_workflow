@@ -57,7 +57,7 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildRunLandDA.html">2.1. Land DA Workflow (Hera/Orion/Hercules)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">2.2. Containerized Land DA Workflow</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">2.2.1. Prerequisites</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#install-singularity-apptainer">2.2.1.1. Install Singularity/Apptainer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-apptainer">2.2.1.1. Install Apptainer</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#build-the-container">2.2.2. Build the Container</a><ul>
@@ -116,8 +116,8 @@
              
   <section id="containerized-land-da-workflow">
 <span id="container"></span><h1><span class="section-number">2.2. </span>Containerized Land DA Workflow<a class="headerlink" href="#containerized-land-da-workflow" title="Link to this heading"></a></h1>
-<p>These instructions will help users build and run a basic case for the Unified Forecast System (<a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a>) Land Data Assimilation (DA) System using a <a class="reference external" href="https://apptainer.org/docs/user/latest/">Singularity/Apptainer</a> container. The Land DA <a class="reference internal" href="../Reference/Glossary.html#term-container"><span class="xref std std-term">container</span></a> packages together the Land DA System with its dependencies (e.g., <a class="reference internal" href="../Reference/Glossary.html#term-spack-stack"><span class="xref std std-term">spack-stack</span></a>, <a class="reference internal" href="../Reference/Glossary.html#term-JEDI"><span class="xref std std-term">JEDI</span></a>) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth systems models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, <a class="reference internal" href="../Reference/Glossary.html#term-MPI"><span class="xref std std-term">MPIs</span></a>, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> system (i.e., Hera, Orion).</p>
-<p>This chapter provides instructions for building and running basic Land DA case for the UFS Land DA System using a Jan. 3-4, 2000 00z sample case using <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> data with the UFS Noah-MP land component in a container.</p>
+<p>These instructions will help users build and run a basic case for the Unified Forecast System (<a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a>) Land Data Assimilation (DA) System using a <a class="reference external" href="https://apptainer.org/docs/user/latest/">Singularity/Apptainer</a> container. The Land DA <a class="reference internal" href="../Reference/Glossary.html#term-container"><span class="xref std std-term">container</span></a> packages together the Land DA System with its dependencies (e.g., <a class="reference internal" href="../Reference/Glossary.html#term-spack-stack"><span class="xref std std-term">spack-stack</span></a>, <a class="reference internal" href="../Reference/Glossary.html#term-JEDI"><span class="xref std std-term">JEDI</span></a>) and provides a uniform environment in which to build and run the Land DA System. Normally, the details of building and running Earth system models will vary based on the computing platform because there are many possible combinations of operating systems, compilers, <a class="reference internal" href="../Reference/Glossary.html#term-MPI"><span class="xref std std-term">MPIs</span></a>, and package versions available. Installation via Singularity/Apptainer container reduces this variability and allows for a smoother experience building and running Land DA. This approach is recommended for users not running Land DA on a supported <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> system (e.g., Hera, Orion).</p>
+<p>This chapter provides instructions for building and running the Unified Forecast System (<a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a>) Land DA System sample case using a container. The sample case runs for Jan. 3-4, 2000 00z and uses <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> data with the UFS Noah-MP land component and data atmosphere (<a class="reference internal" href="../Reference/Glossary.html#term-DATM"><span class="xref std std-term">DATM</span></a>) component.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>This chapter of the User’s Guide should <strong>only</strong> be used for container builds. For non-container builds, see <a class="reference internal" href="BuildRunLandDA.html#buildrunlandda"><span class="std std-numref">Chapter 2.1</span></a>, which describes the steps for building and running Land DA on a <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1 System</span></a> <strong>without</strong> a container.</p>
@@ -127,21 +127,22 @@
 <p>The containerized version of Land DA requires:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><a class="reference external" href="https://apptainer.org/docs/admin/latest/installation.html">Installation of Apptainer</a></p></li>
-<li><p>At least 6 CPU cores</p></li>
+<li><p><a class="reference external" href="https://apptainer.org/docs/admin/latest/installation.html">Installation of Apptainer</a> (or its predecessor, Singularity)</p></li>
+<li><p>At least 26 CPU cores (may be possible to run with 13, but this has not been tested)</p></li>
 <li><p>An <strong>Intel</strong> compiler and <a class="reference internal" href="../Reference/Glossary.html#term-MPI"><span class="xref std std-term">MPI</span></a> (available for <a class="reference external" href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit-download.html">free here</a>)</p></li>
+<li><p>The <a class="reference external" href="https://slurm.schedmd.com/quickstart.html">Slurm</a> job scheduler</p></li>
 </ul>
 </div></blockquote>
-<section id="install-singularity-apptainer">
-<h3><span class="section-number">2.2.1.1. </span>Install Singularity/Apptainer<a class="headerlink" href="#install-singularity-apptainer" title="Link to this heading"></a></h3>
+<section id="install-apptainer">
+<h3><span class="section-number">2.2.1.1. </span>Install Apptainer<a class="headerlink" href="#install-apptainer" title="Link to this heading"></a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>As of November 2021, the Linux-supported version of Singularity has been <a class="reference external" href="https://apptainer.org/news/community-announcement-20211130/">renamed</a> to <em>Apptainer</em>. Apptainer has maintained compatibility with Singularity, so <code class="docutils literal notranslate"><span class="pre">singularity</span></code> commands should work with either Singularity or Apptainer (see <a class="reference external" href="https://apptainer.org/docs/user/1.2/introduction.html">compatibility details here</a>.)</p>
 </div>
-<p>To build and run Land DA using a Singularity/Apptainer container, first install the software according to the <a class="reference external" href="https://apptainer.org/docs/admin/1.2/installation.html">Apptainer Installation Guide</a>. This will include the installation of all dependencies.</p>
+<p>To build and run Land DA using a Apptainer container, first install the software according to the <a class="reference external" href="https://apptainer.org/docs/admin/1.2/installation.html">Apptainer Installation Guide</a>. This will include the installation of all dependencies.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>Docker containers can only be run with root privileges, and users generally do not have root privileges on <a class="reference internal" href="../Reference/Glossary.html#term-HPC"><span class="xref std std-term">HPCs</span></a>. However, a Singularity image may be built directly from a Docker image for use on the system.</p>
+<p>Docker containers can only be run with root privileges, and users generally do not have root privileges on <a class="reference internal" href="../Reference/Glossary.html#term-HPC"><span class="xref std std-term">HPCs</span></a>. However, an Apptainer image may be built directly from a Docker image for use on the system.</p>
 </div>
 </section>
 </section>
@@ -193,22 +194,19 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Derecho</p></td>
-<td><p>/glade/work/epicufsrt/contrib/containers</p></td>
-</tr>
-<tr class="row-odd"><td><p>Gaea</p></td>
+<tr class="row-even"><td><p>Gaea</p></td>
 <td><p>/gpfs/f5/epic/world-shared/containers</p></td>
 </tr>
-<tr class="row-even"><td><p>Hera</p></td>
+<tr class="row-odd"><td><p>Hera</p></td>
 <td><p>/scratch1/NCEPDEV/nems/role.epic/containers</p></td>
 </tr>
-<tr class="row-odd"><td><p>Jet</p></td>
-<td><p>/mnt/lfs4/HFIP/hfv3gfs/role.epic/containers</p></td>
+<tr class="row-even"><td><p>Jet</p></td>
+<td><p>/mnt/lfs5/HFIP/hfv3gfs/role.epic/containers</p></td>
 </tr>
-<tr class="row-even"><td><p>NOAA Cloud</p></td>
+<tr class="row-odd"><td><p>NOAA Cloud</p></td>
 <td><p>/contrib/EPIC/containers</p></td>
 </tr>
-<tr class="row-odd"><td><p>Orion/Hercules</p></td>
+<tr class="row-even"><td><p>Orion/Hercules</p></td>
 <td><p>/work/noaa/epic/role-epic/contrib/containers</p></td>
 </tr>
 </tbody>
@@ -218,13 +216,13 @@
 </pre></div>
 </div>
 <p>If users prefer, they may copy the container to their local working directory. For example, on Jet:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cp /mnt/lfs4/HFIP/hfv3gfs/role.epic/containers/ubuntu22.04-intel-landda-release-public-v2.0.0.img .</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cp /mnt/lfs5/HFIP/hfv3gfs/role.epic/containers/ubuntu22.04-intel-landda-release-public-v2.0.0.img .</span>
 </pre></div>
 </div>
 </section>
 <section id="other-systems">
 <h4><span class="section-number">2.2.2.2.2. </span>Other Systems<a class="headerlink" href="#other-systems" title="Link to this heading"></a></h4>
-<p>On other systems, users can build the Singularity container from a public Docker <a class="reference internal" href="../Reference/Glossary.html#term-container"><span class="xref std std-term">container</span></a> image or download the <code class="docutils literal notranslate"><span class="pre">ubuntu22.04-intel-landda-release-public-v2.0.0.img</span></code> container from the <a class="reference external" href="https://registry.opendata.aws/noaa-ufs-land-da/">Land DA Data Bucket</a>. Downloading may be faster depending on the download speed on the user’s system. However, the container in the data bucket is the <code class="docutils literal notranslate"><span class="pre">release/v2.0.0</span></code> container rather than the updated <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch container.</p>
+<p>On other systems, users can build the Singularity container from a public Docker <a class="reference internal" href="../Reference/Glossary.html#term-container"><span class="xref std std-term">container</span></a> image or download the <code class="docutils literal notranslate"><span class="pre">ubuntu22.04-intel-landda-release-public-v2.0.0.img</span></code> container from the <a class="reference external" href="https://registry.opendata.aws/noaa-ufs-land-da/">Land DA Data Bucket</a>. Downloading may be faster depending on the download speed on the user’s system. However, the container in the data bucket is the <code class="docutils literal notranslate"><span class="pre">release/public-v2.0.0</span></code> container rather than an updated <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch container.</p>
 <p>To download from the data bucket, users can run:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/ubuntu22.04-intel-landda-release-public-v2.0.0.img</span>
 </pre></div>
@@ -292,10 +290,6 @@
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">&lt;local_base_dir&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;container_dir&gt;</span></code> are replaced with a top-level directory on the local system and in the container, respectively. Additional directories can be bound by adding another <code class="docutils literal notranslate"><span class="pre">-B</span> <span class="pre">/&lt;local_base_dir&gt;:/&lt;container_dir&gt;</span></code> argument before the container location (<code class="docutils literal notranslate"><span class="pre">$img</span></code>). Note that if previous steps included a <code class="docutils literal notranslate"><span class="pre">sudo</span></code> command, <code class="docutils literal notranslate"><span class="pre">sudo</span></code> may be required in front of this command.</p>
-<div class="admonition attention">
-<p class="admonition-title">Attention</p>
-<p>Be sure to bind the directory that contains the experiment data!</p>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Sometimes binding directories with different names can cause problems. In general, it is recommended that the local base directory and the container directory have the same name. For example, if the host system’s top-level directory is <code class="docutils literal notranslate"><span class="pre">/user1234</span></code>, the user may want to convert the <code class="docutils literal notranslate"><span class="pre">.img</span></code> file to a writable sandbox and create a <code class="docutils literal notranslate"><span class="pre">user1234</span></code> directory in the sandbox to bind to.</p>
@@ -321,18 +315,18 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load rocoto</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">setup_container.sh</span></code> script creates the <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code> from the <code class="docutils literal notranslate"><span class="pre">parm_xml_singularity.yaml</span></code> file. Update any relevant variables in this file (e.g. <code class="docutils literal notranslate"><span class="pre">ACCOUNT</span></code> or <code class="docutils literal notranslate"><span class="pre">cycledef/spec</span></code>) before creating the Rocoto XML file.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">setup_container.sh</span></code> script creates the <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code> from the <code class="docutils literal notranslate"><span class="pre">parm_xml_singularity.yaml</span></code> file. Update any relevant variables in this file (e.g., <code class="docutils literal notranslate"><span class="pre">account</span></code> or <code class="docutils literal notranslate"><span class="pre">exp_basedir</span></code>) before creating the Rocoto XML file.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd $LANDDAROOT/land-DA_workflow/parm</span>
 <span class="go">vi parm_xml.yaml</span>
 </pre></div>
 </div>
 <p>Save and close the file.</p>
-<p>Once everything looks good, run the uwtools scripts to create the Rocoto XML file:</p>
+<p>Once everything looks good, run the <a class="reference external" href="https://github.com/ufs-community/uwtools">uwtools</a> scripts to create the Rocoto XML file:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">../sorc/conda/envs/land_da/bin/uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml</span>
 <span class="go">../sorc/conda/envs/land_da/bin/uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml</span>
 </pre></div>
 </div>
-<p>A successful run of this command will output a “0 errors found” message.</p>
+<p>A successful run of these commands will output a “0 errors found” message.</p>
 </section>
 <section id="run-the-experiment">
 <span id="runexptc"></span><h3><span class="section-number">2.2.4.3. </span>Run the Experiment<a class="headerlink" href="#run-the-experiment" title="Link to this heading"></a></h3>
@@ -340,7 +334,8 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rocotorun -w land_analysis.xml -d land_analysis.db</span>
 </pre></div>
 </div>
-<p>See the <a class="reference internal" href="BuildRunLandDA.html#wflow-overview"><span class="std std-ref">Workflow Overview</span></a> section to learn more about the workflow process.</p>
+<p>Users will need to issue the <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> command multiple times. The tasks must be run in order, and <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> initiates the next task once its dependencies have completed successfully.</p>
+<p>See the <a class="reference internal" href="BuildRunLandDA.html#wflow-overview"><span class="std std-ref">Workflow Overview</span></a> section to learn more about the steps in the workflow process.</p>
 <section id="track-progress">
 <span id="trackprogress"></span><h4><span class="section-number">2.2.4.3.1. </span>Track Progress<a class="headerlink" href="#track-progress" title="Link to this heading"></a></h4>
 <p>To check on the job status, users on a system with a Slurm job scheduler may run:</p>
@@ -355,7 +350,7 @@
 </section>
 <section id="check-experiment-output">
 <span id="checkexptoutput"></span><h4><span class="section-number">2.2.4.3.2. </span>Check Experiment Output<a class="headerlink" href="#check-experiment-output" title="Link to this heading"></a></h4>
-<p>Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users should see the <a class="reference internal" href="BuildRunLandDA.html#land-da-dir-structure"><span class="std std-ref">experiment output structure</span></a> as well as the <a class="reference internal" href="BuildRunLandDA.html#plotting"><span class="std std-ref">plotting results</span></a> to learn more about the expected experiment outputs.</p>
+<p>Since this experiment in the container is the same experiment explained in the previous document section, it is suggested that users view the <a class="reference internal" href="BuildRunLandDA.html#land-da-dir-structure"><span class="std std-ref">experiment output structure</span></a> and <a class="reference internal" href="BuildRunLandDA.html#plotting"><span class="std std-ref">plotting results</span></a> sections to learn more about the expected experiment output.</p>
 </section>
 </section>
 </section>
@@ -372,7 +367,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

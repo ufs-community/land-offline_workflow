@@ -4,11 +4,11 @@
 Land DA Workflow (Hera/Orion/Hercules)
 ***************************************
 
-This chapter provides instructions for building and running basic Land DA cases for the Unified Forecast System (:term:`UFS`) Land DA System using a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component.
+This chapter provides instructions for building and running the Unified Forecast System (:term:`UFS`) Land DA System using a Jan. 3-4, 2000 00z sample case using :term:`GSWP3` data with the UFS Noah-MP land component and data atmosphere (DATM) component.
 
 .. attention::
    
-   These steps are designed for use on :ref:`Level 1 <LevelsOfSupport>` systems (i.e., Hera and Orion) and may require significant changes on other systems. It is recommended that users on other systems run the containerized version of Land DA. Users may reference :numref:`Chapter %s: Containerized Land DA Workflow <Container>` for instructions.
+   These steps are designed for use on :ref:`Level 1 <LevelsOfSupport>` systems (e.g., Hera, Orion) and may require significant changes on other systems. It is recommended that users on other systems run the containerized version of Land DA. Users may reference :numref:`Chapter %s: Containerized Land DA Workflow <Container>` for instructions.
 
 .. _create-dir:
 
@@ -37,17 +37,17 @@ In this documentation, ``$LANDDAROOT`` is used, but users are welcome to choose 
 Get Code
 ***********
 
-Clone the Land DA workflow repository. To clone the ``develop`` branch, run: 
+Clone the Land DA workflow repository. To clone the ``develop`` branch, run:
 
 .. code-block:: console
 
    git clone -b develop --recursive https://github.com/ufs-community/land-DA_workflow.git
 
-To clone the most recent release, run the same command with |branch| in place of ``develop``: 
+To clone the most recent release, run the same command with |branch| in place of ``develop``:
 
 .. code-block:: console
 
-   git clone -b release/public-v1.2.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
+   git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git
 
 .. _build-land-da:
 
@@ -66,6 +66,7 @@ Build the Land DA System
 
       ./app_build.sh
 
+   Users may need to press the ``Enter`` key to advance the build once the list of currently loaded modules appears. 
    If the code successfully compiles, the console output should end with:
    
    .. code-block:: console
@@ -92,14 +93,9 @@ Load the Workflow Environment
 
 To load the workflow environment, run: 
 
-.. code-block:: console
+.. include:: ../doc-snippets/load-env.rst
 
-   cd $LANDDAROOT/land-DA_workflow
-   module use modulefiles
-   module load wflow_<platform>
-   conda activate land_da
-
-where ``<platform>`` is ``hera`` or ``orion``. This activates the ``land_da`` conda environment, and the user typically sees ``(land_da)`` in front of the Terminal prompt at this point.
+This activates the ``land_da`` conda environment, and the user typically sees ``(land_da)`` in front of the Terminal prompt at this point.
 
 .. _configure-expt:
 
@@ -111,28 +107,27 @@ Copy the experiment settings into ``land_analysis.yaml``:
 .. code-block:: console
 
    cd $LANDDAROOT/land-DA_workflow/parm
-   cp land_analysis_<platform>.yaml land_analysis.yaml
+   cp parm_xml_<platform>.yaml parm_xml.yaml
 
-where ``<platform>`` is ``hera`` or ``orion``.
+where ``<platform>`` is ``hera``, ``orion``, or ``hercules``.
    
-Users will need to configure certain elements of their experiment in ``land_analysis.yaml``: 
+Users will need to configure the ``account`` and ``exp_basedir`` variables in ``parm_xml.yaml``: 
 
-   * ``ACCOUNT:`` A valid account name. Hera, Orion, and most NOAA RDHPCS systems require a valid account name; other systems may not (in which case, any value will do).
-   * ``EXP_BASEDIR:`` The full path to the directory where land-DA_workflow was cloned (i.e., ``$LANDDAROOT``)
-   * ``cycledef/spec:`` Cycle specification
+   * ``account:`` A valid account name. Hera, Orion, Hercules, and most NOAA :term:`RDHPCS` systems require a valid account name; other systems may not (in which case, any value will do).
+   * ``exp_basedir:`` The full path to the directory where ``land-DA_workflow`` was cloned (i.e., ``$LANDDAROOT``). For example, if ``land-DA_workflow`` is located at ``/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow`` on Hera, set ``exp_basedir`` to its parent directory: ``/scratch2/NAGAPE/epic/User.Name/landda``. 
 
 .. note::
 
-   To determine an appropriate ``ACCOUNT`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
+   To determine an appropriate ``account`` field for Level 1 systems that use the Slurm job scheduler, run ``saccount_params``. On other systems, running ``groups`` will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names. 
 
-Users may configure other elements of an experiment in ``land_analysis.yaml`` if desired. The ``land_analysis_*.yaml`` files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in these files and the files they reference using information in Sections :numref:`%s <ConfigWorkflow>`, :numref:`%s <Model>`, and :numref:`%s <DASystem>`. 
+Users may configure other elements of an experiment in ``parm/templates/template.land_analysis.yaml`` if desired. For example, users may wish to alter the ``cycledef.spec`` to indicate a different start cycle, end cycle, and increment. The ``template.land_analysis.yaml`` file contains reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this file using information from Sections :numref:`%s: Workflow Configuration Parameters <ConfigWorkflow>`, :numref:`%s: I/O for the Noah-MP Model <Model>`, and :numref:`%s: I/O for JEDI DA <DASystem>`. 
 
 .. _GetData:
 
 Data
 ------
 
-:numref:`Table %s <Level1Data>` shows the locations of pre-staged data on NOAA :term:`RDHPCS` (i.e., Hera and Orion). These data locations are already included in the ``land_analysis_*.yaml`` files but are provided here for informational purposes. 
+:numref:`Table %s <Level1Data>` shows the locations of pre-staged data on NOAA :term:`RDHPCS` (e.g., Hera, Orion). These data locations are already linked to the Land DA System during the build but are provided here for informational purposes. 
    
 .. _Level1Data:
 
@@ -146,7 +141,7 @@ Data
    * - Hercules & Orion
      - /work/noaa/epic/UFS_Land-DA_Dev/inputs
 
-Users who have difficulty accessing the data on Hera or Orion may download it according to the instructions in :numref:`Section %s <GetDataC>`. Its subdirectories are soft-linked to the ``fix`` directory of ``land-DA_workflow`` by the build script ``sorc/app_build.sh``.
+Users who have difficulty accessing the data on Hera, Orion, or Hercules may download it according to the instructions in :numref:`Section %s <GetDataC>`. Its subdirectories are soft-linked to the ``land-DA_workflow/fix`` directory by the build script (``sorc/app_build.sh``); when downloading new data, it should be placed in or linked to the ``fix`` directory.
 
 .. _generate-wflow:
 
@@ -157,9 +152,10 @@ Generate the workflow XML file with ``uwtools`` by running:
 
 .. code-block:: console
 
+   uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml
    uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
-If the command runs without problems, ``uwtools`` will output a "0 errors found" message similar to the following: 
+If the commands run without issue, ``uwtools`` will output a "0 errors found" message similar to the following: 
 
 .. code-block:: console
 
@@ -193,10 +189,10 @@ Each Land DA experiment includes multiple tasks that must be run in order to sat
      - Runs :term:`JEDI` and adds the increment to the surface data files
    * - JLANDDA_POST_ANAL
      - Transfers the JEDI result from the surface data files to the restart files
-   * - JLANDDA_PLOT_STATS
-     - Plots the JEDI result (scatter/histogram)
    * - JLANDDA_FORECAST
      - Runs the forecast model
+   * - JLANDDA_PLOT_STATS
+     - Plots the JEDI result (scatter/histogram) and the restart files
 
 Users may run these tasks :ref:`using the Rocoto workflow manager <run-w-rocoto>`. 
 
@@ -210,7 +206,7 @@ To run the experiment, users can automate job submission via :term:`crontab` or 
 Automated Run
 ---------------
 
-To automate task submission, users must be on a system where :term:`cron` is available. On Orion, cron is only available on the orion-login-1 node, so users will need to work on that node when running cron jobs on Orion.
+To automate task submission, users must be on a system where :term:`cron` is available. On Orion, cron is only available on the orion-login-1 node, and likewise on Hercules, it is only available on hercules-login-1, so users will need to work on those nodes when running cron jobs on Orion/Hercules.
 
 .. code-block:: console
 
@@ -255,17 +251,17 @@ If ``rocotorun`` was successful, the ``rocotostat`` command will print a status 
    200001030000     pre_anal   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0
    200001030000     analysis                           -            -             -       -          -
    200001030000    post_anal                           -            -             -       -          -
-   200001030000   plot_stats                           -            -             -       -          -
    200001030000     forecast                           -            -             -       -          -
+   200001030000   plot_stats                           -            -             -       -          -
    =========================================================================================================
    200001040000     prep_obs   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0
    200001040000     pre_anal                           -            -             -       -          -
    200001040000     analysis                           -            -             -       -          -
    200001040000    post_anal                           -            -             -       -          -
-   200001040000   plot_stats                           -            -             -       -          -
    200001040000     forecast                           -            -             -       -          -
+   200001040000   plot_stats                           -            -             -       -          -
 
-Note that the status table printed by ``rocotostat`` only updates after each ``rocotorun`` command (whether issued manually or via cron automation). For each task, a log file is generated. These files are stored in ``$LANDDAROOT/ptmp/test/com/output/logs/run_<forcing>``, where ``<forcing>`` is either ``gswp3`` or ``era5``. 
+Note that the status table printed by ``rocotostat`` only updates after each ``rocotorun`` command (whether issued manually or via cron automation). For each task, a log file is generated. These files are stored in ``$LANDDAROOT/ptmp/test/com/output/logs``. 
 
 The experiment has successfully completed when all tasks say SUCCEEDED under STATE. Other potential statuses are: QUEUED, SUBMITTING, RUNNING, and DEAD. Users may view the log files to determine why a task may have failed.
 
@@ -280,8 +276,8 @@ As the experiment progresses, it will generate a number of directories to hold i
 
 .. code-block:: console
 
-   $LANDDAROOT: Base directory
-    ├── land-DA_workflow(<CYCLEDIR>): Home directory of the land DA workflow
+   $LANDDAROOT (<EXP_BASEDIR>): Base directory
+    ├── land-DA_workflow (<HOMElandda> or <CYCLEDIR>): Home directory of the land DA workflow
     └── ptmp (<PTMP>)
           └── test (<envir> or <OPSROOT>)
                 └── com (<COMROOT>)
@@ -299,7 +295,7 @@ As the experiment progresses, it will generate a number of directories to hold i
                            ├── hofx: Directory containing the soft links to the results of the analysis task for plotting
                            └── DATA_RESTART: Directory containing the soft links to the restart files for the next cycles
 
-``<forcing>`` refers to the type of forcing data used (``gswp3`` or ``era5``). Each variable in parentheses and angle brackets (e.g., ``(<VAR>)``) is the name for the directory defined in the file ``land_analysis.yaml``. In the future, this directory structure will be further modified to meet the :nco:`NCO Implementation Standards<>`.
+Each variable in parentheses and angle brackets (e.g., ``(<VAR>)``) is the name for the directory defined in the file ``land_analysis.yaml`` (derived from ``template.land_analysis.yaml`` or ``parm_xml.yaml``) or in the NCO Implementation Standards. For example, the ``<envir>`` variable is set to "test" (i.e., ``envir: "test"``) in ``template.land_analysis.yaml``. In the future, this directory structure will be further modified to meet the :nco:`NCO Implementation Standards<>`.
 
 Check for the output files for each cycle in the experiment directory:
 
@@ -307,7 +303,7 @@ Check for the output files for each cycle in the experiment directory:
 
    ls -l $LANDDAROOT/ptmp/test/com/landda/<model_ver>/landda.YYYYMMDD
 
-where ``YYYYMMDD`` is the cycle date, and ``<model_ver>`` is the model version (currently ``v1.2.1`` in the ``develop`` branch). The experiment should generate several restart files. 
+where ``YYYYMMDD`` is the cycle date, and ``<model_ver>`` is the model version (currently |latestr| in the ``develop`` branch). The experiment should generate several restart files. 
 
 .. _plotting:
 
@@ -332,3 +328,15 @@ The histogram plots OMA values on the x-axis and frequency density values on the
 
    * - |logo1|
      - |logo2|
+
+.. note::
+
+   There are many options for viewing plots, and instructions for this are highly machine dependent. Users should view the data transfer documentation for their system to secure copy files from a remote system (such as :term:`RDHPCS`) to their local system. 
+   Another option is to download `Xming <https://sourceforge.net/projects/xming/>`_ (for Windows) or `XQuartz <https://www.xquartz.org/>`_ (for Mac), use the ``-X`` option when connecting to a remote system via SSH, and run:
+
+   .. code-block:: console
+
+      module load imagemagick
+      display file_name.png
+
+   where ``file_name.png`` is the name of the file to display/view. Depending on the system, users may need to install imagemagick and/or adjust other settings (e.g., for X11 forwarding). Users should contact their machine administrator with any questions. 

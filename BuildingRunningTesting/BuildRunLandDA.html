@@ -118,10 +118,10 @@
              
   <section id="land-da-workflow-hera-orion-hercules">
 <span id="buildrunlandda"></span><h1><span class="section-number">2.1. </span>Land DA Workflow (Hera/Orion/Hercules)<a class="headerlink" href="#land-da-workflow-hera-orion-hercules" title="Link to this heading"></a></h1>
-<p>This chapter provides instructions for building and running basic Land DA cases for the Unified Forecast System (<a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a>) Land DA System using a Jan. 3-4, 2000 00z sample case using <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> data with the UFS Noah-MP land component.</p>
+<p>This chapter provides instructions for building and running the Unified Forecast System (<a class="reference internal" href="../Reference/Glossary.html#term-UFS"><span class="xref std std-term">UFS</span></a>) Land DA System using a Jan. 3-4, 2000 00z sample case using <a class="reference internal" href="../Reference/Glossary.html#term-GSWP3"><span class="xref std std-term">GSWP3</span></a> data with the UFS Noah-MP land component and data atmosphere (DATM) component.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>These steps are designed for use on <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> systems (i.e., Hera and Orion) and may require significant changes on other systems. It is recommended that users on other systems run the containerized version of Land DA. Users may reference <a class="reference internal" href="Container.html#container"><span class="std std-numref">Chapter 2.2: Containerized Land DA Workflow</span></a> for instructions.</p>
+<p>These steps are designed for use on <a class="reference internal" href="../BackgroundInfo/TechnicalOverview.html#levelsofsupport"><span class="std std-ref">Level 1</span></a> systems (e.g., Hera, Orion) and may require significant changes on other systems. It is recommended that users on other systems run the containerized version of Land DA. Users may reference <a class="reference internal" href="Container.html#container"><span class="std std-numref">Chapter 2.2: Containerized Land DA Workflow</span></a> for instructions.</p>
 </div>
 <section id="create-a-working-directory">
 <span id="create-dir"></span><h2><span class="section-number">2.1.1. </span>Create a Working Directory<a class="headerlink" href="#create-a-working-directory" title="Link to this heading"></a></h2>
@@ -143,8 +143,8 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b develop --recursive https://github.com/ufs-community/land-DA_workflow.git</span>
 </pre></div>
 </div>
-<p>To clone the most recent release, run the same command with <code class="docutils literal notranslate"><span class="pre">release/public-v1.2.0</span></code> in place of <code class="docutils literal notranslate"><span class="pre">develop</span></code>:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b release/public-v1.2.0 --recursive https://github.com/ufs-community/land-DA_workflow.git</span>
+<p>To clone the most recent release, run the same command with <code class="docutils literal notranslate"><span class="pre">release/public-v2.0.0</span></code> in place of <code class="docutils literal notranslate"><span class="pre">develop</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b release/public-v2.0.0 --recursive https://github.com/ufs-community/land-DA_workflow.git</span>
 </pre></div>
 </div>
 </section>
@@ -160,7 +160,8 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./app_build.sh</span>
 </pre></div>
 </div>
-<p>If the code successfully compiles, the console output should end with:</p>
+<p>Users may need to press the <code class="docutils literal notranslate"><span class="pre">Enter</span></code> key to advance the build once the list of currently loaded modules appears.
+If the code successfully compiles, the console output should end with:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[100%] Completed &#39;ufs_model.fd&#39;</span>
 <span class="go">[100%] Built target ufs_model.fd</span>
 <span class="go">... Moving pre-compiled executables to designated location ...</span>
@@ -188,32 +189,32 @@
 <span class="go">conda activate land_da</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code> or <code class="docutils literal notranslate"><span class="pre">orion</span></code>. This activates the <code class="docutils literal notranslate"><span class="pre">land_da</span></code> conda environment, and the user typically sees <code class="docutils literal notranslate"><span class="pre">(land_da)</span></code> in front of the Terminal prompt at this point.</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code>, <code class="docutils literal notranslate"><span class="pre">orion</span></code>, or <code class="docutils literal notranslate"><span class="pre">hercules</span></code>.</p>
+<p>This activates the <code class="docutils literal notranslate"><span class="pre">land_da</span></code> conda environment, and the user typically sees <code class="docutils literal notranslate"><span class="pre">(land_da)</span></code> in front of the Terminal prompt at this point.</p>
 </section>
 <section id="modify-the-workflow-configuration-yaml">
 <span id="configure-expt"></span><h3><span class="section-number">2.1.4.2. </span>Modify the Workflow Configuration YAML<a class="headerlink" href="#modify-the-workflow-configuration-yaml" title="Link to this heading"></a></h3>
 <p>Copy the experiment settings into <code class="docutils literal notranslate"><span class="pre">land_analysis.yaml</span></code>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd $LANDDAROOT/land-DA_workflow/parm</span>
-<span class="go">cp land_analysis_&lt;platform&gt;.yaml land_analysis.yaml</span>
+<span class="go">cp parm_xml_&lt;platform&gt;.yaml parm_xml.yaml</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code> or <code class="docutils literal notranslate"><span class="pre">orion</span></code>.</p>
-<p>Users will need to configure certain elements of their experiment in <code class="docutils literal notranslate"><span class="pre">land_analysis.yaml</span></code>:</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;platform&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">hera</span></code>, <code class="docutils literal notranslate"><span class="pre">orion</span></code>, or <code class="docutils literal notranslate"><span class="pre">hercules</span></code>.</p>
+<p>Users will need to configure the <code class="docutils literal notranslate"><span class="pre">account</span></code> and <code class="docutils literal notranslate"><span class="pre">exp_basedir</span></code> variables in <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code>:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ACCOUNT:</span></code> A valid account name. Hera, Orion, and most NOAA RDHPCS systems require a valid account name; other systems may not (in which case, any value will do).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">EXP_BASEDIR:</span></code> The full path to the directory where land-DA_workflow was cloned (i.e., <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cycledef/spec:</span></code> Cycle specification</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">account:</span></code> A valid account name. Hera, Orion, Hercules, and most NOAA <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a> systems require a valid account name; other systems may not (in which case, any value will do).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exp_basedir:</span></code> The full path to the directory where <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> was cloned (i.e., <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT</span></code>). For example, if <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> is located at <code class="docutils literal notranslate"><span class="pre">/scratch2/NAGAPE/epic/User.Name/landda/land-DA_workflow</span></code> on Hera, set <code class="docutils literal notranslate"><span class="pre">exp_basedir</span></code> to its parent directory: <code class="docutils literal notranslate"><span class="pre">/scratch2/NAGAPE/epic/User.Name/landda</span></code>.</p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>To determine an appropriate <code class="docutils literal notranslate"><span class="pre">ACCOUNT</span></code> field for Level 1 systems that use the Slurm job scheduler, run <code class="docutils literal notranslate"><span class="pre">saccount_params</span></code>. On other systems, running <code class="docutils literal notranslate"><span class="pre">groups</span></code> will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names.</p>
+<p>To determine an appropriate <code class="docutils literal notranslate"><span class="pre">account</span></code> field for Level 1 systems that use the Slurm job scheduler, run <code class="docutils literal notranslate"><span class="pre">saccount_params</span></code>. On other systems, running <code class="docutils literal notranslate"><span class="pre">groups</span></code> will return a list of projects that the user has permissions for. Not all listed projects/groups have an HPC allocation, but those that do are potentially valid account names.</p>
 </div>
-<p>Users may configure other elements of an experiment in <code class="docutils literal notranslate"><span class="pre">land_analysis.yaml</span></code> if desired. The <code class="docutils literal notranslate"><span class="pre">land_analysis_*.yaml</span></code> files contain reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in these files and the files they reference using information in Sections <a class="reference internal" href="../CustomizingTheWorkflow/ConfigWorkflow.html#configworkflow"><span class="std std-numref">3.1</span></a>, <a class="reference internal" href="../CustomizingTheWorkflow/Model.html#model"><span class="std std-numref">3.2</span></a>, and <a class="reference internal" href="../CustomizingTheWorkflow/DASystem.html#dasystem"><span class="std std-numref">3.3</span></a>.</p>
+<p>Users may configure other elements of an experiment in <code class="docutils literal notranslate"><span class="pre">parm/templates/template.land_analysis.yaml</span></code> if desired. For example, users may wish to alter the <code class="docutils literal notranslate"><span class="pre">cycledef.spec</span></code> to indicate a different start cycle, end cycle, and increment. The <code class="docutils literal notranslate"><span class="pre">template.land_analysis.yaml</span></code> file contains reasonable default values for running a Land DA experiment. Users who wish to run a more complex experiment may change the values in this file using information from Sections <a class="reference internal" href="../CustomizingTheWorkflow/ConfigWorkflow.html#configworkflow"><span class="std std-numref">3.1: Workflow Configuration Parameters</span></a>, <a class="reference internal" href="../CustomizingTheWorkflow/Model.html#model"><span class="std std-numref">3.2: I/O for the Noah-MP Model</span></a>, and <a class="reference internal" href="../CustomizingTheWorkflow/DASystem.html#dasystem"><span class="std std-numref">3.3: I/O for JEDI DA</span></a>.</p>
 <section id="data">
 <span id="getdata"></span><h4><span class="section-number">2.1.4.2.1. </span>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h4>
-<p><a class="reference internal" href="#level1data"><span class="std std-numref">Table 2.1</span></a> shows the locations of pre-staged data on NOAA <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a> (i.e., Hera and Orion). These data locations are already included in the <code class="docutils literal notranslate"><span class="pre">land_analysis_*.yaml</span></code> files but are provided here for informational purposes.</p>
+<p><a class="reference internal" href="#level1data"><span class="std std-numref">Table 2.1</span></a> shows the locations of pre-staged data on NOAA <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a> (e.g., Hera, Orion). These data locations are already linked to the Land DA System during the build but are provided here for informational purposes.</p>
 <span id="level1data"></span><table class="docutils align-default" id="id1">
 <caption><span class="caption-number">Table 2.1 </span><span class="caption-text">Level 1 RDHPCS Data</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
@@ -230,16 +231,17 @@
 </tr>
 </tbody>
 </table>
-<p>Users who have difficulty accessing the data on Hera or Orion may download it according to the instructions in <a class="reference internal" href="Container.html#getdatac"><span class="std std-numref">Section 2.2.3</span></a>. Its subdirectories are soft-linked to the <code class="docutils literal notranslate"><span class="pre">fix</span></code> directory of <code class="docutils literal notranslate"><span class="pre">land-DA_workflow</span></code> by the build script <code class="docutils literal notranslate"><span class="pre">sorc/app_build.sh</span></code>.</p>
+<p>Users who have difficulty accessing the data on Hera, Orion, or Hercules may download it according to the instructions in <a class="reference internal" href="Container.html#getdatac"><span class="std std-numref">Section 2.2.3</span></a>. Its subdirectories are soft-linked to the <code class="docutils literal notranslate"><span class="pre">land-DA_workflow/fix</span></code> directory by the build script (<code class="docutils literal notranslate"><span class="pre">sorc/app_build.sh</span></code>); when downloading new data, it should be placed in or linked to the <code class="docutils literal notranslate"><span class="pre">fix</span></code> directory.</p>
 </section>
 </section>
 <section id="generate-the-rocoto-xml-file">
 <span id="generate-wflow"></span><h3><span class="section-number">2.1.4.3. </span>Generate the Rocoto XML File<a class="headerlink" href="#generate-the-rocoto-xml-file" title="Link to this heading"></a></h3>
 <p>Generate the workflow XML file with <code class="docutils literal notranslate"><span class="pre">uwtools</span></code> by running:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">uw template render --input-file templates/template.land_analysis.yaml --values-file parm_xml.yaml --output-file land_analysis.yaml</span>
+<span class="go">uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml</span>
 </pre></div>
 </div>
-<p>If the command runs without problems, <code class="docutils literal notranslate"><span class="pre">uwtools</span></code> will output a “0 errors found” message similar to the following:</p>
+<p>If the commands run without issue, <code class="docutils literal notranslate"><span class="pre">uwtools</span></code> will output a “0 errors found” message similar to the following:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[2024-03-01T20:36:03]     INFO 0 UW schema-validation errors found</span>
 <span class="go">[2024-03-01T20:36:03]     INFO 0 Rocoto validation errors found</span>
 </pre></div>
@@ -272,11 +274,11 @@
 <tr class="row-odd"><td><p>JLANDDA_POST_ANAL</p></td>
 <td><p>Transfers the JEDI result from the surface data files to the restart files</p></td>
 </tr>
-<tr class="row-even"><td><p>JLANDDA_PLOT_STATS</p></td>
-<td><p>Plots the JEDI result (scatter/histogram)</p></td>
-</tr>
-<tr class="row-odd"><td><p>JLANDDA_FORECAST</p></td>
+<tr class="row-even"><td><p>JLANDDA_FORECAST</p></td>
 <td><p>Runs the forecast model</p></td>
+</tr>
+<tr class="row-odd"><td><p>JLANDDA_PLOT_STATS</p></td>
+<td><p>Plots the JEDI result (scatter/histogram) and the restart files</p></td>
 </tr>
 </tbody>
 </table>
@@ -287,7 +289,7 @@
 <p>To run the experiment, users can automate job submission via <a class="reference internal" href="../Reference/Glossary.html#term-crontab"><span class="xref std std-term">crontab</span></a> or submit tasks manually via <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code>.</p>
 <section id="automated-run">
 <h4><span class="section-number">2.1.5.2.1. </span>Automated Run<a class="headerlink" href="#automated-run" title="Link to this heading"></a></h4>
-<p>To automate task submission, users must be on a system where <a class="reference internal" href="../Reference/Glossary.html#term-cron"><span class="xref std std-term">cron</span></a> is available. On Orion, cron is only available on the orion-login-1 node, so users will need to work on that node when running cron jobs on Orion.</p>
+<p>To automate task submission, users must be on a system where <a class="reference internal" href="../Reference/Glossary.html#term-cron"><span class="xref std std-term">cron</span></a> is available. On Orion, cron is only available on the orion-login-1 node, and likewise on Hercules, it is only available on hercules-login-1, so users will need to work on those nodes when running cron jobs on Orion/Hercules.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd parm</span>
 <span class="go">./launch_rocoto_wflow.sh add</span>
 </pre></div>
@@ -319,26 +321,26 @@
 <span class="go">200001030000     pre_anal   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0</span>
 <span class="go">200001030000     analysis                           -            -             -       -          -</span>
 <span class="go">200001030000    post_anal                           -            -             -       -          -</span>
-<span class="go">200001030000   plot_stats                           -            -             -       -          -</span>
 <span class="go">200001030000     forecast                           -            -             -       -          -</span>
+<span class="go">200001030000   plot_stats                           -            -             -       -          -</span>
 <span class="go">=========================================================================================================</span>
 <span class="go">200001040000     prep_obs   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0</span>
 <span class="go">200001040000     pre_anal                           -            -             -       -          -</span>
 <span class="go">200001040000     analysis                           -            -             -       -          -</span>
 <span class="go">200001040000    post_anal                           -            -             -       -          -</span>
-<span class="go">200001040000   plot_stats                           -            -             -       -          -</span>
 <span class="go">200001040000     forecast                           -            -             -       -          -</span>
+<span class="go">200001040000   plot_stats                           -            -             -       -          -</span>
 </pre></div>
 </div>
-<p>Note that the status table printed by <code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> only updates after each <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> command (whether issued manually or via cron automation). For each task, a log file is generated. These files are stored in <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT/ptmp/test/com/output/logs/run_&lt;forcing&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;forcing&gt;</span></code> is either <code class="docutils literal notranslate"><span class="pre">gswp3</span></code> or <code class="docutils literal notranslate"><span class="pre">era5</span></code>.</p>
+<p>Note that the status table printed by <code class="docutils literal notranslate"><span class="pre">rocotostat</span></code> only updates after each <code class="docutils literal notranslate"><span class="pre">rocotorun</span></code> command (whether issued manually or via cron automation). For each task, a log file is generated. These files are stored in <code class="docutils literal notranslate"><span class="pre">$LANDDAROOT/ptmp/test/com/output/logs</span></code>.</p>
 <p>The experiment has successfully completed when all tasks say SUCCEEDED under STATE. Other potential statuses are: QUEUED, SUBMITTING, RUNNING, and DEAD. Users may view the log files to determine why a task may have failed.</p>
 </section>
 </section>
 <section id="check-experiment-output">
 <span id="check-output"></span><h3><span class="section-number">2.1.5.3. </span>Check Experiment Output<a class="headerlink" href="#check-experiment-output" title="Link to this heading"></a></h3>
 <p>As the experiment progresses, it will generate a number of directories to hold intermediate and output files. The structure of those files and directories appears below:</p>
-<div class="highlight-console notranslate" id="land-da-dir-structure"><div class="highlight"><pre><span></span><span class="gp">$</span>LANDDAROOT:<span class="w"> </span>Base<span class="w"> </span>directory
-<span class="go"> ├── land-DA_workflow(&lt;CYCLEDIR&gt;): Home directory of the land DA workflow</span>
+<div class="highlight-console notranslate" id="land-da-dir-structure"><div class="highlight"><pre><span></span><span class="gp">$</span>LANDDAROOT<span class="w"> </span><span class="o">(</span>&lt;EXP_BASEDIR&gt;<span class="o">)</span>:<span class="w"> </span>Base<span class="w"> </span>directory
+<span class="go"> ├── land-DA_workflow (&lt;HOMElandda&gt; or &lt;CYCLEDIR&gt;): Home directory of the land DA workflow</span>
 <span class="go"> └── ptmp (&lt;PTMP&gt;)</span>
 <span class="go">       └── test (&lt;envir&gt; or &lt;OPSROOT&gt;)</span>
 <span class="go">             └── com (&lt;COMROOT&gt;)</span>
@@ -357,12 +359,12 @@
 <span class="go">                        └── DATA_RESTART: Directory containing the soft links to the restart files for the next cycles</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">&lt;forcing&gt;</span></code> refers to the type of forcing data used (<code class="docutils literal notranslate"><span class="pre">gswp3</span></code> or <code class="docutils literal notranslate"><span class="pre">era5</span></code>). Each variable in parentheses and angle brackets (e.g., <code class="docutils literal notranslate"><span class="pre">(&lt;VAR&gt;)</span></code>) is the name for the directory defined in the file <code class="docutils literal notranslate"><span class="pre">land_analysis.yaml</span></code>. In the future, this directory structure will be further modified to meet the <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/">NCO Implementation Standards</a>.</p>
+<p>Each variable in parentheses and angle brackets (e.g., <code class="docutils literal notranslate"><span class="pre">(&lt;VAR&gt;)</span></code>) is the name for the directory defined in the file <code class="docutils literal notranslate"><span class="pre">land_analysis.yaml</span></code> (derived from <code class="docutils literal notranslate"><span class="pre">template.land_analysis.yaml</span></code> or <code class="docutils literal notranslate"><span class="pre">parm_xml.yaml</span></code>) or in the NCO Implementation Standards. For example, the <code class="docutils literal notranslate"><span class="pre">&lt;envir&gt;</span></code> variable is set to “test” (i.e., <code class="docutils literal notranslate"><span class="pre">envir:</span> <span class="pre">&quot;test&quot;</span></code>) in <code class="docutils literal notranslate"><span class="pre">template.land_analysis.yaml</span></code>. In the future, this directory structure will be further modified to meet the <a class="reference external" href="https://www.nco.ncep.noaa.gov/idsb/implementation_standards/">NCO Implementation Standards</a>.</p>
 <p>Check for the output files for each cycle in the experiment directory:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ls -l $LANDDAROOT/ptmp/test/com/landda/&lt;model_ver&gt;/landda.YYYYMMDD</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">YYYYMMDD</span></code> is the cycle date, and <code class="docutils literal notranslate"><span class="pre">&lt;model_ver&gt;</span></code> is the model version (currently <code class="docutils literal notranslate"><span class="pre">v1.2.1</span></code> in the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch). The experiment should generate several restart files.</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">YYYYMMDD</span></code> is the cycle date, and <code class="docutils literal notranslate"><span class="pre">&lt;model_ver&gt;</span></code> is the model version (currently v2.0.0 in the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch). The experiment should generate several restart files.</p>
 <section id="plotting-results">
 <span id="plotting"></span><h4><span class="section-number">2.1.5.3.1. </span>Plotting Results<a class="headerlink" href="#plotting-results" title="Link to this heading"></a></h4>
 <p>Additionally, in the <code class="docutils literal notranslate"><span class="pre">plot</span></code> subdirectory, users will find images depicting the results of the <code class="docutils literal notranslate"><span class="pre">analysis</span></code> task for each cycle as a scatter plot (<code class="docutils literal notranslate"><span class="pre">hofx_oma_YYYYMMDD_scatter.png</span></code>) and as a histogram (<code class="docutils literal notranslate"><span class="pre">hofx_oma_YYYYMMDD_histogram.png</span></code>).</p>
@@ -376,6 +378,16 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are many options for viewing plots, and instructions for this are highly machine dependent. Users should view the data transfer documentation for their system to secure copy files from a remote system (such as <a class="reference internal" href="../Reference/Glossary.html#term-RDHPCS"><span class="xref std std-term">RDHPCS</span></a>) to their local system.
+Another option is to download <a class="reference external" href="https://sourceforge.net/projects/xming/">Xming</a> (for Windows) or <a class="reference external" href="https://www.xquartz.org/">XQuartz</a> (for Mac), use the <code class="docutils literal notranslate"><span class="pre">-X</span></code> option when connecting to a remote system via SSH, and run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">module load imagemagick</span>
+<span class="go">display file_name.png</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">file_name.png</span></code> is the name of the file to display/view. Depending on the system, users may need to install imagemagick and/or adjust other settings (e.g., for X11 forwarding). Users should contact their machine administrator with any questions.</p>
+</div>
 </section>
 </section>
 </section>
@@ -392,7 +404,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, .</p>
+    <p>&#169; Copyright 2024, .</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

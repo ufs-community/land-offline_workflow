@@ -67,16 +67,16 @@ Executing this command will generate a workflow status table similar to the foll
    200001030000     pre_anal   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0
    200001030000     analysis                           -            -             -       -          -
    200001030000    post_anal                           -            -             -       -          -
-   200001030000   plot_stats                           -            -             -       -          -
    200001030000     forecast                           -            -             -       -          -
+   200001030000   plot_stats                           -            -             -       -          -
    ================================================================================================================================
    200001040000     prep_obs   druby://10.184.3.62:41973   SUBMITTING             -       1        0.0
    200001040000     pre_anal                           -            -             -       -          -
    200001040000     analysis                           -            -             -       -          -
    200001040000    post_anal                           -            -             -       -          -
-   200001040000   plot_stats                           -            -             -       -          -
    200001040000     forecast                           -            -             -       -          -
-
+   200001040000   plot_stats                           -            -             -       -          -
+   
 This table indicates that the ``prep_obs`` task for cycle 200001030000 was sent to the batch system and is now queued, while the ``pre_anal`` task for cycle 200001030000 and the ``prep_obs`` task for cycle 200001040000 are currently being submitted to the batch system. 
 
 Note that issuing a ``rocotostat`` command without an intervening ``rocotorun`` command will not result in an updated workflow status table; it will print out the same table. It is the ``rocotorun`` command that updates the workflow database file (in this case ``land_analysis.db``, located in ``parm``). The ``rocotostat`` command reads the database file and prints the table to the screen. To see an updated table, the ``rocotorun`` command must be executed first, followed by the ``rocotostat`` command.
@@ -87,19 +87,19 @@ After issuing the ``rocotorun`` command several times (over the course of severa
 
           CYCLE             TASK        JOBID           STATE   EXIT STATUS   TRIES   DURATION
    ============================================================================================
-   200001030000         prep_obs     18347451       SUCCEEDED            0       1        3.0
-   200001030000         pre_anal     18347452       SUCCEEDED            0       1        5.0
-   200001030000         analysis     18347525       SUCCEEDED            0       1       65.0
-   200001030000        post_anal     18347558       SUCCEEDED            0       1       10.0
-   200001030000       plot_stats     18347559       SUCCEEDED            0       1       73.0
-   200001030000         forecast     18347562       SUCCEEDED            0       1      103.0
-   ==========================================================================================
-   200001040000         prep_obs     18347453       SUCCEEDED            0       1        3.0
-   200001040000         pre_anal     18347568       SUCCEEDED            0       1        4.0
-   200001040000         analysis     18347584       SUCCEEDED            0       1       70.0
-   200001040000        post_anal     18347591       SUCCEEDED            0       1        4.0
-   200001040000       plot_stats     18347592       SUCCEEDED            0       1       48.0
-   200001040000         forecast     18347593       RUNNING              -       1        0.0
+   200001030000         prep_obs      1131735       SUCCEEDED            0       1        1.0
+   200001030000         pre_anal      1131736       SUCCEEDED            0       1        5.0
+   200001030000         analysis      1131754       SUCCEEDED            0       1       33.0
+   200001030000        post_anal      1131811       SUCCEEDED            0       1       11.0
+   200001030000         forecast      1131918       SUCCEEDED            0       1       31.0
+   200001030000       plot_stats      1131944       SUCCEEDED            0       1       26.0
+   ============================================================================================
+   200001040000         prep_obs      1131737       SUCCEEDED            0       1        2.0
+   200001040000         pre_anal      1131945       SUCCEEDED            0       1        3.0
+   200001040000         analysis      1132118       SUCCEEDED            0       1       29.0
+   200001040000        post_anal      1132174       SUCCEEDED            0       1       10.0
+   200001040000         forecast      1132186       SUCCEEDED            0       1       31.0
+   200001040000       plot_stats      1132319       RUNNING              -       1        0.0
 
 When the workflow runs to completion, all tasks will be marked as SUCCEEDED. The log file for each task is located in ``$LANDDAROOT/ptmp/test/com/output/logs``. If any task fails, the corresponding log file can be checked for error messages. Optional arguments for the ``rocotostat`` command can be found in the `Rocoto documentation <http://christopherwharrop.github.io/rocoto/>`_.
 
