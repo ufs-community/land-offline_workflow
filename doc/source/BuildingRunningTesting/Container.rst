@@ -126,7 +126,7 @@ If users prefer, they may copy the container to their local working directory. F
 Other Systems
 ----------------
 
-On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. 
+On other systems, users can build the Singularity container from a public Docker :term:`container` image or download the ``ubuntu22.04-intel-landda-release-public-v2.0.0.img`` container from the `Land DA Data Bucket <https://registry.opendata.aws/noaa-ufs-land-da/>`_. Downloading may be faster depending on the download speed on the user's system. However, the container in the data bucket is the ``release/public-v2.0.0`` container rather than an updated ``develop`` branch container.
 
 To download from the data bucket, users can run:
 
@@ -158,8 +158,8 @@ Users on any system may download and untar the data from the `Land DA Data Bucke
 .. code-block:: console
 
    cd $LANDDAROOT
-   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/current_land_da_release_data/v2.0.0/LandDAInputDatav2.0.0.tar.gz
-   tar xvfz LandDAInputDatav2.0.0.tar.gz
+   wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20241024/inputs.tar.gz
+   tar xvfz inputs.tar.gz
 
 If users choose to add data in a location other than ``$LANDDAROOT``, they can set the input data directory by running:
 
