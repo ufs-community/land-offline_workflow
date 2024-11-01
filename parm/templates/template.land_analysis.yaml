@@ -7,29 +7,31 @@ workflow:
   cycledef:
     - attrs:
         group: cycled
-      spec: {{ date_first_cycle }} {{ date_last_cycle }} {{ cycle_freq_hr }}:00:00
+      spec: {{ date_first_cycle }} {{ date_last_cycle }} {{ date_cycle_freq_hr }}:00:00
   entities:
     MACHINE: "{{ machine }}"
     SCHED: "slurm"
     ACCOUNT: "{{ account }}"
     APP: "{{ app }}"
+    CCPP_SUITE: "{{ ccpp_suite }}"
     EXP_BASEDIR: "{{ exp_basedir }}"
     JEDI_INSTALL: "{{ jedi_install }}"
     WARMSTART_DIR: "{{ warmstart_dir }}"
     ATMOS_FORC: "gswp3"
-    RES: "{{ res }}"
-    NPROCS_ANALYSIS: "{{ nprocs_analysis }}"
+    COUPLER_CALENDAR: "{{ coupler_calendar }}"
     FCSTHR: "{{ fcsthr }}"
     DT_ATMOS: "{{ dt_atmos }}"
     DT_RUNSEQ: "{{ dt_runseq }}"
-    NPROCS_FORECAST: "{{ nprocs_forecast }}"
-    NPROCS_FORECAST_ATM: "{{ nprocs_forecast_atm }}"
-    NPROCS_FORECAST_LND: "{{ nprocs_forecast_lnd }}"
     LND_LAYOUT_X: "{{ lnd_layout_x }}"
     LND_LAYOUT_Y: "{{ lnd_layout_y }}"
     LND_OUTPUT_FREQ_SEC: "{{ lnd_output_freq_sec }}"
+    NPROCS_ANALYSIS: "{{ nprocs_analysis }}"
+    NPROCS_FORECAST: "{{ nprocs_forecast }}"
+    NPROCS_FORECAST_ATM: "{{ nprocs_forecast_atm }}"
+    NPROCS_FORECAST_LND: "{{ nprocs_forecast_lnd }}"
     NNODES_FORECAST: "{{ nnodes_forecast }}"
     NPROCS_PER_NODE: "{{ nprocs_per_node }}"
+    RES: "{{ res }}"
     OBSDIR: ""
     OBSDIR_SUBDIR: ""
     OBS_TYPES: "GHCN"
