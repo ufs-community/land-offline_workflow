@@ -6,14 +6,7 @@ sorc/conda/
 sorc/lib/
 sorc/lib64
 parm/conda_loc
-parm/*.xml
-parm/*.db
-parm/*.out
-parm/*.err
-parm/*.log
-parm/parm_xml.yaml
-parm/land_analysis.yaml
-parm/log.*
+parm/config.yaml
 
 __pycache__
 *.swp

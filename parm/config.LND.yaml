@@ -11,17 +11,14 @@ date_last_cycle: 200001040000
 dt_atmos: 900
 dt_runseq: 3600
 envir: test_lnd
-# exp_basedir: /path/to/parent/directory/of/land-DA_workflow
-exp_basedir: 
+exp_case_name: lnd_test_00
 fcsthr: 24
-jedi_install: /work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules
 lnd_calc_snet: true
 lnd_ic_type: custom
 lnd_initial_albedo: 0.25
 lnd_layout_x: 1
 lnd_layout_y: 2
 lnd_output_freq_sec: 21600
-machine: hercules
 med_coupling_mode: ufs.nfrac.aoflux
 model_ver: v2.1.0
 net: landda
@@ -34,7 +31,6 @@ nprocs_per_node: 26
 res: 96
 restart_interval: '12 -1'
 run: landda
-warmstart_dir: /work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART
 we2e_test: 'NO'
 write_groups: 1
 write_tasks_per_group: 6

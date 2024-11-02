@@ -6,15 +6,24 @@
 #
 ###################################################################### CHJ #####
 
+import argparse
 import os
 import sys
+import shutil
 import yaml
-import numpy as np
+
+dirpath = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(dirpath, '../ush'))
+
+from fill_jinja_template import fill_jinja_template
+from uwtools.api.rocoto import realize
 
 # Main part (will be called at the end) ============================= CHJ =====
-def setup_wflow_env():
+def setup_wflow_env(machine):
 # =================================================================== CHJ =====
 
+    machine = machine.lower()
+    print(f''' Machine (platform) name: {machine} ''')
     # Set directory paths
     parm_dir = os.getcwd()
     print(f''' Current directory (PARMdir): {parm_dir} ''')
@@ -48,21 +57,56 @@ def setup_wflow_env():
 
     for key,value in yaml_data.items():
         if key in config_parm:
-            config_parm[key] = vlue
+            config_parm[key] = value
 
-    print(config_parm)
+    print("FINAL configuration=",config_parm)
 
     # Create an experimental case directory
-    exp_case_name = f"{config_parm[app]}_{config_parm[run]}" 
+    if config_parm.get("exp_case_name") is None:
+        exp_case_name = f'''{config_parm.get("app")}_{config_parm.get("run")}'''
+    else:
+        exp_case_name = config_parm.get("exp_case_name")
+
     exp_case_path = os.path.join(exp_basedir, "exp_case", exp_case_name) 
-    if not os.path.exists(exp_case_path):
+    if os.path.exists(exp_case_path) and os.path.isdir(exp_case_path):
+        tmp_new_name = exp_case_path+"_old"
+        if os.path.exists(tmp_new_name):
+            shutil.rmtree(tmp_new_name)
+        os.rename(exp_case_path, tmp_new_name)
+        os.makedirs(exp_case_path)
+    else:
         os.makedirs(exp_case_path)
 
-    # Create the YAML file for Rocoto XML from template
+    print(f''' Experimental case directory {exp_case_path} has been created. ''')
 
+    # Copy rocoto launch file
+    fn_rocoto_launch = "launch_rocoto_wflow.sh"
+    fp_launch_base = os.path.join(parm_dir, fn_rocoto_launch)
+    fp_launch_case = os.path.join(exp_case_path, fn_rocoto_launch)
+    shutil.copyfile(fp_launch_base, fp_launch_case)
+
+    # Create YAML file for Rocoto XML from template
+    fn_yaml_rocoto_template = "template.land_analysis.yaml"
+    fn_yaml_rocoto = "land_analysis.yaml"
+    fp_yaml_rocoto_template = os.path.join(parm_dir, "templates", fn_yaml_rocoto_template)
+    fp_yaml_rocoto = os.path.join(exp_case_path, fn_yaml_rocoto)
+    try:
+        fill_jinja_template([
+            "-u", config_parm,
+            "-t", fp_yaml_rocoto_template,
+            "-o", fp_yaml_rocoto ])
+    except:
+        print(f''' FATAL ERROR: Call to python script fill_jinja_template.py 
+              to create a '{fn_yaml_rocoto}' file from a jinja2 template failed. ''')
+        return False
 
     # Call uwtools to create Rocoto XML file
-
+    fn_xml_rocoto = "land_analysis.xml"
+    fp_xml_rocoto = os.path.join(exp_case_path, fn_xml_rocoto)
+    realize(
+        config = fp_yaml_rocoto,
+        output_file = fp_xml_rocoto,
+        )
 
 
 # Default values of configuration =================================== CHJ =====
@@ -71,44 +115,44 @@ def set_default_parm():
 
     default_config = {
         "account": "epic",
-        "allcomp_read_restart": false,
+        "allcomp_read_restart": False,
         "allcomp_start_type": "startup",
         "app": "LND",
         "atm_model": "datm",
         "ccpp_suite": "FV3_GFS_v17_p8",
-        "coupler_calendar": "2",
-        "date_cycle_freq_hr": "24",
-        "date_first_cycle": "200001030000",
-        "date_last_cycle": "200001040000",
-        "dt_atmos": "900",
-        "dt_runseq": "3600",
+        "coupler_calendar": 2,
+        "date_cycle_freq_hr": 24,
+        "date_first_cycle": 200001030000,
+        "date_last_cycle": 200001040000,
+        "dt_atmos": 900,
+        "dt_runseq": 3600,
         "envir": "test",
-        "exp_basedir": "/path/to/parent/dir/of/home",
-        "fcsthr": "24",
+        "exp_case_name": None,
+        "fcsthr": 24,
         "jedi_install": "/path/to/jedi/install/dir",
-        "lnd_calc_snet": true,
+        "lnd_calc_snet": True,
         "lnd_ic_type": "custom",
-        "lnd_initial_albedo": "0.25",
-        "lnd_layout_x": "1",
-        "lnd_layout_y": "2",
-        "lnd_output_freq_sec": "21600",
+        "lnd_initial_albedo": 0.25,
+        "lnd_layout_x": 1,
+        "lnd_layout_y": 2,
+        "lnd_output_freq_sec": 21600,
         "machine": "/machine/platform/name",
         "med_coupling_mode": "ufs.nfrac.aoflux",
         "model_ver": "v2.1.0",
         "net": "landda",
-        "nprocs_analysis": "6",
-        "nprocs_forecast": "26",
-        "nprocs_forecast_atm": "12",
-        "nprocs_forecast_lnd": "12",
-        "nnodes_forecast": "1",
-        "nprocs_per_node": "26",
-        "res": "96",
+        "nprocs_analysis": 6,
+        "nprocs_forecast": 26,
+        "nprocs_forecast_atm": 12,
+        "nprocs_forecast_lnd": 12,
+        "nnodes_forecast": 1,
+        "nprocs_per_node": 26,
+        "res": 96,
         "restart_interval": "12 -1",
         "run": "landda",
         "warmstart_dir": "/path/to/wart/start/dir",
         "we2e_test": "NO",
-        "write_groups": "1",
-        "write_tasks_per_group": "6",
+        "write_groups": 1,
+        "write_tasks_per_group": 6,
     }
 
     return default_config
@@ -121,22 +165,46 @@ def set_machine_parm(machine):
     lowercase_machine = machine.lower()
     match lowercase_machine:
         case "hera":
-            jedi_install = ""
+            jedi_install = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
+            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
         case "orion":
-            jedi_install = ""
+            jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
         case "hercules":
-            jedi_install = ""
+            jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules"
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
         case "singularity":
-            jedi_install = ""
+            jedi_install = "SINGULARITY_WORKING_DIR"
+            warmstart_dir = "SINGULARITY_WORKING_DIR"
 
     machine_config = {
         "jedi_install": jedi_install,
+        "warmstart_dir": warmstart_dir,
     }
 
     return machine_config
 
 
+# Parse arguments =================================================== CHJ =====
+def parse_args(argv):
+# =================================================================== CHJ =====
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(description="Update FV3 input.nml file for restart.")
+
+    parser.add_argument(
+        "-p", "--platform",
+        dest="machine",
+        required=True,
+        help="Platform (machine) name.",
+    )
+
+    return parser.parse_args(argv)
+
+
 # Main call ========================================================= CHJ =====
 if __name__=='__main__':
-    setup_wflow_env()
+    args = parse_args(sys.argv[1:])
+    setup_wflow_env(
+        machine=args.machine,
+    )
 
