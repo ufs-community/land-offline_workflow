@@ -212,6 +212,7 @@ def set_machine_parm(machine):
         case "singularity":
             jedi_install = "SINGULARITY_WORKING_DIR"
             warmstart_dir = "SINGULARITY_WORKING_DIR"
+            max_cores_per_node = 40
 
     machine_config = {
         "jedi_install": jedi_install,
