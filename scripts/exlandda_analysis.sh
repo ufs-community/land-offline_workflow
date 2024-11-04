@@ -45,6 +45,7 @@ ln -nsf ${COMIN}/obs/*_${YYYY}${MM}${DD}${HH}.nc .
 
 # update coupler.res file
 settings="\
+  'coupler_calendar': ${COUPLER_CALENDAR}
   'yyyy': !!str ${YYYY}
   'mm': !!str ${MM}
   'dd': !!str ${DD}

@@ -6,6 +6,7 @@ set -u
 # Set path
 PARMdir="{{ parm_dir }}"
 source ${PARMdir}/detect_platform.sh
+workdir="{{ exp_case_path }}"
 
 # Load rocoto
 module purge
@@ -37,7 +38,7 @@ LOG_FN_ROCOTO_RUN="log.rocoto_run"
 wflow_status="IN PROGRESS"
 
 # crontab line
-CRONTAB_LINE="*/2 * * * * cd ${PARMdir} && ./launch_rocoto_wflow.sh >> ${WFLOW_LOG_FN}"
+CRONTAB_LINE="*/2 * * * * cd ${workdir} && ./launch_rocoto_wflow.sh >> ${WFLOW_LOG_FN}"
 
 if [ "$#" -eq 1 ] && [ "$1" == "add" ]; then
   msg="The crontab line is added:
@@ -48,7 +49,7 @@ if [ "$#" -eq 1 ] && [ "$1" == "add" ]; then
   printf "%s" "$msg"
 fi
 
-cd "${PARMdir}"
+cd "${workdir}"
 rocotorun_cmd="rocotorun -w \"${WFLOW_XML_FN}\" -d \"${rocoto_database_fn}\" -v 10"
 eval ${rocotorun_cmd} > ${LOG_FN_ROCOTO_RUN} 2>&1
 

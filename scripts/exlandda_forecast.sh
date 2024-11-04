@@ -43,25 +43,37 @@ nHH=${NTIME:8:2}
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
 # Copy input namelist data files
-cp -p ${PARMlandda}/templates/template.input.nml input.nml
-cp -p ${PARMlandda}/templates/template.datm_in datm_in
-cp -p ${PARMlandda}/templates/template.datm.streams datm.streams
-cp -p ${PARMlandda}/templates/template.noahmptable.tbl noahmptable.tbl
-cp -p ${PARMlandda}/templates/template.fd_ufs.yaml fd_ufs.yaml
-cp -p ${PARMlandda}/templates/template.data_table data_table
+cp -p "${PARMlandda}/templates/template.noahmptable.tbl" noahmptable.tbl
+cp -p "${PARMlandda}/templates/template.${APP}.fd_ufs.yaml" fd_ufs.yaml
+if [ "${APP}" = "LND" ]; then
+  cp -p "${PARMlandda}/templates/template.${APP}.datm_in" datm_in
+  cp -p "${PARMlandda}/templates/template.${APP}.datm.streams" datm.streams
+  cp -p "${PARMlandda}/templates/template.${APP}.data_table" data_table
+fi
+
+# Set input.nml
+if [ "${APP}" = "ATML" ]; then
+  cp -p "${PARMlandda}/templates/template.${APP}.input.nml.${CCPP_SUITE}" input.nml
+else
+  cp -p "${PARMlandda}/templates/template.${APP}.input.nml" input.nml
+fi
 
 # Set ufs.configure
 nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
 nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
 
 settings="\
-  'nprocs_atm_m1': ${nprocs_atm_m1}
-  'nprocs_forecast_atm': ${NPROCS_FORECAST_ATM}
-  'nprocs_atm_lnd_m1': ${nprocs_atm_lnd_m1}
+  'atm_model': ${ATM_MODEL}
+  'dt_runseq': ${DT_RUNSEQ}
+  'lnd_cal_snet': ${LND_CAL_SNET}
+  'lnd_ic_type': ${LND_IC_TYPE}
   'lnd_layout_x': ${LND_LAYOUT_X}
   'lnd_layout_y': ${LND_LAYOUT_Y}
   'lnd_output_freq_sec': ${LND_OUTPUT_FREQ_SEC}
-  'dt_runseq': ${DT_RUNSEQ}
+  'med_coupling_mode': ${MED_COUPLING_MODE}
+  'nprocs_atm_m1': ${nprocs_atm_m1}
+  'nprocs_forecast_atm': ${NPROCS_FORECAST_ATM}
+  'nprocs_atm_lnd_m1': ${nprocs_atm_lnd_m1}
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.ufs.configure"
@@ -74,8 +86,14 @@ settings="\
   'mm': !!str ${MM}
   'dd': !!str ${DD}
   'hh': !!str ${HH}
-  'fcsthr': ${FCSTHR}
   'dt_atmos': ${DT_ATMOS}
+  'fcsthr': ${FCSTHR}
+  'fhrot': ${FHROT}
+  'restart_interval': ${RESTART_INTERVAL}
+  'write_groups': ${WRITE_GROUPS}
+  'write_tasks_per_group': ${WRITE_TASKS_PER_GROUP}
+  'imo': ${IMO}
+  'jmo': ${JMO}
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.model_configure"
@@ -91,7 +109,7 @@ settings="\
   'hh': !!str ${HH}
 " # End of settings variable
 
-fp_template="${PARMlandda}/templates/template.diag_table"
+fp_template="${PARMlandda}/templates/template.${APP}.diag_table"
 fn_namelist="diag_table"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 

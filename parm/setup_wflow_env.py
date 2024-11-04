@@ -67,7 +67,7 @@ def setup_wflow_env(machine):
         exp_case_name = config_parm.get("exp_case_name")
 
     config_parm_str = yaml.dump(config_parm, sort_keys=True, default_flow_style=False)
-#    print("FINAL configuration=",config_parm_str)
+    print("FINAL configuration=",config_parm_str)
 
     exp_case_path = os.path.join(exp_basedir, "exp_case", exp_case_name) 
     if os.path.exists(exp_case_path) and os.path.isdir(exp_case_path):
@@ -115,6 +115,7 @@ def setup_wflow_env(machine):
         fdata = file.read()
     fdata = fdata.replace('{{ parm_dir }}', parm_dir)
     fdata = fdata.replace('{{ fn_xml_rocoto }}', fn_xml_rocoto)
+    fdata = fdata.replace('{{ exp_case_path }}', exp_case_path)
     with open(fp_launch_script, 'w') as file:
         file.write(fdata)
     os.chmod(fp_launch_script, 0o755)
@@ -140,7 +141,10 @@ def set_default_parm():
         "envir": "test",
         "exp_case_name": None,
         "fcsthr": 24,
+        "fhrot": 0,
+        "imo": 384,
         "jedi_install": "/path/to/jedi/install/dir",
+        "jmo": 190,
         "lnd_calc_snet": True,
         "lnd_ic_type": "custom",
         "lnd_initial_albedo": 0.25,
@@ -151,11 +155,11 @@ def set_default_parm():
         "med_coupling_mode": "ufs.nfrac.aoflux",
         "model_ver": "v2.1.0",
         "net": "landda",
+        "nnodes_forecast": 1,
         "nprocs_analysis": 6,
         "nprocs_forecast": 26,
         "nprocs_forecast_atm": 12,
         "nprocs_forecast_lnd": 12,
-        "nnodes_forecast": 1,
         "nprocs_per_node": 26,
         "res": 96,
         "restart_interval": "12 -1",
