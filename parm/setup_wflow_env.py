@@ -89,9 +89,8 @@ def setup_wflow_env(machine):
         'nprocs_per_node': nprocs_per_node,
         })
    
-
     config_parm_str = yaml.dump(config_parm, sort_keys=True, default_flow_style=False)
-    print("FINAL configuration=",config_parm_str)
+#    print("FINAL configuration=",config_parm_str)
 
     exp_case_path = os.path.join(exp_basedir, "exp_case", exp_case_name) 
     if os.path.exists(exp_case_path) and os.path.isdir(exp_case_path):

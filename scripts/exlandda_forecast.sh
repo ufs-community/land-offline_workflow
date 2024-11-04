@@ -63,10 +63,13 @@ nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
 nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
 
 settings="\
+  'allcomp_read_restart': ${ALLCOMP_READ_RESTART}
+  'allcomp_start_type': ${ALLCOMP_START_TYPE}
   'atm_model': ${ATM_MODEL}
   'dt_runseq': ${DT_RUNSEQ}
-  'lnd_cal_snet': ${LND_CAL_SNET}
+  'lnd_calc_snet': ${LND_CALC_SNET}
   'lnd_ic_type': ${LND_IC_TYPE}
+  'lnd_initial_albedo': ${LND_INITIAL_ALBEDO}
   'lnd_layout_x': ${LND_LAYOUT_X}
   'lnd_layout_y': ${LND_LAYOUT_Y}
   'lnd_output_freq_sec': ${LND_OUTPUT_FREQ_SEC}
@@ -86,6 +89,7 @@ settings="\
   'mm': !!str ${MM}
   'dd': !!str ${DD}
   'hh': !!str ${HH}
+  'app': ${APP}
   'dt_atmos': ${DT_ATMOS}
   'fcsthr': ${FCSTHR}
   'fhrot': ${FHROT}
