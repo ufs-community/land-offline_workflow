@@ -150,7 +150,7 @@ def set_default_parm():
 
     default_config = {
         "account": "epic",
-        "allcomp_read_restart": False,
+        "allcomp_read_restart": ".false.",
         "allcomp_start_type": "startup",
         "app": "LND",
         "atm_model": "datm",
@@ -168,7 +168,7 @@ def set_default_parm():
         "imo": 384,
         "jedi_install": "/path/to/jedi/install/dir",
         "jmo": 190,
-        "lnd_calc_snet": True,
+        "lnd_calc_snet": ".true.",
         "lnd_ic_type": "custom",
         "lnd_initial_albedo": 0.25,
         "lnd_layout_x": 1,

@@ -69,7 +69,7 @@ LND_attributes::
   surface_thermal_roughness_option = 2
   output_freq = {{ lnd_output_freq_sec }}
   restart_freq = -1
-  calc_snet = .{{ lnd_calc_snet }}.
+  calc_snet = {{ lnd_calc_snet }}
   initial_albedo = {{ lnd_initial_albedo }}
 ::
 
@@ -112,7 +112,7 @@ ALLCOMP_attributes::
   stop_n = 24
   stop_option = nhours
   stop_ymd = -999
-  read_restart = .{{ allcomp_read_restart }}.
+  read_restart = {{ allcomp_read_restart }}
   mediator_present = true
   orb_eccen = 1.e36
   orb_iyear = 2000

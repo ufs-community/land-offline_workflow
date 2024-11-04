@@ -1,5 +1,5 @@
 account: epic
-allcomp_read_restart: false
+allcomp_read_restart: .false.
 allcomp_start_type: startup
 app: LND
 atm_model: datm
@@ -12,7 +12,7 @@ dt_runseq: 3600
 envir: test_lnd
 exp_case_name: lnd_test_00
 fcsthr: 24
-lnd_calc_snet: true
+lnd_calc_snet: .true.
 lnd_ic_type: custom
 lnd_initial_albedo: 0.25
 lnd_layout_x: 1
