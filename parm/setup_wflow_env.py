@@ -70,15 +70,15 @@ def setup_wflow_env(machine):
     # Calculate HPC parameter values
     lnd_layout_x = config_parm.get("lnd_layout_x")
     lnd_layout_y = config_parm.get("lnd_layout_y")
-    ncores_per_node = config_parm.get("ncores_per_node")
+    max_cores_per_node = config_parm.get("max_cores_per_node")
     nprocs_forecast_lnd = 6*lnd_layout_x*lnd_layout_y
     nprocs_forecast_atm = nprocs_forecast_lnd
     nprocs_forecast = nprocs_forecast_lnd + nprocs_forecast_atm + lnd_layout_x*lnd_layout_y
-    if nprocs_forecast <= ncores_per_node:
+    if nprocs_forecast <= max_cores_per_node:
         nnodes_forecast = 1
         nprocs_per_node = nprocs_forecast
     else:
-        nnodes_forecast = math.ceil(nprocs_forecast/ncores_per_node)
+        nnodes_forecast = math.ceil(nprocs_forecast/max_cores_per_node)
         nprocs_per_node = math.ceil(nprocs_forecast/nnodes_forecast)
 
     config_parm.update({
@@ -200,15 +200,15 @@ def set_machine_parm(machine):
         case "hera":
             jedi_install = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
             warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
-            ncores_per_node = 40
+            max_cores_per_node = 40
         case "orion":
             jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
             warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
-            ncores_per_node = 40
+            max_cores_per_node = 40
         case "hercules":
             jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules"
             warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
-            ncores_per_node = 80
+            max_cores_per_node = 80
         case "singularity":
             jedi_install = "SINGULARITY_WORKING_DIR"
             warmstart_dir = "SINGULARITY_WORKING_DIR"
@@ -216,7 +216,7 @@ def set_machine_parm(machine):
     machine_config = {
         "jedi_install": jedi_install,
         "warmstart_dir": warmstart_dir,
-        "ncores_per_node": ncores_per_node,
+        "max_cores_per_node": max_cores_per_node,
     }
 
     return machine_config
