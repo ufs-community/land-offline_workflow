@@ -22,11 +22,6 @@ med_coupling_mode: ufs.nfrac.aoflux
 model_ver: v2.1.0
 net: landda
 nprocs_analysis: 6
-nprocs_forecast: 26
-nprocs_forecast_atm: 12
-nprocs_forecast_lnd: 12
-nnodes_forecast: 1
-nprocs_per_node: 26
 res: 96
 restart_interval: '12 -1'
 run: landda
