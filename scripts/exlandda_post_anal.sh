@@ -59,7 +59,7 @@ settings="\
   'dd': !!str ${DD}
   'hh': !!str ${HH}
   'tstub': ${TSTUB}
-" # End of settins variable
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.jedi2ufs"
 fn_namelist="jedi2ufs.namelist"

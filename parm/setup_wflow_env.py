@@ -81,12 +81,6 @@ def setup_wflow_env(machine):
 
     print(f''' Experimental case directory {exp_case_path} has been created. ''')
 
-    # Copy rocoto launch file
-    fn_rocoto_launch = "launch_rocoto_wflow.sh"
-    fp_launch_base = os.path.join(parm_dir, fn_rocoto_launch)
-    fp_launch_case = os.path.join(exp_case_path, fn_rocoto_launch)
-    shutil.copyfile(fp_launch_base, fp_launch_case)
-
     # Create YAML file for Rocoto XML from template
     fn_yaml_rocoto_template = "template.land_analysis.yaml"
     fn_yaml_rocoto = "land_analysis.yaml"
@@ -110,6 +104,20 @@ def setup_wflow_env(machine):
         config = fp_yaml_rocoto,
         output_file = fp_xml_rocoto,
         )
+
+    # Create rocoto launch file to exp_case directory
+    fn_launch_template = "template.launch_rocoto_wflow.sh"
+    fn_launch_script = "launch_rocoto_wflow.sh"
+    fp_launch_template = os.path.join(parm_dir, "templates", fn_launch_template)
+    fp_launch_script = os.path.join(exp_case_path, fn_launch_script)
+    shutil.copyfile(fp_launch_template, fp_launch_script)
+    with open(fp_launch_script, 'r') as file:
+        fdata = file.read()
+    fdata = fdata.replace('{{ parm_dir }}', parm_dir)
+    fdata = fdata.replace('{{ fn_xml_rocoto }}', fn_xml_rocoto)
+    with open(fp_launch_script, 'w') as file:
+        file.write(fdata)
+    os.chmod(fp_launch_script, 0o755)
 
 
 # Default values of configuration =================================== CHJ =====

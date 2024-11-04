@@ -53,7 +53,7 @@ settings="\
   'mp': !!str ${MP}
   'dp': !!str ${DP}
   'hp': !!str ${HP}
-" # End of settins variable
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
@@ -133,7 +133,7 @@ if [[ $do_DA == "YES" ]]; then
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': false
-  " # End of settins variable
+  " # End of settings variable
 
   fp_template="${DATA}/letkf_land.yaml"
   fn_namelist="${DATA}/letkf_land.yaml"
@@ -170,7 +170,7 @@ if [[ $do_HOFX == "YES" ]]; then
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': true
-  " # End of settins variable
+  " # End of settings variable
 
   fp_template="${DATA}/hofx_land.yaml"
   fn_namelist="${DATA}/hofx_land.yaml"

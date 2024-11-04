@@ -4,7 +4,7 @@
 set -u
 
 # Set path
-PARMdir=$(cd "$(dirname "$(readlink -f -n "${BASH_SOURCE[0]}" )" )" && pwd -P)
+PARMdir="{{ parm_dir }}"
 source ${PARMdir}/detect_platform.sh
 
 # Load rocoto
@@ -27,7 +27,7 @@ else
 fi
 
 # Set file names.
-WFLOW_XML_FN="land_analysis.xml"
+WFLOW_XML_FN="{{ fn_xml_rocoto }}"
 rocoto_xml_bn=$( basename "${WFLOW_XML_FN}" ".xml" )
 rocoto_database_fn="${rocoto_xml_bn}.db"
 WFLOW_LOG_FN="log.rocoto_launch"

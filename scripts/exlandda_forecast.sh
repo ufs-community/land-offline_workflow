@@ -62,7 +62,7 @@ settings="\
   'lnd_layout_y': ${LND_LAYOUT_Y}
   'lnd_output_freq_sec': ${LND_OUTPUT_FREQ_SEC}
   'dt_runseq': ${DT_RUNSEQ}
-" # End of settins variable
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.ufs.configure"
 fn_namelist="ufs.configure"
@@ -76,7 +76,7 @@ settings="\
   'hh': !!str ${HH}
   'fcsthr': ${FCSTHR}
   'dt_atmos': ${DT_ATMOS}
-" # End of settins variable
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.model_configure"
 fn_namelist="model_configure"
@@ -89,7 +89,7 @@ settings="\
   'mm': !!str ${MM}
   'dd': !!str ${DD}
   'hh': !!str ${HH}
-" # End of settins variable
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.diag_table"
 fn_namelist="diag_table"
