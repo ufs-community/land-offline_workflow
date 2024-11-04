@@ -51,7 +51,7 @@ def setup_wflow_env(machine):
         with open(yaml_file, 'r') as f:
             yaml_data = yaml.safe_load(f)
         f.close()
-        print(f''' Input YAML file:, {yaml_data} ''')
+#        print(f''' Input YAML file:, {yaml_data} ''')
     except FileNotFoundError:
         print(f''' FATAL ERROR: Input YAML file {yaml_file} does not exist! ''')
 
@@ -59,13 +59,15 @@ def setup_wflow_env(machine):
         if key in config_parm:
             config_parm[key] = value
 
-    print("FINAL configuration=",config_parm)
-
     # Create an experimental case directory
     if config_parm.get("exp_case_name") is None:
         exp_case_name = f'''{config_parm.get("app")}_{config_parm.get("run")}'''
+        config_parm.update({'exp_case_name': exp_case_name})
     else:
         exp_case_name = config_parm.get("exp_case_name")
+
+    config_parm_str = yaml.dump(config_parm, sort_keys=True, default_flow_style=False)
+#    print("FINAL configuration=",config_parm_str)
 
     exp_case_path = os.path.join(exp_basedir, "exp_case", exp_case_name) 
     if os.path.exists(exp_case_path) and os.path.isdir(exp_case_path):
@@ -90,14 +92,15 @@ def setup_wflow_env(machine):
     fn_yaml_rocoto = "land_analysis.yaml"
     fp_yaml_rocoto_template = os.path.join(parm_dir, "templates", fn_yaml_rocoto_template)
     fp_yaml_rocoto = os.path.join(exp_case_path, fn_yaml_rocoto)
+    print(f''' Rocoto YAML template: {fp_yaml_rocoto_template} ''')
     try:
         fill_jinja_template([
-            "-u", config_parm,
+            "-u", config_parm_str,
             "-t", fp_yaml_rocoto_template,
             "-o", fp_yaml_rocoto ])
     except:
         print(f''' FATAL ERROR: Call to python script fill_jinja_template.py 
-              to create a '{fn_yaml_rocoto}' file from a jinja2 template failed. ''')
+              to create a '{fp_yaml_rocoto}' file from a jinja2 template failed. ''')
         return False
 
     # Call uwtools to create Rocoto XML file
