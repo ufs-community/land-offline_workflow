@@ -2,7 +2,7 @@
   blocksize = 32
   chksum_debug = .false.
   dycore_only = .false.
-  ccpp_suite = 'FV3_GFS_v17_p8'
+  ccpp_suite = '{{ ccpp_suite }}'
 /
 
 &diag_manager_nml
@@ -21,8 +21,8 @@
 /
 
 &fv_core_nml
-  layout = 3,8
-  io_layout = 1,1
+  layout = {{ atm_layout_x }},{{ atm_layout_y }}
+  io_layout = {{ atm_io_layout_x }},{{ atm_io_layout_y }}
   npx = 97
   npy = 97
   ntiles = 6
@@ -30,7 +30,7 @@
   dz_min = 6
   psm_bc = 1
   grid_type = -1
-  make_nh = .false.
+  make_nh = {{ make_nh }}
   fv_debug = .false.
   range_warn = .true.
   reset_eta = .false.
@@ -56,7 +56,7 @@
   k_split = 2
   n_split = 5
   nwat = 6
-  na_init = 0
+  na_init = {{ na_init }}
   d_ext = 0.
   dnats = 0
   fv_sg_adj = 450
@@ -68,11 +68,11 @@
   delt_max = 0.002
   ke_bg = 0.
   do_vort_damp = .true.
-  external_ic = .false.
+  external_ic = {{ external_ic }}
   external_eta = .true.
   gfs_phil = .false.
-  nggps_ic = .false.
-  mountain = .true.
+  nggps_ic = {{ nggps_ic }}
+  mountain = {{ mountain }}
   ncep_ic = .false.
   d_con = 1.
   hord_mt = 5
@@ -88,7 +88,7 @@
   fill = .true.
   dwind_2d = .false.
   print_freq = 6
-  warm_start = .true.
+  warm_start = {{ warm_start }}
   no_dycore = .false.
   z_tracer = .true.
   agrid_vel_rst = .true.
@@ -201,7 +201,7 @@
   iopt_tbot    = 2
   iopt_stc     = 3
   debug        = .false.
-  nstf_name    = 2,0,0,0,0
+  nstf_name    = {{ nstf_name }}
   nst_anl      = .true.
   psautco      = 0.0008,0.0005
   prautco      = 0.00015,0.00015

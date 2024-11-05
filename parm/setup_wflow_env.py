@@ -68,11 +68,21 @@ def setup_wflow_env(machine):
         exp_case_name = config_parm.get("exp_case_name")
 
     # Calculate HPC parameter values
+    app = config_parm.get("app")
+    atm_layout_x = config_parm.get("atm_layout_x")
+    atm_layout_y = config_parm.get("atm_layout_y")
+    atm_io_layout_x = config_parm.get("atm_io_layout_x")
+    atm_io_layout_y = config_parm.get("atm_io_layout_y")    
     lnd_layout_x = config_parm.get("lnd_layout_x")
     lnd_layout_y = config_parm.get("lnd_layout_y")
     max_cores_per_node = config_parm.get("max_cores_per_node")
+
     nprocs_forecast_lnd = 6*lnd_layout_x*lnd_layout_y
-    nprocs_forecast_atm = nprocs_forecast_lnd
+    if app == "ATML":
+        nprocs_forecast_atm = 6*(atm_layout_x*atm_layout_y+atm_io_layout_x*atm_io_layout_y)
+    else:
+        nprocs_forecast_atm = nprocs_forecast_lnd
+
     nprocs_forecast = nprocs_forecast_lnd + nprocs_forecast_atm + lnd_layout_x*lnd_layout_y
     if nprocs_forecast <= max_cores_per_node:
         nnodes_forecast = 1
@@ -150,11 +160,14 @@ def set_default_parm():
 
     default_config = {
         "account": "epic",
-        "allcomp_read_restart": ".false.",
-        "allcomp_start_type": "startup",
         "app": "LND",
+        "atm_io_layout_x": 1,
+        "atm_io_layout_y": 1,
+        "atm_layout_x": 3,
+        "atm_layout_y": 8,
         "atm_model": "datm",
         "ccpp_suite": "FV3_GFS_v17_p8",
+        "coldstart": "YES",
         "coupler_calendar": 2,
         "date_cycle_freq_hr": 24,
         "date_first_cycle": 200001030000,
@@ -179,6 +192,7 @@ def set_default_parm():
         "model_ver": "v2.1.0",
         "net": "landda",
         "nprocs_analysis": 6,
+        "output_fh": "1 -1",
         "res": 96,
         "restart_interval": "12 -1",
         "run": "landda",

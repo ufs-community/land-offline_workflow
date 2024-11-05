@@ -53,18 +53,64 @@ fi
 
 # Set input.nml
 if [ "${APP}" = "ATML" ]; then
-  cp -p "${PARMlandda}/templates/template.${APP}.input.nml.${CCPP_SUITE}" input.nml
+  if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+    settings="\
+      'atm_io_layout_x': ${ATM_IO_LAYOUT_X}
+      'atm_io_layout_y': ${ATM_IO_LAYOUT_Y}
+      'atm_layout_x': ${ATM_LAYOUT_X}
+      'atm_layout_y': ${ATM_LAYOUT_Y}
+      'ccpp_suite': ${CCPP_SUITE}
+      'external_ic': '.true.'
+      'make_nh': '.true.'
+      'mountain': '.false.'
+      'na_init': l
+      'nggps_ic': '.true.'
+      'nstf_name': '2,1,0,0,0'
+      'warm_start': '.false.'
+    " # End of settings variable
+  else
+    settings="\
+      'atm_io_layout_x': ${ATM_IO_LAYOUT_X}
+      'atm_io_layout_y': ${ATM_IO_LAYOUT_Y}
+      'atm_layout_x': ${ATM_LAYOUT_X}
+      'atm_layout_y': ${ATM_LAYOUT_Y}
+      'ccpp_suite': ${CCPP_SUITE}
+      'external_ic': '.false.'
+      'make_nh': '.false.'
+      'mountain': '.true.'
+      'na_init': 0
+      'nggps_ic': '.false.'
+      'nstf_name': '2,0,0,0,0'
+      'warm_start': '.true.'
+    " # End of settings variable
+  fi
+  fp_template="${PARMlandda}/templates/template.${APP}.input.nml.${CCPP_SUITE}"
+  fn_namelist="input.nml"
+  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 else
   cp -p "${PARMlandda}/templates/template.${APP}.input.nml" input.nml
 fi
 
 # Set ufs.configure
+if [ "${APP}" = "ATML" ]; then
+  if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+    allcomp_read_restart = ".false."
+    allcomp_start_type = "startup"
+  else
+    allcomp_read_restart = ".true."
+    allcomp_start_type = "continue"
+  fi
+else
+  allcomp_read_restart = ".false."
+  allcomp_start_type = "startup"
+fi
+
 nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
 nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
 
 settings="\
-  'allcomp_read_restart': ${ALLCOMP_READ_RESTART}
-  'allcomp_start_type': ${ALLCOMP_START_TYPE}
+  'allcomp_read_restart': ${allcomp_read_restart}
+  'allcomp_start_type': ${allcomp_start_type}
   'atm_model': ${ATM_MODEL}
   'dt_runseq': ${DT_RUNSEQ}
   'lnd_calc_snet': ${LND_CALC_SNET}
@@ -93,11 +139,12 @@ settings="\
   'dt_atmos': ${DT_ATMOS}
   'fcsthr': ${FCSTHR}
   'fhrot': ${FHROT}
+  'imo': ${IMO}
+  'jmo': ${JMO}
+  'output_fh': ${OUTPUT_FH}
   'restart_interval': ${RESTART_INTERVAL}
   'write_groups': ${WRITE_GROUPS}
   'write_tasks_per_group': ${WRITE_TASKS_PER_GROUP}
-  'imo': ${IMO}
-  'jmo': ${JMO}
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.model_configure"

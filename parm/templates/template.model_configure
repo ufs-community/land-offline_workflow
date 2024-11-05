@@ -34,6 +34,6 @@ jchunk3d:                0
 kchunk3d:                0
 imo:                     {{ imo }}
 jmo:                     {{ jmo }}
-output_fh:               1 -1
+output_fh:               {{ output_fh }}
 iau_offset:              0
 {%- endif %}
