@@ -100,7 +100,9 @@ fi
 if [ "${APP}" = "LND" ]; then
   allcomp_read_restart=".false."
   allcomp_start_type="startup"
+  atm_model="datm"
 elif [ "${APP}" = "ATML" ]; then
+  atm_model="fv3"
   if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
     allcomp_read_restart=".false."
     allcomp_start_type="startup"
@@ -116,7 +118,7 @@ nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
 settings="\
   'allcomp_read_restart': ${allcomp_read_restart}
   'allcomp_start_type': ${allcomp_start_type}
-  'atm_model': ${ATM_MODEL}
+  'atm_model': ${atm_model}
   'dt_runseq': ${DT_RUNSEQ}
   'lnd_calc_snet': ${LND_CALC_SNET}
   'lnd_ic_type': ${LND_IC_TYPE}

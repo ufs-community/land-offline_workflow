@@ -1,6 +1,5 @@
 account: epic
 app: LND
-atm_model: datm
 coupler_calendar: 2
 date_cycle_freq_hr: 24
 date_first_cycle: 200001030000

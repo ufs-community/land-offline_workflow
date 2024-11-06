@@ -2,13 +2,12 @@ account: epic
 app: ATML
 atm_io_layout_x: 1
 atm_io_layout_y: 1
-atm_layout_x: 1
-atm_layout_y: 2
-atm_model: fv3
+atm_layout_x: 3
+atm_layout_y: 8
 coupler_calendar: 3
 date_cycle_freq_hr: 24
-date_first_cycle: 202103220600
-date_last_cycle: 202103220600
+date_first_cycle: 200001030000
+date_last_cycle: 200001040000
 dt_atmos: 720
 dt_runseq: 3600
 envir: test_atml
