@@ -13,8 +13,8 @@ geometry:
       filetype: fms restart
       skip coupler file: true
       state variables: [orog_filt]
-      datapath: {{ tpath }}
-      filename_orog: {{ tstub }}.nc
+      datapath: {{ datapath }}
+      filename_orog: {{ fn_orog }}.nc
     derived fields: [nominal_surface_pressure]
 
 time window:

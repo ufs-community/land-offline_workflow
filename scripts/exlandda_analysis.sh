@@ -2,7 +2,6 @@
 
 set -xue
 
-TPATH="${FIXlandda}/FV3_fix_tiled/C${RES}"
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
@@ -129,8 +128,8 @@ if [[ $do_DA == "YES" ]]; then
     'mp': !!str ${MP}
     'dp': !!str ${DP}
     'hp': !!str ${HP}
-    'tstub': ${TSTUB}
-    'tpath': ${TPATH}
+    'fn_orog': C${RES}_oro_data
+    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': false
@@ -166,8 +165,8 @@ if [[ $do_HOFX == "YES" ]]; then
     'mp': !!str ${MP}
     'dp': !!str ${DP}
     'hp': !!str ${HP}
-    'tstub': ${TSTUB}
-    'tpath': ${TPATH}
+    'fn_orog': C${RES}_oro_data
+    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': true
@@ -231,8 +230,8 @@ cat << EOF > apply_incr_nml
  hour_str=$HH
  res=$RES
  frac_grid=$GFSv17
- orog_path="$TPATH"
- otype="$TSTUB"
+ orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
+ otype="C${RES}_oro_data"
 /
 EOF
 

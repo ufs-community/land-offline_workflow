@@ -97,17 +97,17 @@ else
 fi
 
 # Set ufs.configure
-if [ "${APP}" = "ATML" ]; then
+if [ "${APP}" = "LND" ]; then
+  allcomp_read_restart=".false."
+  allcomp_start_type="startup"
+elif [ "${APP}" = "ATML" ]; then
   if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
-    allcomp_read_restart = ".false."
-    allcomp_start_type = "startup"
+    allcomp_read_restart=".false."
+    allcomp_start_type="startup"
   else
-    allcomp_read_restart = ".true."
-    allcomp_start_type = "continue"
+    allcomp_read_restart=".true."
+    allcomp_start_type="continue"
   fi
-else
-  allcomp_read_restart = ".false."
-  allcomp_start_type = "startup"
 fi
 
 nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))

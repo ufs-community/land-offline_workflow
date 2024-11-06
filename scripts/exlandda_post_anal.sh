@@ -58,7 +58,7 @@ settings="\
   'mm': !!str ${MM}
   'dd': !!str ${DD}
   'hh': !!str ${HH}
-  'tstub': ${TSTUB}
+  'fn_orog': C${RES}_oro_data
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.jedi2ufs"
