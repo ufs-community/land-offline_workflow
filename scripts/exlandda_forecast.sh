@@ -68,7 +68,7 @@ if [ "${APP}" = "ATML" ]; then
       'external_ic': '.true.'
       'make_nh': '.true.'
       'mountain': '.false.'
-      'na_init': l
+      'na_init': '1'
       'nggps_ic': '.true.'
       'nstf_name': '2,1,0,0,0'
       'warm_start': '.false.'
@@ -83,7 +83,7 @@ if [ "${APP}" = "ATML" ]; then
       'external_ic': '.false.'
       'make_nh': '.false.'
       'mountain': '.true.'
-      'na_init': 0
+      'na_init': '0'
       'nggps_ic': '.false.'
       'nstf_name': '2,0,0,0,0'
       'warm_start': '.true.'
@@ -217,7 +217,6 @@ ls -1 "./RESTART/${rfile1}">rpointer.cpl
 mkdir -p INPUT
 cd INPUT
 
-ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
 for itile in {1..6}
 do
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.maximum_snow_albedo.tile${itile}.nc .
@@ -233,11 +232,13 @@ done
 
 if [ "${APP}" = "LND" ]; then
   ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
   for itile in {1..6}
   do
     ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc
   done
 elif [ "${APP}" = "ATML" ]; then
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc grid_spec.nc
   for itile in {1..6}
   do
     ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ls.tile${itile}.nc oro_data_ls.tile${itile}.nc
