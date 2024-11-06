@@ -15,7 +15,7 @@ HP=${PTIME:8:2}
 ################################################
 # 2. PREPARE OBS FILES
 ################################################
-OBSDIR="${OBSDIR:-${FIXlandda}/DA}"
+OBSDIR="${OBSDIR:-${FIXlandda}/DA_obs}"
 for obs in "${OBS_TYPES[@]}"; do
   # get the obs file name
   if [ "${obs}" == "GTS" ]; then

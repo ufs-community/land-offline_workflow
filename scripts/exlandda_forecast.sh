@@ -40,6 +40,11 @@ nMM=${NTIME:4:2}
 nDD=${NTIME:6:2}
 nHH=${NTIME:8:2}
 
+HHsec=$(( HH * 3600 ))
+HHsec_5d=$(printf "%05d" "${HHsec}")
+nHHsec=$(( nHH * 3600 ))
+nHHsec_5d=$(printf "%05d" "${nHHsec}")
+
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
 # Copy input namelist data files
@@ -164,17 +169,37 @@ fp_template="${PARMlandda}/templates/template.${APP}.diag_table"
 fn_namelist="diag_table"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
-# Set up the run directory
+if [ "${APP}" = "LND" ]; then
+  # CDEPS restart and pointer files for DATM (LND)
+  rfile2="ufs.cpld.datm.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
+  if [[ -e "${COMINm1}/${rfile2}" ]]; then
+    ln -nsf "${COMINm1}/${rfile2}" .
+  elif [[ -e "${WARMSTART_DIR}/${rfile2}" ]]; then
+    ln -nsf "${WARMSTART_DIR}/${rfile2}" .
+  else
+    ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile2} .
+  fi
+  ls -1 "${rfile2}">rpointer.atm
+elif [ "${APP}" = "ATML" ]; then
+  for itile in {1..6}
+  do
+    ln -nsf ${FIXlandda}/FV3_fix_global/* .
+  done
+fi
+
+###############################
+# Set up RESTART directory
+################################
 mkdir -p RESTART
 
 # NoahMP restart files
 for itile in {1..6}
 do
-  ln -nsf ${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-00000.tile${itile}.nc
+  ln -nsf ${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-${HHsec_5d}.tile${itile}.nc
 done
 
 # CMEPS restart and pointer files
-rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-00000.nc"
+rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
 if [[ -e "${COMINm1}/${rfile1}" ]]; then
   ln -nsf "${COMINm1}/${rfile1}" RESTART/.
 elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
@@ -182,25 +207,17 @@ elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
 else
   ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile1} RESTART/.
 fi
-ls -1 "RESTART/${rfile1}">rpointer.cpl
+ls -1 "./RESTART/${rfile1}">rpointer.cpl
 
-# CDEPS restart and pointer files
-rfile2="ufs.cpld.datm.r.${YYYY}-${MM}-${DD}-00000.nc"
-if [[ -e "${COMINm1}/${rfile2}" ]]; then
-  ln -nsf "${COMINm1}/${rfile2}" RESTART/.
-elif [[ -e "${WARMSTART_DIR}/${rfile2}" ]]; then
-  ln -nsf "${WARMSTART_DIR}/${rfile2}" RESTART/.
-else
-  ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile2} RESTART/.
-fi
-ls -1 "RESTART/${rfile2}">rpointer.atm
-
+#############################
+# Set up INPUT directory
+#############################
 mkdir -p INPUT
 cd INPUT
-ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* .
+
+ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
 for itile in {1..6}
 do
-  ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.maximum_snow_albedo.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.slope_type.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_type.tile${itile}.nc .
@@ -208,10 +225,29 @@ do
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.substrate_temperature.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_greenness.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_type.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/oro_C${RES}.mx100.tile${itile}.nc oro_data.tile${itile}.nc
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc oro_data.tile${itile}.nc
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/grid_spec.nc C${RES}_mosaic.nc
 done
+
+if [ "${APP}" = "LND" ]; then
+  ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* .
+  for itile in {1..6}
+  do
+    ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc
+  done
+elif [ "${APP}" = "ATML" ]; then
+  for itile in {1..6}
+  do
+    ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ls.tile${itile}.nc oro_data_ls.tile${itile}.nc
+    ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ss.tile${itile}.nc oro_data_ss.tile${itile}.nc
+  done
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_gfs_ctrl.nc gfs_ctrl.nc
+  for itile in {1..6}
+  do
+    ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_gfs_data.tile${itile}.nc gfs_data.tile${itile}.nc
+  done
+fi
+
 cd -
 
 # start runs
@@ -229,10 +265,32 @@ fi
 # copy model ouput to COM
 for itile in {1..6}
 do
-  cp -p ${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-00000.tile${itile}.nc ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc
+  cp -p ${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile${itile}.nc ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc
 done
-cp -p ${DATA}/ufs.cpld.datm.r.${nYYYY}-${nMM}-${nDD}-00000.nc ${COMOUT}
-cp -p ${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-00000.nc ${COMOUT}
+
+cp -p ${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}
+
+if [ "${APP}" = "LND" ]; then
+  cp -p ${DATA}/ufs.cpld.datm.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}
+elif [ "${APP}" = "ATML" ]; then
+  read -ra out_fh <<< "${OUTPUT_FH}"
+  out_fh1="${out_fh[0]}"
+  out_fh2="${out_fh[1]}"
+  if [ "${out_fh2}" = "-1" ]; then
+    list_out_fh=$(seq 0 ${out_fh1} ${FCSTHR})
+  else
+    list_out_fh=${OUTPUT_FH}
+  fi
+  for ihr in ${list_out_fh}
+  do
+    ihr_3d=$(printf "%03d" "${ihr}")
+    for itile in {1..6}
+    do
+      mv "${DATA}/atmf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.atm.f${ihr_3d}.c${RES}.nc"
+      mv "${DATA}/sfcf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.sfc.f${ihr_3d}.c${RES}.nc"
+    done
+  done
+fi
 
 # link restart for next cycle
 for itile in {1..6}

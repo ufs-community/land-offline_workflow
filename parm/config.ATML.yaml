@@ -5,7 +5,7 @@ atm_io_layout_y: 1
 atm_layout_x: 1
 atm_layout_y: 2
 atm_model: fv3
-coupler_calendar: 2
+coupler_calendar: 3
 date_cycle_freq_hr: 24
 date_first_cycle: 202103220600
 date_last_cycle: 202103220600
@@ -17,13 +17,13 @@ fcsthr: 24
 fhrot: 0
 imo: 384
 jmo: 190
-lnd_calc_snet: .true.
-lnd_ic_type: custom
-lnd_initial_albedo: 0.25
+lnd_calc_snet: .false.
+lnd_ic_type: sfc
+lnd_initial_albedo: 0.2
 lnd_layout_x: 1
 lnd_layout_y: 2
 lnd_output_freq_sec: 21600
-med_coupling_mode: ufs.nfrac.aoflux
+med_coupling_mode: ufs.frac
 model_ver: v2.1.0
 net: landda
 nprocs_analysis: 6
