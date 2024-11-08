@@ -6,8 +6,8 @@
   flds_presaero = .false.
   flds_wiso = .false.
   iradsw = 1
-  model_maskfile = "INPUT/fv1.9x2.5_141008_ESMFmesh.nc"
-  model_meshfile = "INPUT/fv1.9x2.5_141008_ESMFmesh.nc"
+  model_maskfile = "INPUT_DATM/fv1.9x2.5_141008_ESMFmesh.nc"
+  model_meshfile = "INPUT_DATM/fv1.9x2.5_141008_ESMFmesh.nc"
   nx_global = 144
   ny_global = 96
   restfilm = "null"

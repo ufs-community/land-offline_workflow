@@ -7,7 +7,7 @@ workflow:
   cycledef:
     - attrs:
         group: cycled
-      spec: 200001030000 200001040000 24:00:00
+      spec: 200001040000 200001050000 24:00:00
   entities:
     MACHINE: "{{ machine }}"
     SCHED: "slurm"
