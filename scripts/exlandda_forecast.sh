@@ -98,18 +98,17 @@ fi
 
 # Set ufs.configure
 if [ "${APP}" = "LND" ]; then
-  allcomp_read_restart=".false."
-  allcomp_start_type="startup"
   atm_model="datm"
 elif [ "${APP}" = "ATML" ]; then
   atm_model="fv3"
-  if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
-    allcomp_read_restart=".false."
-    allcomp_start_type="startup"
-  else
-    allcomp_read_restart=".true."
-    allcomp_start_type="continue"
-  fi
+fi
+
+if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+  allcomp_read_restart=".false."
+  allcomp_start_type="startup"
+else
+  allcomp_read_restart=".true."
+  allcomp_start_type="continue"
 fi
 
 nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
@@ -231,7 +230,6 @@ do
 done
 
 if [ "${APP}" = "LND" ]; then
-  ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
   for itile in {1..6}
   do
@@ -244,6 +242,7 @@ elif [ "${APP}" = "ATML" ]; then
     ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ls.tile${itile}.nc oro_data_ls.tile${itile}.nc
     ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ss.tile${itile}.nc oro_data_ss.tile${itile}.nc
   done
+  # GFS data files
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_gfs_ctrl.nc gfs_ctrl.nc
   for itile in {1..6}
   do
@@ -252,6 +251,11 @@ elif [ "${APP}" = "ATML" ]; then
 fi
 
 cd -
+
+if [ "${APP}" = "LND" ]; then
+  mkdir -p INPUT_DATM
+  ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* INPUT_DATM/.
+fi
 
 # start runs
 echo "Start ufs-cdeps-land model run with TASKS: ${NPROCS_FORECAST}"

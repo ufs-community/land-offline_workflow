@@ -166,7 +166,7 @@ def set_default_parm():
         "atm_layout_x": 3,
         "atm_layout_y": 8,
         "ccpp_suite": "FV3_GFS_v17_p8",
-        "coldstart": "YES",
+        "coldstart": "NO",
         "coupler_calendar": 2,
         "date_cycle_freq_hr": 24,
         "date_first_cycle": 200001030000,
