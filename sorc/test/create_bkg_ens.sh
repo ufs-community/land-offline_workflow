@@ -37,6 +37,7 @@ if [[ ${DAtype} == 'letkfoi_snow' ]]; then
 
     # update coupler.res file
     settings="\
+      'coupler_calendar': 2
       'yyyy': !!str ${YY}
       'mm': !!str ${MM}
       'dd': !!str ${DD}

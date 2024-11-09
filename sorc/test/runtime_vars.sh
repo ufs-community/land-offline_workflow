@@ -7,7 +7,7 @@ project_source_dir=$2
 
 # Prepare runtime environement
 # set date
-export CYMDH=2000010300
+export CYMDH=2000010400
 export YY=`echo $CYMDH | cut -c1-4`
 export MM=`echo $CYMDH | cut -c5-6`
 export DD=`echo $CYMDH | cut -c7-8`
@@ -52,7 +52,7 @@ export PYTHON_EXEC=${PYTHON_EXEC:-`which python`}
 export RES=96
 export atmos_forc=gswp3
 export TPATH="$FIXlandda/FV3_fix_tiled/C${RES}/"
-export TSTUB="oro_C${RES}.mx100"
+export fn_orog="C${RES}_oro_data"
 export GFSv17=NO
 export OBS_TYPES=("GHCN")
 export DAtype=letkfoi_snow

@@ -10,7 +10,7 @@ source ${project_source_dir}/test/runtime_vars.sh ${project_binary_dir} ${projec
 
 # set extra paths
 OROG_PATH=$TPATH
-OBSDIR="${FIXlandda}/DA"
+OBSDIR="${FIXlandda}/DA_obs"
 
 # set executables
 JEDI_EXEC=${JEDI_EXEC:-$JEDI_EXECDIR/fv3jedi_letkf.x}
@@ -63,8 +63,8 @@ settings="\
   'mp': !!str ${MP}
   'dp': !!str ${DP}
   'hp': !!str ${HP}
-  'tstub': ${TSTUB}
-  'tpath': ${TPATH}
+  'fn_orog': C${RES}_oro_data
+  'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
   'res': ${RES}
   'resp1': ${RESP1}
   'driver_obs_only': false
@@ -83,5 +83,6 @@ ln -fs $JEDI_STATICDIR ./
 cp $project_source_dir/../parm/jedi/gfs-land.yaml .
 
 #
+MPIRUN="${MPIRUN:-srun}"
 echo "============================= calling ${JEDI_EXEC} with ${MPIRUN}"
 ${MPIRUN} -n $NPROC ${JEDI_EXEC} letkf_land.yaml
