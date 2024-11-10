@@ -32,6 +32,12 @@ load(pathJoin("w3emc", w3emc_ver))
 load(pathJoin("gftl-shared", gftl_shared_ver))
 load(pathJoin("mapl", mapl_ver))
 load(pathJoin("scotch", scotch_ver))
+
+load(pathJoin("nemsio", nemsio_ver))
+load(pathJoin("sfcio", sfcio_ver))
+load(pathJoin("sigio", sigio_ver))
+load(pathJoin("nccmp", nccmp_ver))
+
 load(pathJoin("prod_util", prod_util_ver))
 load(pathJoin("ufs-pyenv", ufs_pyenv_ver))
 
