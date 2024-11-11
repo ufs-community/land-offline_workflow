@@ -12,6 +12,7 @@ import sys
 import shutil
 import yaml
 import math
+from datetime import datetime, timedelta
 
 dirpath = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirpath, '../ush'))
@@ -66,6 +67,13 @@ def setup_wflow_env(machine):
         config_parm.update({'exp_case_name': exp_case_name})
     else:
         exp_case_name = config_parm.get("exp_case_name")
+
+    # Calculate date for the second cycle
+    date_first_cycle = config_parm.get("date_first_cycle")
+    date_cycle_freq_hr = config_parm.get("date_cycle_freq_hr")
+    next_date = datetime.strptime(str(date_first_cycle), "%Y%m%d%H") + timedelta(hours=date_cycle_freq_hr)
+    date_second_cycle = next_date.strftime("%Y%m%d%H")
+    config_parm["date_second_cycle"] = date_second_cycle
 
     # Calculate HPC parameter values
     app = config_parm.get("app")
