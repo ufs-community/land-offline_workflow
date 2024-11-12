@@ -10,9 +10,9 @@ yearFirst01:               1999
 yearLast01:                2000
 yearAlign01:               1999
 stream_vectors01:          null
-stream_mesh_file01:        INPUT/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
+stream_mesh_file01:        INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
 stream_lev_dimname01:      null
-stream_data_files01:       "INPUT/clmforc.GSWP3.c2011.0.5x0.5.Solr.1999-12.nc" "INPUT/clmforc.GSWP3.c2011.0.5x0.5.Solr.2000-01.nc"
+stream_data_files01:       "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.Solr.1999-12.nc" "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.Solr.2000-01.nc"
 stream_data_variables01:   "FSDS Faxa_swdn"
 
 taxmode02:                 limit
@@ -25,9 +25,9 @@ yearFirst02:               1999
 yearLast02:                2000
 yearAlign02:               1999
 stream_vectors02:          null
-stream_mesh_file02:        INPUT/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
+stream_mesh_file02:        INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
 stream_lev_dimname02:      null
-stream_data_files02:       "INPUT/clmforc.GSWP3.c2011.0.5x0.5.Prec.1999-12.nc" "INPUT/clmforc.GSWP3.c2011.0.5x0.5.Prec.2000-01.nc"
+stream_data_files02:       "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.Prec.1999-12.nc" "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.Prec.2000-01.nc"
 stream_data_variables02:   "PRECTmms Faxa_precn"
 
 taxmode03:                 limit
@@ -40,9 +40,9 @@ yearFirst03:               1999
 yearLast03:                2000
 yearAlign03:               1999
 stream_vectors03:          null
-stream_mesh_file03:        INPUT/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
+stream_mesh_file03:        INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.SCRIP.210520_ESMFmesh.nc
 stream_lev_dimname03:      null
-stream_data_files03:       "INPUT/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.1999-12.nc" "INPUT/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.2000-01.nc"
+stream_data_files03:       "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.1999-12.nc" "INPUT_DATM/clmforc.GSWP3.c2011.0.5x0.5.TPQWL.2000-01.nc"
 stream_data_variables03:   "TBOT Sa_tbot" "WIND Sa_wind" "QBOT Sa_shum" "PSRF Sa_pbot" "PSRF Sa_pslv" "FLDS Faxa_lwdn"
 
 taxmode04:                 cycle
@@ -55,7 +55,7 @@ yearFirst04:               1
 yearLast04:                1
 yearAlign04:               1
 stream_vectors04:          null
-stream_mesh_file04:        INPUT/topodata_0.9x1.SCRIP.210520_ESMFmesh.nc
+stream_mesh_file04:        INPUT_DATM/topodata_0.9x1.SCRIP.210520_ESMFmesh.nc
 stream_lev_dimname04:      null
-stream_data_files04:       "INPUT/topodata_0.9x1.25_USGS_070110_stream_c151201.nc"
+stream_data_files04:       "INPUT_DATM/topodata_0.9x1.25_USGS_070110_stream_c151201.nc"
 stream_data_variables04:   "TOPO Sa_topo"

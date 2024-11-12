@@ -126,9 +126,11 @@ else
 fi
 ls -1 "RESTART/${rfile2}">rpointer.atm
 
+mkdir -p INPUT_DATM
+ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* INPUT_DATM/.
+
 mkdir -p INPUT
 cd INPUT
-ln -nsf ${FIXlandda}/DATM_input_data/${ATMOS_FORC}/* .
 for itile in {1..6}
 do
   ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc

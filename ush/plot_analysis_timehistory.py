@@ -8,6 +8,7 @@
 ## History ===============================
 ## V000: 2024/10/14: Chan-Hoo Jeon : Preliminary version
 ## V001: 2024/10/15: Chan-Hoo Jeon : Add wall-clock time plot
+## V002: 2024/10/31: Chan-Hoo Jeon : Fix input log file name issue
 ###################################################################### CHJ #####
 
 import os, sys
@@ -64,11 +65,13 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
     fp_data_anal_prefix = os.path.join(path_data,fn_data_anal_prefix)
     files = []
     for entry in os.scandir(path_data):
-        if entry.is_file() and entry.name.startswith(fn_data_anal_prefix):
+        if entry.is_file() and \
+           entry.name.startswith(fn_data_anal_prefix) and \
+           entry.name.endswith(fn_data_anal_suffix):
             files.append(entry.path)
 
     files.sort()
-    #print("Files=",files)
+    print("Files=",files)
 
     nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
     wtime_oops_prefix = "OOPS_STATS util::Timers::Total"
@@ -134,12 +137,36 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
                         wtime_oops_file = float(line_split[2])
                         #print("WTIME OOPS AVG=",wtime_oops_file)
 
-        min_val_final.append(min_val_file[-1])
-        max_val_final.append(max_val_file[-1])
-        rms_val_final.append(rms_val_file[-1])
-        nobs_qc_final.append(nobs_qc_file[-1])
-        nobs_in_final.append(nobs_in_file[-1])
-        wtime_oops.append(wtime_oops_file)
+        if not min_val_file:
+            min_val_final.append(None)
+        else:
+            min_val_final.append(min_val_file[-1])
+
+        if not max_val_file:
+            max_val_final.append(None)
+        else:
+            max_val_final.append(max_val_file[-1])
+
+        if not rms_val_file:
+            rms_val_final.append(None)
+        else:
+            rms_val_final.append(rms_val_file[-1])
+
+        if not nobs_qc_file:
+            nobs_qc_final.append(None)
+        else:
+            nobs_qc_final.append(nobs_qc_file[-1])
+
+        if not nobs_in_file:
+            nobs_in_final.append(None)
+        else:
+            nobs_in_final.append(nobs_in_file[-1])
+
+        if not wtime_oops_file:
+            wtime_oops.append(None)
+        else:
+            wtime_oops.append(wtime_oops_file)
+
     # ms to sec 
     wtime_oops = [x * 0.001 for x in wtime_oops]
     tcpu_oops = [x * nprocs_anal for x in wtime_oops]
@@ -193,7 +220,10 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
                     wtime_uwm_file = float(line_split)
                     #print("WTIME UFS Weather Model=",wtime_uwm_file)
 
-        wtime_uwm.append(wtime_uwm_file)
+        if not wtime_uwm_file:
+            wtime_uwm.append(None)
+        else:
+            wtime_uwm.append(wtime_uwm_file)
 
     tcpu_uwm = [x * nprocs_fcst for x in wtime_uwm]
 
