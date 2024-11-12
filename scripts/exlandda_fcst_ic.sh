@@ -50,18 +50,18 @@ elif [ "${APP}" = "ATML" ]; then
   fi
 
   settings="
-   'cycle_mon': $((10#${MM}))
-   'cycle_day': $((10#${DD}))
-   'cycle_hour': $((10#${HH}))
-   'atm_files_input_grid': ${fn_atm_data}
-   'data_dir_input_grid': ${COMINgfs}/gfs.${PDY}/${cyc}/atmos
-   'fix_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
-   'input_type': ${input_type}
    'mosaic_file_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_mosaic.nc
+   'fix_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
    'orog_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
-   'res': ${RES}
    'sfc_files_input_grid': ${fn_sfc_data}
+   'atm_files_input_grid': ${fn_atm_data}
+   'data_dir_input_grid': ${COMINgfs}/${PDY}
    'vcoord_file_target_grid': ${FIXlandda}/FV3_fix_global/global_hyblev.l128.txt
+   'cycle_mon': !!str ${MM}
+   'cycle_day': !!str ${DD}
+   'cycle_hour': !!str ${HH}
+   'input_type': ${input_type}
+   'res': ${RES}
   "
   
   fp_template="${PARMlandda}/templates/template.chgres_cube"
@@ -78,7 +78,14 @@ elif [ "${APP}" = "ATML" ]; then
   export pgm="chgres_cube"
   
   . prep_step
-  eval ${RUN_CMD} ${EXEClandda}/$pgm >>$pgmout 2>errfile
+  eval ${RUN_CMD} -n ${NPROCS_FCST_IC} ${EXEClandda}/$pgm >>$pgmout 2>errfile
   export err=$?; err_chk
+
+  cp -p ${DATA}/gfs_ctrl.nc ${COMOUT}
+  for itile in {1..6}
+  do
+    cp -p ${DATA}/out.atm.tile${itile}.nc ${COMOUT}/gfs_data.tile${itile}.nc
+    cp -p ${DATA}/out.sfc.tile${itile}.nc ${COMOUT}/sfc_data.tile${itile}.nc
+  done
 
 fi

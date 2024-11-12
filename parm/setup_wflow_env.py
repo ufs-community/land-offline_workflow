@@ -217,6 +217,7 @@ def set_default_parm():
         "model_ver": "v2.1.0",
         "net": "landda",
         "nprocs_analysis": 6,
+        "nprocs_fcst_ic": 36,
         "obsdir": "",
         "obsdir_subdir": "",
         "obs_types": "GHCN",

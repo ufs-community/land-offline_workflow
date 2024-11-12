@@ -49,6 +49,7 @@ workflow:
     NET: "{{ net }}"
     NNODES_FORECAST: "{{ nnodes_forecast }}"
     NPROCS_ANALYSIS: "{{ nprocs_analysis }}"
+    NPROCS_FCST_IC: "{{ nprocs_fcst_ic }}"
     NPROCS_FORECAST: "{{ nprocs_forecast }}"
     NPROCS_FORECAST_ATM: "{{ nprocs_forecast_atm }}"
     NPROCS_FORECAST_LND: "{{ nprocs_forecast_lnd }}"
@@ -126,13 +127,14 @@ workflow:
         KEEPDATA: "&KEEPDATA;"
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
+        NPROCS_FCST_IC: "&NPROCS_FCST_IC;"
         PDY: "&PDY;"
         RES: "&RES;"
         SCHED: "&SCHED;"
       account: "&ACCOUNT;"
       command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "fcst_ic" "&HOMElandda;" "&MACHINE;"'
       jobname: fcst_ic
-      nodes: "1:ppn=12;"
+      nodes: "1:ppn=&NPROCS_FCST_IC;"
       walltime: 00:15:00
       queue: batch
       join: "&LOGDIR;/fcst_ic&LOGFN_SUFFIX;"
