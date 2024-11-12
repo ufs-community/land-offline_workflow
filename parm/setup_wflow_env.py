@@ -161,6 +161,23 @@ def setup_wflow_env(machine):
         file.write(fdata)
     os.chmod(fp_launch_script, 0o755)
 
+    # Add links to log/tmp/com directories within exp_case directory
+    envir = config_parm.get("envir")
+    model_ver = config_parm.get("model_ver")    
+    net = config_parm.get("net")
+    run = config_parm.get("run")
+    ptmp = os.path.join(exp_basedir,"ptmp")
+    log_dir_src = os.path.join(ptmp, envir, "com/output/logs")
+    log_dir_dst = os.path.join(exp_case_path, "log_dir")
+    tmp_dir_src = os.path.join(ptmp, envir, "tmp")
+    tmp_dir_dst = os.path.join(exp_case_path, "tmp_dir")
+    com_dir_src = os.path.join(ptmp, envir, "com", net, model_ver)
+    com_dir_dst = os.path.join(exp_case_path, "com_dir")
+    os.symlink(log_dir_src, log_dir_dst)
+    os.symlink(tmp_dir_src, tmp_dir_dst)
+    os.symlink(com_dir_src, com_dir_dst)
+
+
 
 # Default values of configuration =================================== CHJ =====
 def set_default_parm():
@@ -173,6 +190,7 @@ def set_default_parm():
         "atm_io_layout_y": 1,
         "atm_layout_x": 3,
         "atm_layout_y": 8,
+        "COMINgfs": "",
         "ccpp_suite": "FV3_GFS_v17_p8",
         "coldstart": "NO",
         "coupler_calendar": 2,

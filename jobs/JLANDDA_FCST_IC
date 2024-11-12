@@ -66,10 +66,12 @@ if [ "${MACHINE}" = "WCOSS2" ]; then
   export COMIN="${COMIN:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
   export COMOUT="${COMOUT:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
   export COMINm1="${COMINm1:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDYm1})}"
+  export COMINgfs="${COMINgfs:-$(compath.py ${envir}/gfs/${gfs_ver})}"
 else
   export COMIN="${COMIN:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
   export COMOUT="${COMOUT:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
   export COMINm1="${COMINm1:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDYm1}}"
+  export COMINgfs="${COMINgfs:-${FIXlandda}/FV3GFS}"
 fi
 
 mkdir -p ${COMOUT}

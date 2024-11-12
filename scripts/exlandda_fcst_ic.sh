@@ -6,7 +6,7 @@ set -xue
 if [ "${APP}" = "LND" ]; then
   echo "This step is skipped for APP=LND because it is not necessary." 
 
-elif ["${APP}" = "ATML" ]; then
+elif [ "${APP}" = "ATML" ]; then
 
   case $MACHINE in
     "hera")
@@ -38,35 +38,30 @@ elif ["${APP}" = "ATML" ]; then
   else
     data_format="nemsio"
   fi
-  
-  fn_atm="${EXTRN_MDL_FNS[0]}"
-  fn_sfc="${EXTRN_MDL_FNS[1]}"
-  tracers_input="[\"spfh\",\"clwmr\",\"o3mr\",\"icmr\",\"rwmr\",\"snmr\",\"grle\"]"
-  tracers="[\"sphum\",\"liq_wat\",\"o3mr\",\"ice_wat\",\"rainwat\",\"snowwat\",\"graupel\"]"
+
   if [ "${data_format}" = "nemsio" ]; then
     input_type="gaussian_nemsio"
+    fn_atm_data="gfs.${cycle}.atmanl.nemsio"
+    fn_sfc_data="gfs.${cycle}.sfcanl.nemsio"
   elif [ "${data_format}" = "netcdf" ]; then
     input_type="gaussian_netcdf"
+    fn_atm_data="gfs.${cycle}.atmanl.nc"
+    fn_sfc_data="gfs.${cycle}.sfcanl.nc"
   fi
-  
+
   settings="
    'cycle_mon': $((10#${MM}))
    'cycle_day': $((10#${DD}))
    'cycle_hour': $((10#${HH}))
-   'atm_files_input_grid': ${fn_atm}
-   'convert_atm': True
-   'convert_nst': True
-   'convert_sfc': True
-   'data_dir_input_grid': ${DATA}
-   'fix_dir_target_grid': ${FIXlam}
+   'atm_files_input_grid': ${fn_atm_data}
+   'data_dir_input_grid': ${COMINgfs}/gfs.${PDY}/${cyc}/atmos
+   'fix_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
    'input_type': ${input_type}
-   'mosaic_file_target_grid': ${FIXlam}/${CRES}_mosaic.halo4.nc
-   'orog_dir_target_grid': ${FIXlam}
-   'orog_files_target_grid': ${CRES}_oro_data.tile7.halo4.nc
-   'sfc_files_input_grid': ${fn_sfc}
-   'tracers': ${tracers}
-   'tracers_input': ${tracers_input}
-   'vcoord_file_target_grid': ${VCOORD_FILE}
+   'mosaic_file_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_mosaic.nc
+   'orog_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
+   'res': ${RES}
+   'sfc_files_input_grid': ${fn_sfc_data}
+   'vcoord_file_target_grid': ${FIXlandda}/FV3_fix_global/global_hyblev.l128.txt
   "
   
   fp_template="${PARMlandda}/templates/template.chgres_cube"

@@ -127,12 +127,13 @@ workflow:
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
         PDY: "&PDY;"
+        RES: "&RES;"
         SCHED: "&SCHED;"
       account: "&ACCOUNT;"
       command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "fcst_ic" "&HOMElandda;" "&MACHINE;"'
       jobname: fcst_ic
-      cores: 1
-      walltime: 00:10:00
+      nodes: "1:ppn=12;"
+      walltime: 00:15:00
       queue: batch
       join: "&LOGDIR;/fcst_ic&LOGFN_SUFFIX;"
 {%- endif %}
