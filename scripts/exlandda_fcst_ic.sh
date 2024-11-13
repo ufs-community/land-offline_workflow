@@ -41,12 +41,12 @@ elif [ "${APP}" = "ATML" ]; then
 
   if [ "${data_format}" = "nemsio" ]; then
     input_type="gaussian_nemsio"
-    fn_atm_data="gfs.${cycle}.atmanl.nemsio"
-    fn_sfc_data="gfs.${cycle}.sfcanl.nemsio"
+    fn_atm_data="gdas.${cycle}.atmanl.nemsio"
+    fn_sfc_data="gdas.${cycle}.sfcanl.nemsio"
   elif [ "${data_format}" = "netcdf" ]; then
     input_type="gaussian_netcdf"
-    fn_atm_data="gfs.${cycle}.atmanl.nc"
-    fn_sfc_data="gfs.${cycle}.sfcanl.nc"
+    fn_atm_data="gdas.${cycle}.atmanl.nc"
+    fn_sfc_data="gdas.${cycle}.sfcanl.nc"
   fi
 
   settings="
@@ -55,7 +55,7 @@ elif [ "${APP}" = "ATML" ]; then
    'orog_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
    'sfc_files_input_grid': ${fn_sfc_data}
    'atm_files_input_grid': ${fn_atm_data}
-   'data_dir_input_grid': ${COMINgfs}/${PDY}
+   'data_dir_input_grid': ${COMINgdas}/${PDY}${cyc}
    'vcoord_file_target_grid': ${FIXlandda}/FV3_fix_global/global_hyblev.l128.txt
    'cycle_mon': !!str ${MM}
    'cycle_day': !!str ${DD}

@@ -54,6 +54,8 @@ if [ "${APP}" = "LND" ]; then
   cp -p "${PARMlandda}/templates/template.${APP}.datm_in" datm_in
   cp -p "${PARMlandda}/templates/template.${APP}.datm.streams" datm.streams
   cp -p "${PARMlandda}/templates/template.${APP}.data_table" data_table
+elif [ "${APP}" = "ATML" ]; then
+  cp -p "${PARMlandda}/templates/template.${APP}.field_table" field_table
 fi
 
 # Set input.nml
@@ -182,10 +184,7 @@ if [ "${APP}" = "LND" ]; then
   fi
   ls -1 "${rfile2}">rpointer.atm
 elif [ "${APP}" = "ATML" ]; then
-  for itile in {1..6}
-  do
-    ln -nsf ${FIXlandda}/FV3_fix_global/* .
-  done
+  ln -nsf ${FIXlandda}/FV3_fix_global/* .
 fi
 
 ###############################
@@ -218,19 +217,21 @@ cd INPUT
 
 for itile in {1..6}
 do
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.facsf.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.maximum_snow_albedo.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.slope_type.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_type.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.snowfree_albedo.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_color.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_type.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.substrate_temperature.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_greenness.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_type.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc oro_data.tile${itile}.nc
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid.tile${itile}.nc .
 done
+ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_mosaic.nc .
 
 if [ "${APP}" = "LND" ]; then
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
   for itile in {1..6}
   do
     ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc
@@ -242,12 +243,15 @@ elif [ "${APP}" = "ATML" ]; then
     ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ls.tile${itile}.nc oro_data_ls.tile${itile}.nc
     ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data_ss.tile${itile}.nc oro_data_ss.tile${itile}.nc
   done
-  # GFS data files
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_gfs_ctrl.nc gfs_ctrl.nc
-  for itile in {1..6}
-  do
-    ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_gfs_data.tile${itile}.nc gfs_data.tile${itile}.nc
-  done
+  # GFS IC files for cold start
+  if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+    ln -nsf ${COMIN}/gfs_ctrl.nc .
+    for itile in {1..6}
+    do
+      ln -nsf ${COMIN}/gfs_data.tile${itile}.nc .
+      ln -nsf ${COMIN}/sfc_data.tile${itile}.nc .
+    done
+  fi
 fi
 
 cd -

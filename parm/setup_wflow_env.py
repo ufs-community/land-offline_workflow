@@ -190,7 +190,7 @@ def set_default_parm():
         "atm_io_layout_y": 1,
         "atm_layout_x": 3,
         "atm_layout_y": 8,
-        "COMINgfs": "",
+        "COMINgdas": "",
         "ccpp_suite": "FV3_GFS_v17_p8",
         "coldstart": "NO",
         "coupler_calendar": 2,
