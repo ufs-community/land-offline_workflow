@@ -15,6 +15,7 @@ envir: test_atml
 exp_case_name: atml_test_00
 fcsthr: 24
 fhrot: 0
+ic_data_model: GDAS
 imo: 384
 jmo: 190
 lnd_calc_snet: .false.

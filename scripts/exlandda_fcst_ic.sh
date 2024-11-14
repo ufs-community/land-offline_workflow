@@ -39,27 +39,59 @@ elif [ "${APP}" = "ATML" ]; then
     data_format="nemsio"
   fi
 
-  if [ "${data_format}" = "nemsio" ]; then
-    input_type="gaussian_nemsio"
-    fn_atm_data="gdas.${cycle}.atmanl.nemsio"
-    fn_sfc_data="gdas.${cycle}.sfcanl.nemsio"
-  elif [ "${data_format}" = "netcdf" ]; then
-    input_type="gaussian_netcdf"
-    fn_atm_data="gdas.${cycle}.atmanl.nc"
-    fn_sfc_data="gdas.${cycle}.sfcanl.nc"
+  if [ "${IC_DATA_MODEL}" = "GFS" ] || [ "${IC_DATA_MODEL}" = "gfs" ]; then
+    fn_data_prefix="gfs"
+    data_dir_input_grid="${COMINgfs}/${PDY}${cyc}"
+  elif [ "${IC_DATA_MODEL}" = "GDAS" ] || [ "${IC_DATA_MODEL}" = "gdas" ]; then
+    fn_data_prefix="gdas"
+    data_dir_input_grid="${COMINgdas}/${PDY}${cyc}"
   fi
 
+  if [ "${data_format}" = "nemsio" ]; then
+    input_type="gaussian_nemsio"
+    fn_atm_data="${fn_data_prefix}.${cycle}.atmanl.nemsio"
+    fn_sfc_data="${fn_data_prefix}.${cycle}.sfcanl.nemsio"
+  elif [ "${data_format}" = "netcdf" ]; then
+    input_type="gaussian_netcdf"
+    fn_atm_data="${fn_data_prefix}.${cycle}.atmanl.nc"
+    fn_sfc_data="${fn_data_prefix}.${cycle}.sfcanl.nc"
+  fi
+
+#  if [ "${RES}" = "96" ]; then
+#    mxnum=".mx100"
+#  else
+#    mxnum=""
+#  fi
+
+  mkdir -p fix_sfc
+  sfc_fns=( "facsf" "maximum_snow_albedo" "slope_type" "snowfree_albedo" "soil_color" \
+	    "soil_type" "substrate_temperature" "vegetation_greenness" "vegetation_type" )
+  for ifn in "${sfc_fns[@]}" ; do
+    for itile in {1..6}
+    do
+      ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/sfc_mx100/C${RES}.${ifn}.tile${itile}.nc" "fix_sfc/C${RES}.${ifn}.tile${itile}.nc"
+    done
+  done
+
+  mkdir -p fix_oro
+  ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_mosaic.nc" fix_oro/.
+  for itile in {1..6}
+  do
+    ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid.tile${itile}.nc" fix_oro/.
+    ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc" fix_oro/.
+  done
+
   settings="
-   'mosaic_file_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_mosaic.nc
-   'fix_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
-   'orog_dir_target_grid': ${FIXlandda}/FV3_fix_tiled/C${RES}
+   'mosaic_file_target_grid': ${DATA}/fix_oro/C${RES}_mosaic.nc
+   'fix_dir_target_grid': ${DATA}/fix_sfc
+   'orog_dir_target_grid': ${DATA}/fix_oro
    'sfc_files_input_grid': ${fn_sfc_data}
    'atm_files_input_grid': ${fn_atm_data}
-   'data_dir_input_grid': ${COMINgdas}/${PDY}${cyc}
+   'data_dir_input_grid': ${data_dir_input_grid}
    'vcoord_file_target_grid': ${FIXlandda}/FV3_fix_global/global_hyblev.l128.txt
-   'cycle_mon': !!str ${MM}
-   'cycle_day': !!str ${DD}
-   'cycle_hour': !!str ${HH}
+   'cycle_mon': ${MM}
+   'cycle_day': ${DD}
+   'cycle_hour': ${HH}
    'input_type': ${input_type}
    'res': ${RES}
   "

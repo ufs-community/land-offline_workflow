@@ -203,6 +203,7 @@ def set_default_parm():
         "exp_case_name": None,
         "fcsthr": 24,
         "fhrot": 0,
+        "ic_data_model": "GFS",
         "imo": 384,
         "jedi_install": "/path/to/jedi/install/dir",
         "jmo": 190,

@@ -192,22 +192,24 @@ fi
 ################################
 mkdir -p RESTART
 
-# NoahMP restart files
-for itile in {1..6}
-do
-  ln -nsf ${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-${HHsec_5d}.tile${itile}.nc
-done
+if [ "${COLDSTART}" != "YES" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
+  # NoahMP restart files
+  for itile in {1..6}
+  do
+    ln -nsf ${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-${HHsec_5d}.tile${itile}.nc
+  done
 
-# CMEPS restart and pointer files
-rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
-if [[ -e "${COMINm1}/${rfile1}" ]]; then
-  ln -nsf "${COMINm1}/${rfile1}" RESTART/.
-elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
-  ln -nsf "${WARMSTART_DIR}/${rfile1}" RESTART/.
-else
-  ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile1} RESTART/.
+  # CMEPS restart and pointer files
+  rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
+  if [[ -e "${COMINm1}/${rfile1}" ]]; then
+    ln -nsf "${COMINm1}/${rfile1}" RESTART/.
+  elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
+    ln -nsf "${WARMSTART_DIR}/${rfile1}" RESTART/.
+  else
+    ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile1} RESTART/.
+  fi
+  ls -1 "./RESTART/${rfile1}">rpointer.cpl
 fi
-ls -1 "./RESTART/${rfile1}">rpointer.cpl
 
 #############################
 # Set up INPUT directory
@@ -215,17 +217,17 @@ ls -1 "./RESTART/${rfile1}">rpointer.cpl
 mkdir -p INPUT
 cd INPUT
 
+sfc_fns=( "facsf" "maximum_snow_albedo" "slope_type" "snowfree_albedo" "soil_color" \
+          "soil_type" "substrate_temperature" "vegetation_greenness" "vegetation_type" )
+for ifn in "${sfc_fns[@]}" ; do
+  for itile in {1..6};
+  do
+    cp -p "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.${ifn}.tile${itile}.nc" .
+  done
+done
+
 for itile in {1..6}
 do
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.facsf.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.maximum_snow_albedo.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.slope_type.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.snowfree_albedo.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_color.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_type.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.substrate_temperature.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_greenness.tile${itile}.nc .
-  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_type.tile${itile}.nc .
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc oro_data.tile${itile}.nc
   ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid.tile${itile}.nc .
 done
