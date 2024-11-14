@@ -12,9 +12,6 @@ MP=${PTIME:4:2}
 DP=${PTIME:6:2}
 HP=${PTIME:8:2}
 
-################################################
-# 2. PREPARE OBS FILES
-################################################
 OBSDIR="${OBSDIR:-${FIXlandda}/DA_obs}"
 for obs in "${OBS_TYPES[@]}"; do
   # get the obs file name
@@ -35,15 +32,14 @@ for obs in "${OBS_TYPES[@]}"; do
     OBSDIR_SUBDIR="${OBSDIR_SUBDIR:-synthetic_noahmp}"
     obsfile="${OBSDIR}/${OBSDIR_SUBDIR}/IODA.synthetic_gswp_obs.${YYYY}${MM}${DD}${HH}.nc"
   else
-    echo "do_landDA: Unknown obs type requested ${obs}, exiting"
-    exit 1
+    err_exit "Unknown obs type requested ${obs}, exiting"
   fi
 
   # check obs are available
   if [[ -e $obsfile ]]; then
-    echo "do_landDA: $obs observations found: $obsfile"
+    echo "$obs observations found: $obsfile"
     cp -p $obsfile ${COMOUTobs}/${obs}_${YYYY}${MM}${DD}${HH}.nc
   else
-    echo "${obs} observations not found: $obsfile"
+    err_exit "${obs} observations not found: $obsfile"
   fi
 done

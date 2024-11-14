@@ -69,7 +69,7 @@ elif [ "${APP}" = "ATML" ]; then
   for ifn in "${sfc_fns[@]}" ; do
     for itile in {1..6}
     do
-      ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/sfc_mx100/C${RES}.${ifn}.tile${itile}.nc" "fix_sfc/C${RES}.${ifn}.tile${itile}.nc"
+      ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.${ifn}.tile${itile}.nc" "fix_sfc/C${RES}.${ifn}.tile${itile}.nc"
     done
   done
 

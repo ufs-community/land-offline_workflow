@@ -2,8 +2,6 @@
 
 set -xue
 
-echo '************************************************'
-echo 'running the forecast model' 
 
 case $MACHINE in
   "hera")
@@ -201,7 +199,7 @@ if [ "${COLDSTART}" != "YES" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}"
 
   # CMEPS restart and pointer files
   rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
-  if [[ -e "${COMINm1}/${rfile1}" ]]; then
+  if [[ -e "${COMINm1}/RESTART/${rfile1}" ]]; then
     ln -nsf "${COMINm1}/${rfile1}" RESTART/.
   elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
     ln -nsf "${WARMSTART_DIR}/${rfile1}" RESTART/.
@@ -278,13 +276,19 @@ fi
 # copy model ouput to COM
 for itile in {1..6}
 do
-  cp -p ${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile${itile}.nc ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc
+  cp -p "${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile${itile}.nc" "${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc"
 done
 
-cp -p ${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}
+# link restart for next cycle
+for itile in {1..6}
+do
+  ln -nsf ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc ${DATA_RESTART}/.
+done
+
+cp -p "${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc" ${COMOUT}/RESTART/.
 
 if [ "${APP}" = "LND" ]; then
-  cp -p ${DATA}/ufs.cpld.datm.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}
+  cp -p ${DATA}/ufs.cpld.datm.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}/.
 elif [ "${APP}" = "ATML" ]; then
   read -ra out_fh <<< "${OUTPUT_FH}"
   out_fh1="${out_fh[0]}"
@@ -303,13 +307,18 @@ elif [ "${APP}" = "ATML" ]; then
       mv "${DATA}/sfcf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.sfc.f${ihr_3d}.c${RES}.nc"
     done
   done
-fi
+  # RESTART directory
+  cp -p "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.coupler.res" ${COMOUT}/RESTART/.
+  cp -p "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.fv_core.res.nc" ${COMOUT}/RESTART/.
 
-# link restart for next cycle
-for itile in {1..6}
-do
-  ln -nsf ${COMOUT}/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc ${DATA_RESTART}
-done
+  rst_fns=( "ca_data" "fv_core.res" "fv_srf_wnd.res" "fv_tracer.res" "phy_data" "sfc_data" )
+  for ifn in "${rst_fns[@]}" ; do
+    for itile in {1..6};
+    do
+      mv "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.${ifn}.tile${itile}.nc" ${COMOUT}/RESTART/.
+    done
+  done
+fi
 
 # WE2E test
 if [[ "${WE2E_TEST}" == "YES" ]]; then

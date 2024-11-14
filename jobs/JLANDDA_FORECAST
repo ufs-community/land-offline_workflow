@@ -74,6 +74,9 @@ fi
 
 mkdir -p ${COMOUT}
 
+# RESTART directory in COMOUT
+mkdir -p ${COMOUT}/RESTART
+
 # Create a teomporary share directory
 export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
 mkdir -p ${DATA_SHARE}
