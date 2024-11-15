@@ -88,8 +88,7 @@ if [[ ${DAtype} == "letkfoi_snow" ]]; then
   # using ioda mods to get a python version with netCDF4
   ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
   if [[ $? != 0 ]]; then
-    echo "letkf create failed"
-    exit 10
+    err_exit "letkf create failed"
   fi
 fi
 
@@ -200,8 +199,7 @@ if [[ $do_DA == "YES" ]]; then
   export err=$?; err_chk
   cp errfile errfile_jedi_letkf
   if [[ $err != 0 ]]; then
-    echo "JEDI DA failed"
-    exit 10
+    err_exit "JEDI DA failed"
   fi
 fi 
 if [[ $do_HOFX == "YES" ]]; then
@@ -211,8 +209,7 @@ if [[ $do_HOFX == "YES" ]]; then
   export err=$?; err_chk
   cp errfile errfile_jedi_hofx
   if [[ $err != 0 ]]; then
-    echo "JEDI hofx failed"
-    exit 10
+    err_exit "JEDI hofx failed"
   fi
 fi 
 
@@ -244,8 +241,7 @@ EOF
     export err=$?; err_chk
     cp errfile errfile_apply_incr
     if [[ $err != 0 ]]; then
-      echo "apply snow increment failed"
-      exit 10
+      err_exit "apply snow increment failed"
     fi
   fi
 

@@ -13,21 +13,17 @@ HP=${PTIME:8:2}
 
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
-# tile2tile for DA
-echo '************************************************'
-echo 'calling tile2tile'    
- 
 # copy restarts into work directory
 for itile in {1..6}
 do
+  out_fn="ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc"
   rst_fn="ufs_land_restart.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc"
-  if [[ -e ${DATA_RESTART}/${rst_fn} ]]; then
-    cp ${DATA_RESTART}/${rst_fn} .
-  elif [[ -e ${WARMSTART_DIR}/${rst_fn} ]]; then
-    cp ${WARMSTART_DIR}/${rst_fn} .
+  if [[ -e ${DATA_RESTART}/${out_fn} ]]; then
+    cp ${DATA_RESTART}/${out_fn} ${rst_fn}
+  elif [[ -e ${WARMSTART_DIR}/${out_fn} ]]; then
+    cp ${WARMSTART_DIR}/${out_fn} ${rst_fn}
   else
-    echo "Initial restart files do not exist"
-    exit 21
+    err_exit "Initial restart files do not exist"
   fi
   # copy restart to data share dir for post_anal
   cp -p ${rst_fn} ${DATA_SHARE}
@@ -55,8 +51,7 @@ ${EXEClandda}/$pgm ufs2jedi.namelist >>$pgmout 2>errfile
 cp errfile errfile_tile2tile
 export err=$?; err_chk
 if [[ $err != 0 ]]; then
-  echo "tile2tile failed"
-  exit 22 
+  err_exit "tile2tile failed"
 fi
 
 #stage restarts for applying JEDI update to intermediate directory

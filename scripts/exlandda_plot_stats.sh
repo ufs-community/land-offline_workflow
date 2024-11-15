@@ -45,8 +45,7 @@ EOF
 
 ${USHlandda}/hofx_analysis_stats.py
 if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Scatter/Histogram plots failed"
-  exit 33
+  err_exit "Scatter/Histogram plots failed"
 fi
 
 # Copy result files to COMOUT
@@ -83,8 +82,7 @@ EOF
 
 ${USHlandda}/plot_analysis_timehistory.py
 if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Time-history plots failed"
-  exit 44
+  err_exit "Time-history plots failed"
 fi
 
 # Copy result files to COMOUT
@@ -115,8 +113,7 @@ EOF
 
 ${USHlandda}/plot_forecast_restart.py
 if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Forecast restart plots failed"
-  exit 44
+  err_exit "Forecast restart plots failed"
 fi
 
 # Copy result files to COMOUT

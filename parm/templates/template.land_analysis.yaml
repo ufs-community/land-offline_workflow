@@ -77,10 +77,10 @@ workflow:
     LOGFN_SUFFIX: "<cyclestr>_@Y@m@d@H.log</cyclestr>"
     PDY:  "<cyclestr>@Y@m@d</cyclestr>"
     cyc: "<cyclestr>@H</cyclestr>"
-    DATADEP_FILE1: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>"
-    DATADEP_FILE2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.nc</cyclestr>"
-    DATADEP_FILE3: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>"
-    DATADEP_FILE4: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.nc</cyclestr>"
+    DATADEP_FILE1: "<cyclestr>&WARMSTART_DIR;/ufs.cpld.lnd.out.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>"
+    DATADEP_FILE2: "<cyclestr>&WARMSTART_DIR;/ufs.cpld.lnd.out.@Y-@m-@d_@H-00-00.nc</cyclestr>"
+    DATADEP_FILE3: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs.cpld.lnd.out.@Y-@m-@d_@H-00-00.tile1.nc</cyclestr>"
+    DATADEP_FILE4: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs.cpld.lnd.out.@Y-@m-@d_@H-00-00.nc</cyclestr>"
   log: "&LOGDIR;/workflow.log"
   tasks:
     task_prep_obs:

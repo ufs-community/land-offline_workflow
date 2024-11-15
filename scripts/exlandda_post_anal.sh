@@ -71,8 +71,7 @@ ${EXEClandda}/$pgm jedi2ufs.namelist >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_tile2tile
 if [[ $err != 0 ]]; then
-  echo "tile2tile failed"
-  exit 10
+  err_exit "tile2tile failed"
 fi
 
 # save analysis restart
