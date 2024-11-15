@@ -200,11 +200,11 @@ if [ "${COLDSTART}" != "YES" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}"
   # CMEPS restart and pointer files
   rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
   if [[ -e "${COMINm1}/RESTART/${rfile1}" ]]; then
-    ln -nsf "${COMINm1}/${rfile1}" RESTART/.
+    ln -nsf "${COMINm1}/RESTART/${rfile1}" RESTART/.
   elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
     ln -nsf "${WARMSTART_DIR}/${rfile1}" RESTART/.
   else
-    ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile1} RESTART/.
+    err_exit "ufs.cpld.cpl.r file does not exist."
   fi
   ls -1 "./RESTART/${rfile1}">rpointer.cpl
 fi
@@ -279,7 +279,7 @@ fi
 # Copy and link output file to restart for next cycle
 for itile in {1..6}
 do
-  cp -p "${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHHsec_5d}.tile${itile}.nc" "${COMOUT}/RESTART/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc"
+  cp -p "${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile${itile}.nc" "${COMOUT}/RESTART/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc"
   ln -nsf "${COMOUT}/RESTART/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc" ${DATA_RESTART}/.
 done
 
@@ -287,8 +287,7 @@ done
 lnd_out_freq_hr=$(( LND_OUTPUT_FREQ_SEC / 3600 ))
 lnd_out_hr=$(( cyc + lnd_out_freq_hr ))
 lnd_fcst_hh=${lnd_out_freq_hr}
-while [ "${lnd_fcst_hh}" <= "${FCSTHR}" ]
-do
+while [ ${lnd_fcst_hh} -le ${FCSTHR} ]; do
   lnd_out_date=$($NDATE $lnd_out_hr $PDY$cyc)
   lnd_out_yyyy=${lnd_out_date:0:4}
   lnd_out_mm=${lnd_out_date:4:2}
@@ -297,15 +296,17 @@ do
   lnd_out_hh_sec=$(( lnd_out_hh * 3600 ))
   lnd_out_hh_sec_5d=$(printf "%05d" "${lnd_out_hh_sec}")
   lnd_fcst_hh_3d=$(printf "%03d" "${lnd_fcst_hh}")
+  # land output files
   for itile in {1..6}
   do
     mv "${DATA}/ufs.cpld.lnd.out.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.lnd.f${lnd_fcst_hh_3d}.C${RES}.tile${itile}.nc"
   done
+  # ufs.cpld.cpl.r files
+  cp -p "${DATA}/RESTART/ufs.cpld.cpl.r.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.nc" ${COMOUT}/RESTART/.
+
   lnd_fcst_hh=$(( lnd_fcst_hh + lnd_out_freq_hr ))
   lnd_out_hr=$(( lnd_out_hr + lnd_out_freq_hr ))
 done
-
-cp -p "${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc" ${COMOUT}/RESTART/.
 
 if [ "${APP}" = "LND" ]; then
   cp -p ${DATA}/ufs.cpld.datm.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc ${COMOUT}/.
@@ -343,7 +344,7 @@ fi
 # WE2E test
 if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
-  fn_res0="ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHHsec_5d}.tile"
+  fn_res0="ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile"
   fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   

@@ -102,7 +102,7 @@ ALLCOMP_attributes::
   ScalarFieldIdxGridNTile = 3
   ScalarFieldIdxNextSwCday = 4 # required for data atmosphere configurations
   ScalarFieldName = cpl_scalars
-  start_type = startup
+  start_type = continue
   restart_dir = ./RESTART/
   case_name = ufs.cpld
   restart_n = 1
@@ -112,7 +112,7 @@ ALLCOMP_attributes::
   stop_n = 24
   stop_option = nhours
   stop_ymd = -999
-  read_restart = .false.
+  read_restart = .true.
   mediator_present = true
   orb_eccen = 1.e36
   orb_iyear = 2000

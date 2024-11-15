@@ -33,6 +33,7 @@ cp -p ${project_source_dir}/test/parm/fd_ufs.yaml .
 cp -p ${project_source_dir}/test/parm/datm_in .
 cp -p ${project_source_dir}/test/parm/datm.streams .
 cp -p ${project_source_dir}/test/parm/data_table .
+cp -p ${project_source_dir}/test/parm/diag_table .
 cp -p ${project_source_dir}/test/parm/input.nml .
 cp -p ${project_source_dir}/test/parm/model_configure .
 cp -p ${project_source_dir}/test/parm/rpointer.atm .
@@ -41,7 +42,8 @@ cp -p ${project_source_dir}/test/parm/rpointer.cpl .
 # Set RESTART directory
 mkdir -p RESTART
 ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.cpl.r.2000-01-04-00000.nc RESTART/.
-ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.datm.r.2000-01-04-00000.nc RESTART/.
+ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.datm.r.2000-01-04-00000.nc .
+ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.lnd.out.* RESTART/.
 
 # Set INPUT directory
 mkdir -p INPUT
@@ -80,10 +82,11 @@ ${MPIRUN} -n ${NPROCS_FORECAST} ./ufs_model
 echo "Now check model output with ufs-wm baseline!"
 path_fbase="${FIXlandda}/test_base/we2e_com/landda.20000104"
 fn_out="ufs.cpld.lnd.out.2000-01-05-00000.tile"
+fn_res="ufs_land_restart.2000-01-05_00-00-00.tile"
 
 # restart files
 for itile in {1..6}
 do
-  ${project_source_dir}/test/compare.py "${path_fbase}/${fn_out}${itile}.nc" "${fn_out}${itile}.nc" ${ATOL}
+  ${project_source_dir}/test/compare.py "${path_fbase}/RESTART/${fn_res}${itile}.nc" "${fn_out}${itile}.nc" ${ATOL}
 done
 

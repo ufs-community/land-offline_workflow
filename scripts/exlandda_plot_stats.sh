@@ -101,7 +101,7 @@ OUT_TITLE_BASE="Land-DA::restart::${nYYYY}-${nMM}-${nDD}_${nHH}::"
 OUT_FN_BASE="landda_out_restart_${nYYYY}-${nMM}-${nDD}_${nHH}_"
 
 cat > plot_restart.yaml <<EOF
-path_data: '${COMIN}'
+path_data: '${COMIN}/RESTART'
 work_dir: '${DATA}'
 fn_data_base: '${FN_DATA_BASE}'
 fn_data_ext: '${FN_DATA_EXT}'
