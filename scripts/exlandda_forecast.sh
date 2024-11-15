@@ -272,16 +272,37 @@ if [[ $err != 0 ]]; then
   err_exit "ufs_model failed"
 fi
 
+###########################
 # copy model ouput to COM
+###########################
+
+# Copy and link output file to restart for next cycle
 for itile in {1..6}
 do
-  cp -p "${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile${itile}.nc" ${COMOUT}/.
+  cp -p "${DATA}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHHsec_5d}.tile${itile}.nc" "${COMOUT}/RESTART/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc"
+  ln -nsf "${COMOUT}/RESTART/ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc" ${DATA_RESTART}/.
 done
 
-# link restart for next cycle
-for itile in {1..6}
+# Move land output to COMOUT
+lnd_out_freq_hr=$(( LND_OUTPUT_FREQ_SEC / 3600 ))
+lnd_out_hr=$(( cyc + lnd_out_freq_hr ))
+lnd_fcst_hh=${lnd_out_freq_hr}
+while [ "${lnd_fcst_hh}" <= "${FCSTHR}" ]
 do
-  ln -nsf "${COMOUT}/ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile${itile}.nc" ${DATA_RESTART}/.
+  lnd_out_date=$($NDATE $lnd_out_hr $PDY$cyc)
+  lnd_out_yyyy=${lnd_out_date:0:4}
+  lnd_out_mm=${lnd_out_date:4:2}
+  lnd_out_dd=${lnd_out_date:6:2}
+  lnd_out_hh=${lnd_out_date:8:2}
+  lnd_out_hh_sec=$(( lnd_out_hh * 3600 ))
+  lnd_out_hh_sec_5d=$(printf "%05d" "${lnd_out_hh_sec}")
+  lnd_fcst_hh_3d=$(printf "%03d" "${lnd_fcst_hh}")
+  for itile in {1..6}
+  do
+    mv "${DATA}/ufs.cpld.lnd.out.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.lnd.f${lnd_fcst_hh_3d}.C${RES}.tile${itile}.nc"
+  done
+  lnd_fcst_hh=$(( lnd_fcst_hh + lnd_out_freq_hr ))
+  lnd_out_hr=$(( lnd_out_hr + lnd_out_freq_hr ))
 done
 
 cp -p "${DATA}/RESTART/ufs.cpld.cpl.r.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.nc" ${COMOUT}/RESTART/.
@@ -322,7 +343,8 @@ fi
 # WE2E test
 if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
-  fn_res="ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
+  fn_res0="ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}_${nHHsec_5d}.tile"
+  fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   
   if [[ ! -e "${we2e_log_fp}" ]]; then
@@ -331,7 +353,7 @@ if [[ "${WE2E_TEST}" == "YES" ]]; then
   # restart files
   for itile in {1..6}
   do
-    ${USHlandda}/compare.py "${path_fbase}/${fn_res}${itile}.nc" "${COMOUT}/${fn_res}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "FORECAST" ${FILEDATE} "ufs.cpld.lnd.out.tile${itile}"
+    ${USHlandda}/compare.py "${path_fbase}/${fn_res0}${itile}.nc" "${COMOUT}/RESTART/${fn_res}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "FORECAST" ${FILEDATE} "ufs_land_restart.tile${itile}"
   done
 fi
 

@@ -6,22 +6,17 @@ YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
 HH=${cyc}
-YYYP=${PTIME:0:4}
-MP=${PTIME:4:2}
-DP=${PTIME:6:2}
-HP=${PTIME:8:2}
 
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
 # copy restarts into work directory
 for itile in {1..6}
 do
-  out_fn="ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc"
   rst_fn="ufs_land_restart.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc"
-  if [[ -e ${DATA_RESTART}/${out_fn} ]]; then
-    cp ${DATA_RESTART}/${out_fn} ${rst_fn}
-  elif [[ -e ${WARMSTART_DIR}/${out_fn} ]]; then
-    cp ${WARMSTART_DIR}/${out_fn} ${rst_fn}
+  if [[ -e ${DATA_RESTART}/${rst_fn} ]]; then
+    cp ${DATA_RESTART}/${rst_fn} .
+  elif [[ -e ${WARMSTART_DIR}/${rst_fn} ]]; then
+    cp ${WARMSTART_DIR}/${rst_fn} .
   else
     err_exit "Initial restart files do not exist"
   fi

@@ -78,8 +78,6 @@ mkdir -p ${DATA_SHARE}
 export DATA_RESTART="${DATA_RESTART:-${DATAROOT}/DATA_SHARE/RESTART}"
 mkdir -p ${DATA_RESTART}
 
-# Set other dates
-export PTIME=$($NDATE -24 $PDY$cyc)
 #
 #-----------------------------------------------------------------------
 #

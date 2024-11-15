@@ -243,15 +243,15 @@ def set_machine_parm(machine):
     match lowercase_machine:
         case "hera":
             jedi_install = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
-            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
+            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
         case "orion":
             jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
         case "hercules":
             jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules"
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART"
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 80
         case "singularity":
             jedi_install = "SINGULARITY_WORKING_DIR"
