@@ -341,8 +341,7 @@ fi
 
 # WE2E test
 if [[ "${WE2E_TEST}" == "YES" ]]; then
-  path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
-  fn_res0="ufs.cpld.lnd.out.${nYYYY}-${nMM}-${nDD}-${nHHsec_5d}.tile"
+  path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}/RESTART"
   fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   
@@ -352,7 +351,7 @@ if [[ "${WE2E_TEST}" == "YES" ]]; then
   # restart files
   for itile in {1..6}
   do
-    ${USHlandda}/compare.py "${path_fbase}/${fn_res0}${itile}.nc" "${COMOUT}/RESTART/${fn_res}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "FORECAST" ${FILEDATE} "ufs_land_restart.tile${itile}"
+    ${USHlandda}/compare.py "${path_fbase}/${fn_res}${itile}.nc" "${COMOUT}/RESTART/${fn_res}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "FORECAST" ${FILEDATE} "ufs_land_restart.tile${itile}"
   done
 fi
 
