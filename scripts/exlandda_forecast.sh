@@ -285,10 +285,9 @@ done
 
 # Move land output to COMOUT
 lnd_out_freq_hr=$(( LND_OUTPUT_FREQ_SEC / 3600 ))
-lnd_out_hr=$(( cyc + lnd_out_freq_hr ))
 lnd_fcst_hh=${lnd_out_freq_hr}
 while [ ${lnd_fcst_hh} -le ${FCSTHR} ]; do
-  lnd_out_date=$($NDATE $lnd_out_hr $PDY$cyc)
+  lnd_out_date=$($NDATE $lnd_fcst_hh $PDY$cyc)
   lnd_out_yyyy=${lnd_out_date:0:4}
   lnd_out_mm=${lnd_out_date:4:2}
   lnd_out_dd=${lnd_out_date:6:2}
@@ -299,13 +298,12 @@ while [ ${lnd_fcst_hh} -le ${FCSTHR} ]; do
   # land output files
   for itile in {1..6}
   do
-    mv "${DATA}/ufs.cpld.lnd.out.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.lnd.f${lnd_fcst_hh_3d}.C${RES}.tile${itile}.nc"
+    cp -p "${DATA}/ufs.cpld.lnd.out.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.lnd.f${lnd_fcst_hh_3d}.c${RES}.tile${itile}.nc"
   done
   # ufs.cpld.cpl.r files
   cp -p "${DATA}/RESTART/ufs.cpld.cpl.r.${lnd_out_yyyy}-${lnd_out_mm}-${lnd_out_dd}-${lnd_out_hh_sec_5d}.nc" ${COMOUT}/RESTART/.
 
   lnd_fcst_hh=$(( lnd_fcst_hh + lnd_out_freq_hr ))
-  lnd_out_hr=$(( lnd_out_hr + lnd_out_freq_hr ))
 done
 
 if [ "${APP}" = "LND" ]; then
@@ -324,8 +322,8 @@ elif [ "${APP}" = "ATML" ]; then
     ihr_3d=$(printf "%03d" "${ihr}")
     for itile in {1..6}
     do
-      mv "${DATA}/atmf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.atm.f${ihr_3d}.c${RES}.nc"
-      mv "${DATA}/sfcf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.sfc.f${ihr_3d}.c${RES}.nc"
+      cp -p "${DATA}/atmf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.atm.f${ihr_3d}.c${RES}.tile${itile}.nc"
+      cp -p "${DATA}/sfcf${ihr_3d}.tile${itile}.nc" "${COMOUT}/${NET}.${cycle}.sfc.f${ihr_3d}.c${RES}.tile${itile}.nc"
     done
   done
   # RESTART directory
@@ -336,7 +334,7 @@ elif [ "${APP}" = "ATML" ]; then
   for ifn in "${rst_fns[@]}" ; do
     for itile in {1..6};
     do
-      mv "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.${ifn}.tile${itile}.nc" ${COMOUT}/RESTART/.
+      cp -p "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.${ifn}.tile${itile}.nc" ${COMOUT}/RESTART/.
     done
   done
 fi
