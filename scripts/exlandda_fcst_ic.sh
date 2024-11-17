@@ -57,12 +57,6 @@ elif [ "${APP}" = "ATML" ]; then
     fn_sfc_data="${fn_data_prefix}.${cycle}.sfcanl.nc"
   fi
 
-#  if [ "${RES}" = "96" ]; then
-#    mxnum=".mx100"
-#  else
-#    mxnum=""
-#  fi
-
   mkdir -p fix_sfc
   sfc_fns=( "facsf" "maximum_snow_albedo" "slope_type" "snowfree_albedo" "soil_color" \
 	    "soil_type" "substrate_temperature" "vegetation_greenness" "vegetation_type" )

@@ -138,6 +138,7 @@ workflow:
       walltime: 00:15:00
       queue: batch
       join: "&LOGDIR;/fcst_ic&LOGFN_SUFFIX;"
+      memory: 128G
 {%- endif %}
     task_pre_anal:
       attrs:
