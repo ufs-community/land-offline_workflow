@@ -9,7 +9,7 @@ import os, sys
 import argparse
 import numpy as np
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.parser import parse
 
 jedi_path = os.environ.get('JEDI_PATH')
@@ -106,6 +106,7 @@ class ghcn(object):
         df30 = pd.concat(df30_list, ignore_index=True)
         df30 = df30[df30["ELEMENT"] == "SNWD"]
         df30["DATETIME"] = df30.apply(lambda row: parse(str(row["DATETIME"])).date(), axis=1)
+
         # select data which matches the Start date
         startdate = self.date
         valid_date = datetime.strptime(startdate, "%Y%m%d%H")
@@ -173,7 +174,17 @@ class ghcn(object):
 
         # get datetime from input
         my_date = datetime.strptime(startdate, "%Y%m%d%H")
-        epoch_time = np.int64(get_epoch_time(my_date))
+
+        ########################################################
+        # Adjust time stamp (+18hours) to match with JEDI : CHJ
+        ########################################################
+        my_date_adj = my_date + timedelta(seconds=64800)
+
+        epoch_time = np.int64(get_epoch_time(my_date_adj))
+
+        print(f"my_date: {my_date}")
+        print(f"my_date_adj: {my_date_adj}")
+        print(f"epoch_time: {epoch_time}")
 
         # vals[vals >= 0.0] *= 0.001      # mm to meters
         # errs[:] = 0.04                  # error in meters
