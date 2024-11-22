@@ -11,7 +11,7 @@ RUN wget https://noaa-ufs-land-da-pds.s3.amazonaws.com/develop-20241024/inputs.t
 
 # set env vars
 ENV FIXlandda=$HOME/land-DA_workflow/fix
-ENV JEDI_INSTALL=$HOME
+ENV JEDI_PATH=$HOME
 ENV FIXdir=$FIXlandda
 ENV JEDI_EXECDIR=/opt/jedi-bundle/install/bin
 

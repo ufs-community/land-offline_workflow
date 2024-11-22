@@ -76,8 +76,6 @@ mkdir -p ${COMOUT}
 export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
 mkdir -p ${DATA_SHARE}
 
-# Set other dates
-export NTIME=$($NDATE 24 $PDY$cyc)
 #
 #-----------------------------------------------------------------------
 #

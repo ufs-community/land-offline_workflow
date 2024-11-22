@@ -71,5 +71,5 @@ setenv("CC", "mpiicc")
 setenv("CXX", "mpiicpc")
 setenv("FC", "mpiifort")
 
-setenv("JEDI_INSTALL", pathJoin(os.getenv("EPICHOME"),""))
+setenv("JEDI_PATH", pathJoin(os.getenv("EPICHOME"),""))
 

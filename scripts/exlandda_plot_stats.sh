@@ -2,6 +2,9 @@
 
 set -xue
 
+# Set other dates
+NTIME=$($NDATE {DATE_CYCLE_FREQ_HR} $PDY$cyc)
+
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
@@ -44,7 +47,7 @@ machine: '${MACHINE}'
 EOF
 
 ${USHlandda}/hofx_analysis_stats.py
-if [[ $? != 0 ]]; then
+if [ $? -ne 0 ]; then
   err_exit "Scatter/Histogram plots failed"
 fi
 
@@ -81,7 +84,7 @@ out_fn_time: '${OUT_FN_TIME}'
 EOF
 
 ${USHlandda}/plot_analysis_timehistory.py
-if [[ $? != 0 ]]; then
+if [ $? -ne 0 ]; then
   err_exit "Time-history plots failed"
 fi
 
@@ -112,7 +115,7 @@ machine: '${MACHINE}'
 EOF
 
 ${USHlandda}/plot_forecast_restart.py
-if [[ $? != 0 ]]; then
+if [ $? -ne 0 ]; then
   err_exit "Forecast restart plots failed"
 fi
 

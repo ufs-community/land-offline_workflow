@@ -78,8 +78,6 @@ mkdir -p ${COMOUTobs}
 export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
 mkdir -p ${DATA_SHARE}
 
-# Set other dates
-export PTIME=$($NDATE -24 $PDY$cyc)
 #
 #-----------------------------------------------------------------------
 #

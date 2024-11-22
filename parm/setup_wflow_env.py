@@ -205,7 +205,8 @@ def set_default_parm():
         "fhrot": 0,
         "ic_data_model": "GFS",
         "imo": 384,
-        "jedi_install": "/path/to/jedi/install/dir",
+        "jedi_path": "/path/to/jedi/install/dir",
+        "jedi_py_ver": "/python/version/used/for/jedi",
         "jmo": 190,
         "lnd_calc_snet": ".true.",
         "lnd_ic_type": "custom",
@@ -220,8 +221,7 @@ def set_default_parm():
         "nprocs_analysis": 6,
         "nprocs_fcst_ic": 36,
         "obsdir": "",
-        "obsdir_subdir": "",
-        "obs_types": "GHCN",
+        "obs_ghcn": "YES",
         "output_fh": "1 -1",
         "res": 96,
         "restart_interval": "12 -1",
@@ -242,24 +242,29 @@ def set_machine_parm(machine):
     lowercase_machine = machine.lower()
     match lowercase_machine:
         case "hera":
-            jedi_install = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
+            jedi_path = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
+            jedi_py_ver = "python3.11"
             warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
         case "orion":
-            jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
+            jedi_path = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
+            jedi_py_ver = "python3.10"
             warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
         case "hercules":
-            jedi_install = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules"
+            jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_hercules"
+            jedi_py_ver = "python3.10"
             warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 80
         case "singularity":
-            jedi_install = "SINGULARITY_WORKING_DIR"
+            jedi_path = "SINGULARITY_WORKING_DIR"
+            jedi_py_ver = "python3.11"
             warmstart_dir = "SINGULARITY_WORKING_DIR"
             max_cores_per_node = 40
 
     machine_config = {
-        "jedi_install": jedi_install,
+        "jedi_path": jedi_path,
+        "jedi_py_ver": jedi_py_ver,
         "warmstart_dir": warmstart_dir,
         "max_cores_per_node": max_cores_per_node,
     }

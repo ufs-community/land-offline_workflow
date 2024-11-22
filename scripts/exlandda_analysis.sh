@@ -2,6 +2,9 @@
 
 set -xue
 
+# Set other dates
+PTIME=$($NDATE -{DATE_CYCLE_FREQ_HR} $PDY$cyc)
+
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
@@ -13,8 +16,8 @@ HP=${PTIME:8:2}
 
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
-JEDI_STATICDIR=${JEDI_INSTALL}/jedi-bundle/fv3-jedi/test/Data
-JEDI_EXECDIR=${JEDI_INSTALL}/build/bin
+JEDI_STATICDIR=${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data
+JEDI_EXECDIR=${JEDI_PATH}/build/bin
 
 case $MACHINE in
   "hera")
@@ -31,7 +34,6 @@ case $MACHINE in
     ;;
 esac
 
-YAML_DA=construct
 GFSv17="NO"
 B=30 # back ground error std for LETKFOI
 
@@ -63,33 +65,28 @@ ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${f
 # CREATE BACKGROUND ENSEMBLE (LETKFOI)
 ################################################
 
-if [[ ${DAtype} == "letkfoi_snow" ]]; then
-
-  if [ $GFSv17 == "YES" ]; then
-    SNOWDEPTHVAR="snodl"
-  else
-    SNOWDEPTHVAR="snwdph"
-    # replace field overwrite file
-    cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+if [ $GFSv17 == "YES" ]; then
+  SNOWDEPTHVAR="snodl"
+else
+  SNOWDEPTHVAR="snwdph"
+  # replace field overwrite file
+  cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+fi
+# FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
+for ens in pos neg
+do
+  if [ -e $DATA/mem_${ens} ]; then
+    rm -r $DATA/mem_${ens}
   fi
-  # FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
-  for ens in pos neg
-  do
-    if [ -e $DATA/mem_${ens} ]; then
-      rm -r $DATA/mem_${ens}
-    fi
-    mkdir -p $DATA/mem_${ens}
-    cp ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
-    cp ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
-  done
+  mkdir -p $DATA/mem_${ens}
+  cp ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
+  cp ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
+done
 
-  echo 'do_landDA: calling create ensemble'
-
-  # using ioda mods to get a python version with netCDF4
-  ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
-  if [[ $? != 0 ]]; then
-    err_exit "letkf create failed"
-  fi
+# using ioda mods to get a python version with netCDF4
+${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
+if [[ $? != 0 ]]; then
+  err_exit "letkf create failed"
 fi
 
 ################################################
@@ -104,15 +101,9 @@ mkdir -p output/DA/hofx
 # if yaml is specified by user, use that. Otherwise, build the yaml
 if [[ $do_DA == "YES" ]]; then 
 
-  if [[ $YAML_DA == "construct" ]];then  # construct the yaml
-    cp ${PARMlandda}/jedi/${DAtype}.yaml ${DATA}/letkf_land.yaml
-    for obs in "${OBS_TYPES[@]}";
-    do 
-      cat ${PARMlandda}/jedi/${obs}.yaml >> letkf_land.yaml
-    done
-  else # use specified yaml 
-    echo "Using user specified YAML: ${YAML_DA}"
-    cp ${PARMlandda}/jedi/${YAML_DA} ${DATA}/letkf_land.yaml
+  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
+  if [ "${OBS_GHCN}" = "YES" ]; then
+    cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
   fi
 
   # update jedi yaml file
@@ -141,15 +132,9 @@ fi
 
 if [[ $do_HOFX == "YES" ]]; then 
 
-  if [[ $YAML_HOFX == "construct" ]];then  # construct the yaml
-    cp ${PARMlandda}/jedi/${DAtype}.yaml ${DATA}/hofx_land.yaml
-    for obs in "${OBS_TYPES[@]}";
-    do 
-      cat ${PARMlandda}/jedi/${obs}.yaml >> hofx_land.yaml
-    done
-  else # use specified yaml 
-    echo "Using user specified YAML: ${YAML_HOFX}"
-    cp ${PARMlandda}/jedi/${YAML_HOFX} ${DATA}/hofx_land.yaml
+  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/hofx_land.yaml"
+  if [ "${OBS_GHCN}" = "YES" ]; then
+    cat ${PARMlandda}/jedi/GHCN.yaml >> hofx_land.yaml
   fi
 
   # update jedi yaml file
@@ -179,7 +164,7 @@ fi
 if [[ "$GFSv17" == "NO" ]]; then
   cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
 else
-  cp ${JEDI_INSTALL}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
+  cp ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
 fi
 
 ################################################
@@ -219,8 +204,6 @@ fi
 
 if [[ $do_DA == "YES" ]]; then 
 
-  if [[ $DAtype == "letkfoi_snow" ]]; then 
-
 cat << EOF > apply_incr_nml
 &noahmp_snow
  date_str=${YYYY}${MM}${DD}
@@ -232,17 +215,14 @@ cat << EOF > apply_incr_nml
 /
 EOF
 
-    echo 'do_landDA: calling apply snow increment'
-
-    export pgm="apply_incr.exe"
-    . prep_step
-    # (n=6) -> this is fixed, at one task per tile (with minor code change, could run on a single proc). 
-    ${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
-    export err=$?; err_chk
-    cp errfile errfile_apply_incr
-    if [[ $err != 0 ]]; then
-      err_exit "apply snow increment failed"
-    fi
+  export pgm="apply_incr.exe"
+  . prep_step
+  # (n=6) -> this is fixed, at one task per tile (with minor code change, could run on a single proc). 
+  ${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
+  export err=$?; err_chk
+  cp errfile errfile_apply_incr
+  if [[ $err != 0 ]]; then
+    err_exit "apply snow increment failed"
   fi
 
   for itile in {1..6}

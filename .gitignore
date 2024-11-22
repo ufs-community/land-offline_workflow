@@ -7,6 +7,7 @@ sorc/lib/
 sorc/lib64
 parm/conda_loc
 parm/config.yaml
+ush/__pycache__/
 
 __pycache__
 *.swp

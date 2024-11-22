@@ -80,8 +80,6 @@ mkdir -p ${DATA_SHARE}
 export DATA_HOFX="${DATA_HOFX:-${DATAROOT}/DATA_SHARE/hofx}"
 mkdir -p ${DATA_HOFX}
 
-# Set other dates
-export NTIME=$($NDATE 24 $PDY$cyc)
 #
 #-----------------------------------------------------------------------
 #

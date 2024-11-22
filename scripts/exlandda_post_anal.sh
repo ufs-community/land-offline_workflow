@@ -2,10 +2,10 @@
 
 set -xue
 
-############################
-# copy restarts to workdir, convert to UFS tile for DA (all members)
-
 MACHINE_ID=${MACHINE}
+
+# Set other dates
+NTIME=$($NDATE ${DATE_CYCLE_FREQ_HR} $PDY$cyc)
 
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
