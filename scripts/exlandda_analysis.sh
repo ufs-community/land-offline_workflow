@@ -3,7 +3,7 @@
 set -xue
 
 # Set other dates
-PTIME=$($NDATE -{DATE_CYCLE_FREQ_HR} $PDY$cyc)
+PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
 
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
