@@ -176,13 +176,18 @@ class ghcn(object):
         my_date = datetime.strptime(startdate, "%Y%m%d%H")
 
         ########################################################
-        # Adjust time stamp (+18hours) to match with JEDI : CHJ
+        # Adjust time stamp to match with JEDI : CHJ
+        # JEDI: 18h
+        # cyc: HH
+        # adjust = ( 18h - HH ) * 3600
         ########################################################
-        my_date_adj = my_date + timedelta(seconds=64800)
+        dt_adj_sec = (18-int(my_date.hour))*3600
+        my_date_adj = my_date + timedelta(seconds=dt_adj_sec)
 
         epoch_time = np.int64(get_epoch_time(my_date_adj))
 
         print(f"my_date: {my_date}")
+        print(f"dt_adj_sec: {dt_adj_sec}")
         print(f"my_date_adj: {my_date_adj}")
         print(f"epoch_time: {epoch_time}")
 
