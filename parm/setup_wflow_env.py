@@ -9,6 +9,7 @@
 import argparse
 import os
 import sys
+import socket
 import shutil
 import yaml
 import math
@@ -19,6 +20,7 @@ sys.path.append(os.path.join(dirpath, '../ush'))
 
 from fill_jinja_template import fill_jinja_template
 from uwtools.api.rocoto import realize
+
 
 # Main part (will be called at the end) ============================= CHJ =====
 def setup_wflow_env(machine):
@@ -235,6 +237,7 @@ def set_default_parm():
     return default_config
 
 
+
 # Machine-specific values of configuration ========================== CHJ =====
 def set_machine_parm(machine):
 # =================================================================== CHJ =====
@@ -261,6 +264,8 @@ def set_machine_parm(machine):
             jedi_py_ver = "python3.11"
             warmstart_dir = "SINGULARITY_WORKING_DIR"
             max_cores_per_node = 40
+        case _:
+            sys.exit(f"FATAL ERROR: this machine/platform '{lowercase_machine}' is NOT supported yet !!!")
 
     machine_config = {
         "jedi_path": jedi_path,
@@ -272,26 +277,54 @@ def set_machine_parm(machine):
     return machine_config
 
 
+
 # Parse arguments =================================================== CHJ =====
 def parse_args(argv):
 # =================================================================== CHJ =====
     """Parse command line arguments"""
-    parser = argparse.ArgumentParser(description="Update FV3 input.nml file for restart.")
+    parser = argparse.ArgumentParser(description="Generate case-specific workflow environment.")
 
     parser.add_argument(
         "-p", "--platform",
         dest="machine",
-        required=True,
+#        required=True,
         help="Platform (machine) name.",
     )
 
     return parser.parse_args(argv)
 
 
+
+# Detect platform (machine) ========================================= CHJ =====
+def detect_platform():
+# =================================================================== CHJ =====
+
+    if os.path.isdir("/scratch2/NAGAPE"):
+        machine = "hera"
+    elif os.path.isdir("/work/noaa"):
+        machine = socket.gethostname().split('-')[0]  #orion/hercules
+    elif os.path.isdir("/ncrc"):
+        machine = "gaea"
+    elif os.path.isdir("/glade"):
+        machine = "derecho"
+    elif os.path.isdir("/lfs4/HFIP"):
+        machine = "jet"
+    elif os.path.isdir("/lfs/h2"):
+        machine = "wcoss2"
+    else:
+        sys.exit(f"Machine (platform) is not detected. Please set it with -p argument")
+
+    print(f" Machine (platform) detected: {machine}")
+
+    return machine
+
+
 # Main call ========================================================= CHJ =====
 if __name__=='__main__':
     args = parse_args(sys.argv[1:])
-    setup_wflow_env(
-        machine=args.machine,
-    )
+    machine=args.machine
+    if machine is None:
+        machine = detect_platform()
+   
+    setup_wflow_env(machine)
 
