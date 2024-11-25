@@ -179,6 +179,12 @@ def setup_wflow_env(machine):
     os.symlink(tmp_dir_src, tmp_dir_dst)
     os.symlink(com_dir_src, com_dir_dst)
 
+    # Create coldstart txt file for the first cycle when APP = LND
+    coldstart = config_parm.get("coldstart")
+    if app == "LND" and coldstart == "YES":
+        fn_pass = f"task_skip_coldstart_{date_first_cycle}.txt"
+        open(os.path.join(exp_case_path,fn_pass), 'a').close()
+
 
 
 # Default values of configuration =================================== CHJ =====

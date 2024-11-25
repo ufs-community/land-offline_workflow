@@ -31,6 +31,7 @@ workflow:
     DT_RUNSEQ: "{{ dt_runseq }}"
     envir: "{{ envir }}"
     EXP_BASEDIR: "{{ exp_basedir }}"
+    EXP_CASE_NAME: "{{ exp_case_name }}"
     FCSTHR: "{{ fcsthr }}"
     FHROT: "{{ fhrot }}"
     IC_DATA_MODEL: "{{ ic_data_model }}"
@@ -77,8 +78,9 @@ workflow:
     LOGFN_SUFFIX: "<cyclestr>_@Y@m@d@H.log</cyclestr>"
     PDY:  "<cyclestr>@Y@m@d</cyclestr>"
     cyc: "<cyclestr>@H</cyclestr>"
-    DATADEP_FILE1: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
-    DATADEP_FILE2: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
+    DATADEP_FILE1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
+    DATADEP_FILE2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
+    DATADEP_COLDSTART: "<cyclestr>&EXP_BASEDIR;/exp_case/&EXP_CASE_NAME;/task_skip_coldstart_@Y@m@d@H.txt</cyclestr>"
   log: "&LOGDIR;/workflow.log"
   tasks:
     task_prep_obs:
@@ -113,7 +115,7 @@ workflow:
       walltime: 00:15:00
       queue: batch
       join: "&LOGDIR;/prep_obs&LOGFN_SUFFIX;"
-{%- if coldstart == "YES" %}
+{%- if ( app == "ATML" and coldstart == "YES" ) %}
     task_fcst_ic:
       attrs:
         cycledefs: first_cycle
@@ -177,10 +179,12 @@ workflow:
             attrs:
               age: 5
             value: "&DATADEP_FILE1;"
+{%- if coldstart == "NO" %}
           datadep_file2:
             attrs:
               age: 5
             value: "&DATADEP_FILE2;"
+{%- endif %}
     task_analysis:
       attrs:
 {%- if coldstart == "YES" %}
@@ -218,9 +222,13 @@ workflow:
       queue: batch
       join: "&LOGDIR;/analysis&LOGFN_SUFFIX;"
       dependency:
-        taskdep:
-          attrs:
-            task: pre_anal
+        and:
+          taskdep_prep_obs:
+            attrs:
+              task: prep_obs
+          taskdep_pre_anal:
+            attrs:
+              task: pre_anal
     task_post_anal:
       attrs:
 {%- if coldstart == "YES" %}
@@ -327,7 +335,11 @@ workflow:
               task: post_anal
           taskdep_fcst_ic:
             attrs:
-              task: fcst_ic              
+              task: fcst_ic
+          datadep_coldstart:
+            attrs:
+              age: 5
+            value: "&DATADEP_COLDSTART;"
     task_plot_stats:
       attrs:
 {%- if coldstart == "YES" %}
