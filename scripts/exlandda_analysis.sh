@@ -42,7 +42,7 @@ for itile in {1..6}
 do
   cp ${DATA_SHARE}/${FILEDATE}.sfc_data.tile${itile}.nc .
 done
-ln -nsf ${COMIN}/obs/*_${YYYY}${MM}${DD}${HH}.nc .
+ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
 
 # update coupler.res file
 settings="\

@@ -245,12 +245,12 @@ def set_machine_parm(machine):
     lowercase_machine = machine.lower()
     match lowercase_machine:
         case "hera":
-            jedi_path = "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7"
+            jedi_path = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic"
             jedi_py_ver = "python3.11"
             warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
         case "orion":
-            jedi_path = "/work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_stack1.6"
+            jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion"
             jedi_py_ver = "python3.10"
             warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
@@ -302,7 +302,7 @@ def detect_platform():
     if os.path.isdir("/scratch2/NAGAPE"):
         machine = "hera"
     elif os.path.isdir("/work/noaa"):
-        machine = socket.gethostname().split('-')[0]  #orion/hercules
+        machine = socket.gethostname().split('-')[0]  # orion/hercules
     elif os.path.isdir("/ncrc"):
         machine = "gaea"
     elif os.path.isdir("/glade"):

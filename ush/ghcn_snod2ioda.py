@@ -15,7 +15,6 @@ from dateutil.parser import parse
 jedi_path = os.environ.get('JEDI_PATH')
 jedi_py_ver = os.environ.get('JEDI_PY_VER')
 sys.path.append(os.path.join(jedi_path, 'build/lib', jedi_py_ver))
-#sys.path.append(os.path.join(jedi_path, 'build/lib', jedi_py_ver, 'pyiodaconv'))
 
 import pyiodaconv.ioda_conv_engines as iconv
 from collections import defaultdict, OrderedDict
@@ -183,13 +182,14 @@ class ghcn(object):
         ########################################################
         dt_adj_sec = (18-int(my_date.hour))*3600
         my_date_adj = my_date + timedelta(seconds=dt_adj_sec)
-
         epoch_time = np.int64(get_epoch_time(my_date_adj))
-
+        my_date_time_string = my_date_adj.isoformat() + "Z"
+        AttrData['date_time_string'] = my_date_time_string
         print(f"my_date: {my_date}")
         print(f"dt_adj_sec: {dt_adj_sec}")
         print(f"my_date_adj: {my_date_adj}")
         print(f"epoch_time: {epoch_time}")
+        print(f"date_time_string: {my_date_time_string}")
 
         # vals[vals >= 0.0] *= 0.001      # mm to meters
         # errs[:] = 0.04                  # error in meters
@@ -209,7 +209,13 @@ class ghcn(object):
         self.outdata[self.varDict[iodavar]['errKey']] = errs
         self.outdata[self.varDict[iodavar]['qcKey']] = qflg
 
-        DimDict['Location'] = len(self.outdata[('dateTime', 'MetaData')])
+        ########################################################
+        # Add nlocs to global attributes : CHJ
+        ########################################################
+#        DimDict['Location'] = len(self.outdata[('dateTime', 'MetaData')])
+        nlocs = len(self.outdata[('dateTime', 'MetaData')])
+        DimDict['Location'] = nlocs
+        AttrData['nlocs'] = nlocs
 
 
 def main():
