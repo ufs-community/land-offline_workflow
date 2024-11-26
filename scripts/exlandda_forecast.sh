@@ -193,23 +193,28 @@ fi
 ################################
 mkdir -p RESTART
 
-if [ "${COLDSTART}" != "YES" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
+if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
+  # Set path to directory where restart files exist
+  if [ "${COLDSTART}" = "NO" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+    data_dir="${WARMSTART_DIR}"
+  else
+    data_dir="${COMINm1}"
+  fi      
+
   # NoahMP restart files
   for itile in {1..6}
   do
-    ln -nsf ${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-${HHsec_5d}.tile${itile}.nc
+    ln -nsf "${COMIN}/ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc" RESTART/ufs.cpld.lnd.out.${YYYY}-${MM}-${DD}-${HHsec_5d}.tile${itile}.nc
   done
 
   # CMEPS restart and pointer files
-  rfile1="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
-  if [[ -e "${COMINm1}/RESTART/${rfile1}" ]]; then
-    ln -nsf "${COMINm1}/RESTART/${rfile1}" RESTART/.
-  elif [[ -e "${WARMSTART_DIR}/${rfile1}" ]]; then
-    ln -nsf "${WARMSTART_DIR}/${rfile1}" RESTART/.
+  r_fn="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
+  if [ -f "${data_dir}/RESTART/${r_fn}" ]; then
+    ln -nsf "${data_dir}/RESTART/${r_fn}" RESTART/.
   else
-    err_exit "ufs.cpld.cpl.r file does not exist."
+    err_exit "${data_dir}/RESTART/${r_fn} file does not exist."
   fi
-  ls -1 "./RESTART/${rfile1}">rpointer.cpl
+  ls -1 "./RESTART/${r_fn}">rpointer.cpl
 fi
 
 #############################
@@ -254,6 +259,43 @@ elif [ "${APP}" = "ATML" ]; then
       ln -nsf ${COMIN}/gfs_data.tile${itile}.nc .
       ln -nsf ${COMIN}/sfc_data.tile${itile}.nc .
     done
+  fi
+fi
+
+# Copy restart files only for ATML
+if [ "${APP}" = "ATML" ]; then
+  if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
+    # Set path to directory where restart files exist
+    if [ "${COLDSTART}" = "NO" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
+      data_dir="${WARMSTART_DIR}"
+    else
+      data_dir="${COMINm1}"
+    fi
+
+    rst_fns=( "ca_data" "fv_core.res" "fv_srf_wnd.res" "fv_tracer.res" "phy_data" "sfc_data" )
+    for ifn in "${rst_fns[@]}" ; do
+      for itile in {1..6};
+      do
+        r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.${ifn}.tile${itile}.nc"
+        if [ -f "${r_fp}" ]; then
+          ln -nsf "${r_fp}" .
+        else
+          err_exit "${r_fp} file does not exist."
+        fi
+      done
+    done
+    r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.fv_core.res.nc"
+    if [ -f "${r_fp}" ]; then
+      ln -nsf "${r_fp}" .
+    else
+      err_exit "${r_fp} file does not exist."
+    fi
+    r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.coupler.res"
+    if [ -f "${r_fp}" ]; then
+      ln -nsf "${r_fp}" .
+    else
+      err_exit "${r_fp} file does not exist."
+    fi
   fi
 fi
 
