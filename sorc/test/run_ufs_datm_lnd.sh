@@ -41,9 +41,12 @@ cp -p ${project_source_dir}/test/parm/rpointer.cpl .
 
 # Set RESTART directory
 mkdir -p RESTART
-ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.cpl.r.2000-01-04-00000.nc RESTART/.
-ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.datm.r.2000-01-04-00000.nc .
-ln -nsf ${FIXlandda}/restarts/gswp3/ufs.cpld.lnd.out.* RESTART/.
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.cpl.r.2000-01-05-00000.nc RESTART/.
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.datm.r.2000-01-05-00000.nc .
+for itile in {1..6}
+do
+  ln -nsf ${FIXlandda}/DATA_RESTART/ufs_land_restart.2000-01-05_00-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.2000-01-05-00000.tile${itile}.nc
+done
 
 # Set INPUT directory
 mkdir -p INPUT
@@ -80,9 +83,9 @@ ${MPIRUN} -n ${NPROCS_FORECAST} ./ufs_model
 
 #
 echo "Now check model output with ufs-wm baseline!"
-path_fbase="${FIXlandda}/test_base/we2e_com/landda.20000104"
-fn_out="ufs.cpld.lnd.out.2000-01-05-00000.tile"
-fn_res="ufs_land_restart.2000-01-05_00-00-00.tile"
+path_fbase="${FIXlandda}/test_base/we2e_com/landda.20000105"
+fn_out="ufs.cpld.lnd.out.2000-01-06-00000.tile"
+fn_res="ufs_land_restart.2000-01-06_00-00-00.tile"
 
 # restart files
 for itile in {1..6}

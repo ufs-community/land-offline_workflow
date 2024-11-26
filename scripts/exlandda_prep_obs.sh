@@ -26,11 +26,16 @@ if [ "${OBS_GHCN}" = "YES" ]; then
   out_fn="GHCN_${YYYY}${MM}${DD}${HH}.nc"
 
   # check obs is available
-  if [ -e $obs_fp ]; then
-    echo "GHCN observation file: $obs_fp"
-    cp -p $obs_fp ${COMOUTobs}/${out_fn}
+  if [ -f "${obs_fp}" ]; then
+    echo "GHCN observation file: ${obs_fp}"
+    cp -p "${obs_fp}" "${COMOUTobs}/${out_fn}"
   else
     input_ghcn_file="${DATA_GHCN_RAW}/${YYYP}.csv"
+    if [ ! -f "${input_ghcn_file}" ]; then
+      echo "GHCN raw data path: ${DATA_GHCN_RAW}"
+      echo "GHCN raw data file: ${YYYP}.csv"
+      err_exit "GHCN raw data file does not exist in designated path !!!"
+    fi
     output_ioda_file="${obs_fn}"
     ghcn_station_file="${DATA_GHCN_RAW}/ghcnd-stations.txt"
 
@@ -38,7 +43,7 @@ if [ "${OBS_GHCN}" = "YES" ]; then
     if [ $? -ne 0 ]; then
       err_exit "Generation of GHCN obs file failed !!!"
     fi
-    cp -p ${output_ioda_file} ${COMOUTobs}/${out_fn}
+    cp -p "${output_ioda_file}" "${COMOUTobs}/${out_fn}"
 
   fi
 fi

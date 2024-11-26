@@ -46,5 +46,5 @@ setenv("CXX", "mpiicpc")
 setenv("FC", "mpiifort")
 setenv("CMAKE_Platform", "hera.intel")
 
-setenv("EPICHOME", "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev")
-setenv("JEDI_PATH", "/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7")
+setenv("EPICHOME", "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1")
+setenv("JEDI_PATH", "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic")

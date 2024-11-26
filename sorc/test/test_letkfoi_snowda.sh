@@ -38,7 +38,7 @@ do
   # GHCN are time-stamped at 18. If assimilating at 00, need to use previous day's obs, so that
   # obs are within DA window.
   [[ -e ${OBS_TYPES[$ii]}_${YY}${MP}${DP}${HP}.nc ]] && rm ${OBS_TYPES[$ii]}_${YY}${MP}${DP}${HP}.nc
-  obs_file=${OBSDIR}/snow_depth/${OBS_TYPES[$ii]}/data_proc/v3/${YY}/${OBS_TYPES[$ii],,}_snwd_ioda_${YY}${MP}${DP}.nc
+  obs_file=${OBSDIR}/${OBS_TYPES[$ii]}/${YY}/${OBS_TYPES[$ii],,}_snwd_ioda_${YY}${MP}${DP}${HP}.nc
   if [[ -e $obs_file ]]; then
     echo "${OBS_TYPES[$ii]} observations found: $obs_file"
   else

@@ -7,7 +7,7 @@ project_source_dir=$2
 
 # Prepare runtime environement
 # set date
-export CYMDH=2000010400
+export CYMDH=2000010500
 export YY=`echo $CYMDH | cut -c1-4`
 export MM=`echo $CYMDH | cut -c5-6`
 export DD=`echo $CYMDH | cut -c7-8`
