@@ -47,14 +47,14 @@ ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
 # update coupler.res file
 settings="\
   'coupler_calendar': ${COUPLER_CALENDAR}
-  'yyyy': !!str ${YYYY}
-  'mm': !!str ${MM}
-  'dd': !!str ${DD}
-  'hh': !!str ${HH}
   'yyyp': !!str ${YYYP}
   'mp': !!str ${MP}
   'dp': !!str ${DP}
   'hp': !!str ${HP}
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.coupler.res"

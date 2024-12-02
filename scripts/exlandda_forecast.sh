@@ -228,7 +228,7 @@ sfc_fns=( "facsf" "maximum_snow_albedo" "slope_type" "snowfree_albedo" "soil_col
 for ifn in "${sfc_fns[@]}" ; do
   for itile in {1..6};
   do
-    cp -p "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.${ifn}.tile${itile}.nc" .
+    ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.${ifn}.tile${itile}.nc" .
   done
 done
 
@@ -278,24 +278,38 @@ if [ "${APP}" = "ATML" ]; then
       do
         r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.${ifn}.tile${itile}.nc"
         if [ -f "${r_fp}" ]; then
-          ln -nsf "${r_fp}" .
+          ln -nsf "${r_fp}" "${ifn}.tile${itile}.nc"
         else
           err_exit "${r_fp} file does not exist."
         fi
       done
+      if [ "${ifn}" = "fv_core.res" ]; then
+        r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.${ifn}.nc"
+        if [ -f "${r_fp}" ]; then
+          ln -nsf "${r_fp}" "${ifn}.nc"
+        else
+          err_exit "${r_fp} file does not exist."
+        fi
+      fi
     done
-    r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.fv_core.res.nc"
-    if [ -f "${r_fp}" ]; then
-      ln -nsf "${r_fp}" .
-    else
-      err_exit "${r_fp} file does not exist."
-    fi
-    r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.coupler.res"
-    if [ -f "${r_fp}" ]; then
-      ln -nsf "${r_fp}" .
-    else
-      err_exit "${r_fp} file does not exist."
-    fi
+
+    # update coupler.res file
+    settings="\
+  'coupler_calendar': ${COUPLER_CALENDAR}
+  'yyyp': !!str ${YYYY}
+  'mp': !!str ${MM}
+  'dp': !!str ${DD}
+  'hp': !!str ${HH}
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+" # End of settings variable
+
+    fp_template="${PARMlandda}/templates/template.coupler.res"
+    fn_namelist="coupler.res"
+    ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
+
   fi
 fi
 

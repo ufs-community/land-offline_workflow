@@ -282,6 +282,7 @@ workflow:
         CCPP_SUITE: "&CCPP_SUITE;"
         COLDSTART: "&COLDSTART;"
         COMROOT: "&COMROOT;"
+        COUPLER_CALENDAR: "&COUPLER_CALENDAR;"
         cyc: "&cyc;"
         DATAROOT: "&DATAROOT;"
         DATE_FIRST_CYCLE: "&DATE_FIRST_CYCLE;"
