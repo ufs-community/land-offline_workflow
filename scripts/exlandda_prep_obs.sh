@@ -28,6 +28,7 @@ if [ "${OBS_GHCN}" = "YES" ]; then
   # check obs is available
   if [ -f "${obs_fp}" ]; then
     echo "GHCN observation file: ${obs_fp}"
+    cp -p "${obs_fp}" .
     cp -p "${obs_fp}" "${COMOUTobs}/${out_fn}"
   else
     input_ghcn_file="${DATA_GHCN_RAW}/${YYYP}.csv"
@@ -36,14 +37,36 @@ if [ "${OBS_GHCN}" = "YES" ]; then
       echo "GHCN raw data file: ${YYYP}.csv"
       err_exit "GHCN raw data file does not exist in designated path !!!"
     fi
-    output_ioda_file="${obs_fn}"
     ghcn_station_file="${DATA_GHCN_RAW}/ghcnd-stations.txt"
 
-    ${USHlandda}/ghcn_snod2ioda.py -i ${input_ghcn_file} -o ${output_ioda_file} -f ${ghcn_station_file} -d ${YYYP}${MP}${DP}${HP} -m maskout
+    ${USHlandda}/ghcn_snod2ioda.py -i ${input_ghcn_file} -o ${obs_fn} -f ${ghcn_station_file} -d ${YYYP}${MP}${DP}${HP} -m maskout
     if [ $? -ne 0 ]; then
       err_exit "Generation of GHCN obs file failed !!!"
     fi
-    cp -p "${output_ioda_file}" "${COMOUTobs}/${out_fn}"
-
+    cp -p "${obs_fn}" "${COMOUTobs}/${out_fn}"
   fi
+
+  ############################################################
+  # Observation File Plot
+  ############################################################
+
+  out_title_base="Land-DA::Obs::GHCN::${PDY}::"
+  out_fn_base="landda_obs_ghcn_${PDY}_"
+
+  cat > plot_obs_ghcn.yaml <<EOF
+work_dir: '${DATA}'
+fn_input: '${obs_fn}'
+out_title_base: '${out_title_base}'
+out_fn_base: '${out_fn_base}'
+machine: '${MACHINE}'
+EOF
+
+  ${USHlandda}/plot_obs_ghcn.py
+  if [ $? -ne 0 ]; then
+    err_exit "Observation file plot failed"
+  fi
+
+  # Copy result file to COMOUT
+  cp -p ${out_fn_base}* ${COMOUTplot}
+
 fi
