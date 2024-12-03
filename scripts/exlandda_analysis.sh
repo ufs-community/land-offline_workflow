@@ -242,7 +242,9 @@ if [[ -d output/DA/hofx ]]; then
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
 
+###########################################################
 # WE2E test
+###########################################################
 if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"

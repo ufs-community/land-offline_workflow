@@ -28,7 +28,6 @@ export ESMF_RUNTIME_PROFILE_OUTPUT="SUMMARY"
 export PSM_RANKS_PER_CONTEXT=4
 export PSM_SHAREDCONTEXTS=1
 
-
 NTIME=$($NDATE ${DATE_CYCLE_FREQ_HR} $PDY$cyc)
 
 YYYY=${PDY:0:4}
@@ -398,7 +397,10 @@ elif [ "${APP}" = "ATML" ]; then
   done
 fi
 
+
+###########################################################
 # WE2E test
+###########################################################
 if [[ "${WE2E_TEST}" == "YES" ]]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}/RESTART"
   fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"

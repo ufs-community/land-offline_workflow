@@ -76,6 +76,9 @@ mkdir -p ${COMOUT}
 
 # RESTART directory in COMOUT
 mkdir -p ${COMOUT}/RESTART
+# plot directory in COMOUT
+export COMOUTplot="${COMOUTplot:-${COMOUT}/plot}"
+mkdir -p ${COMOUTplot}
 
 # Create a teomporary share directory
 export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
