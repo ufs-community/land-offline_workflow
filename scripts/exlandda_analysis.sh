@@ -37,11 +37,19 @@ esac
 GFSv17="NO"
 B=30 # back ground error std for LETKFOI
 
-# Import input files
+# copy sfc_data files into work directory
 for itile in {1..6}
 do
-  cp ${DATA_RESTART}/${FILEDATE}.sfc_data.tile${itile}.nc .
+  sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
+  if [ -f ${DATA_RESTART}/${sfc_fn} ]; then
+    cp -p ${DATA_RESTART}/${sfc_fn} .
+  elif [ -f ${WARMSTART_DIR}/${sfc_fn} ]; then
+    cp -p ${WARMSTART_DIR}/${sfc_fn} .
+  else
+    err_exit "Initial sfc_data files do not exist"
+  fi
 done
+# Copy obserbation file to work directory
 ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
 
 # update coupler.res file

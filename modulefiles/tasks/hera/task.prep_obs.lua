@@ -10,5 +10,6 @@ load(pathJoin("py-cartopy", py_cartopy_ver))
 load(pathJoin("py-matplotlib", py_matplotlib_ver))
 load(pathJoin("py-netcdf4", py_netcdf4_ver))
 load(pathJoin("py-numpy", py_numpy_ver))
+load(pathJoin("py-pandas", py_pandas_ver))
 load(pathJoin("py-pyyaml", py_pyyaml_ver))
 

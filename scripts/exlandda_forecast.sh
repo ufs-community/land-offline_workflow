@@ -197,7 +197,7 @@ if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]
   if [ "${COLDSTART}" = "NO" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
     data_dir="${WARMSTART_DIR}"
   else
-    data_dir="${COMINm1}"
+    data_dir="${COMINm1}/RESTART"
   fi      
 
   # NoahMP restart files
@@ -208,10 +208,10 @@ if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]
 
   # CMEPS restart and pointer files
   r_fn="ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
-  if [ -f "${data_dir}/RESTART/${r_fn}" ]; then
-    ln -nsf "${data_dir}/RESTART/${r_fn}" RESTART/.
+  if [ -f "${data_dir}/${r_fn}" ]; then
+    ln -nsf "${data_dir}/${r_fn}" RESTART/.
   else
-    err_exit "${data_dir}/RESTART/${r_fn} file does not exist."
+    err_exit "${data_dir}/${r_fn} file does not exist."
   fi
   ls -1 "./RESTART/${r_fn}">rpointer.cpl
 fi
@@ -266,7 +266,7 @@ if [ "${APP}" = "ATML" ]; then
   if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
     # Set path to directory where restart files exist
     if [ "${COLDSTART}" = "NO" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
-      data_dir="${WARMSTART_DIR}/RESTART"
+      data_dir="${WARMSTART_DIR}"
     else
       data_dir="${COMINm1}/RESTART"
     fi

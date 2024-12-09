@@ -78,10 +78,11 @@ workflow:
     LOGFN_SUFFIX: "<cyclestr>_@Y@m@d@H.log</cyclestr>"
     PDY:  "<cyclestr>@Y@m@d</cyclestr>"
     cyc: "<cyclestr>@H</cyclestr>"
-    DATADEP_FILE1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
-    DATADEP_FILE2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
+    DATADEP_LRST1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
+    DATADEP_LRST2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
     DATADEP_COLDSTART: "<cyclestr>&EXP_BASEDIR;/exp_case/&EXP_CASE_NAME;/task_skip_coldstart_@Y@m@d@H.txt</cyclestr>"
-    DATADEP_SFCDATA: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>" 
+    DATADEP_SFC1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>" 
+    DATADEP_SFC2: "<cyclestr>&WARMSTART_DIR;/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>"
   log: "&LOGDIR;/workflow.log"
   tasks:
     task_prep_obs:
@@ -177,15 +178,15 @@ workflow:
       join: "&LOGDIR;/pre_anal&LOGFN_SUFFIX;"
       dependency:
         or:
-          datadep_file1:
+          datadep_lrst1:
             attrs:
               age: 5
-            value: "&DATADEP_FILE1;"
+            value: "&DATADEP_LRST1;"
 {%- if coldstart == "NO" %}
-          datadep_file2:
+          datadep_lrst2:
             attrs:
               age: 5
-            value: "&DATADEP_FILE2;"
+            value: "&DATADEP_LRST2;"
 {%- endif %}
 {%- endif %}
     task_analysis:
@@ -214,6 +215,7 @@ workflow:
         PDY: "&PDY;"
         RES: "&RES;"
         SCHED: "&SCHED;"
+        WARMSTART_DIR: "&WARMSTART_DIR;"
         WE2E_TEST: "&WE2E_TEST;"
         WE2E_ATOL: "&WE2E_ATOL;"
         WE2E_LOG_FN: "&WE2E_LOG_FN;"
@@ -234,10 +236,15 @@ workflow:
             attrs:
               task: pre_anal
 {%- else %}
-          datadep_sfcdata:
-            attrs:
-              age: 5
-            value: "&DATADEP_SFCDATA;"
+          or:
+            datadep_sfc1:
+              attrs:
+                age: 5
+              value: "&DATADEP_SFC1;"
+            datadep_sfc2:
+              attrs:
+                age: 5
+              value: "&DATADEP_SFC2;"
 {%- endif %}
     task_post_anal:
       attrs:
@@ -263,6 +270,7 @@ workflow:
         RES: "&RES;"
         RUN: "&RUN;"
         SCHED: "&SCHED;"
+        WARMSTART_DIR: "&WARMSTART_DIR;"
         WE2E_TEST: "&WE2E_TEST;"
         WE2E_ATOL: "&WE2E_ATOL;"
         WE2E_LOG_FN: "&WE2E_LOG_FN;"
