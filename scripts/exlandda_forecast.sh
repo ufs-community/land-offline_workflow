@@ -175,9 +175,9 @@ ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${f
 if [ "${APP}" = "LND" ]; then
   # CDEPS restart and pointer files for DATM (LND)
   rfile2="ufs.cpld.datm.r.${YYYY}-${MM}-${DD}-${HHsec_5d}.nc"
-  if [[ -e "${COMINm1}/${rfile2}" ]]; then
+  if [ -f "${COMINm1}/${rfile2}" ]; then
     ln -nsf "${COMINm1}/${rfile2}" .
-  elif [[ -e "${WARMSTART_DIR}/${rfile2}" ]]; then
+  elif [ -f "${WARMSTART_DIR}/${rfile2}" ]; then
     ln -nsf "${WARMSTART_DIR}/${rfile2}" .
   else
     ln -nsf ${FIXlandda}/restarts/${ATMOS_FORC}/${rfile2} .
@@ -266,16 +266,16 @@ if [ "${APP}" = "ATML" ]; then
   if [ "${COLDSTART}" = "NO" ] || [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
     # Set path to directory where restart files exist
     if [ "${COLDSTART}" = "NO" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
-      data_dir="${WARMSTART_DIR}"
+      data_dir="${WARMSTART_DIR}/RESTART"
     else
-      data_dir="${COMINm1}"
+      data_dir="${COMINm1}/RESTART"
     fi
 
-    rst_fns=( "ca_data" "fv_core.res" "fv_srf_wnd.res" "fv_tracer.res" "phy_data" "sfc_data" )
+    rst_fns=( "ca_data" "fv_core.res" "fv_srf_wnd.res" "fv_tracer.res" "phy_data" )
     for ifn in "${rst_fns[@]}" ; do
       for itile in {1..6};
       do
-        r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.${ifn}.tile${itile}.nc"
+        r_fp="${data_dir}/${YYYY}${MM}${DD}.${HH}0000.${ifn}.tile${itile}.nc"
         if [ -f "${r_fp}" ]; then
           ln -nsf "${r_fp}" "${ifn}.tile${itile}.nc"
         else
@@ -283,12 +283,25 @@ if [ "${APP}" = "ATML" ]; then
         fi
       done
       if [ "${ifn}" = "fv_core.res" ]; then
-        r_fp="${data_dir}/RESTART/${YYYY}${MM}${DD}.${HH}0000.${ifn}.nc"
+        r_fp="${data_dir}/${YYYY}${MM}${DD}.${HH}0000.${ifn}.nc"
         if [ -f "${r_fp}" ]; then
           ln -nsf "${r_fp}" "${ifn}.nc"
         else
           err_exit "${r_fp} file does not exist."
         fi
+      fi
+    done
+    # link sfc_data from COMIN because they were upated by JEDI Analysis task
+    if [ "${PDY}${cyc}" != "${DATE_FIRST_CYCLE:0:10}" ]; then
+      data_dir="${COMIN}"
+    fi
+    for itile in {1..6};
+    do
+      r_fp="${data_dir}/${YYYY}${MM}${DD}.${HH}0000.sfc_data.tile${itile}.nc"
+      if [ -f "${r_fp}" ]; then
+        ln -nsf "${r_fp}" "sfc_data.tile${itile}.nc"
+      else
+        err_exit "${r_fp} file does not exist."
       fi
     done
 
@@ -395,18 +408,23 @@ elif [ "${APP}" = "ATML" ]; then
       cp -p "${DATA}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.${ifn}.tile${itile}.nc" ${COMOUT}/RESTART/.
     done
   done
+  # Set sfc_data to DATA_RESTART to trigger ANALYSIS task in next cycle
+  for itile in {1..6};
+  do
+    cp -p "${COMOUT}/RESTART/${nYYYY}${nMM}${nDD}.${nHH}0000.sfc_data.tile${itile}.nc" ${DATA_RESTART}/.
+  done
 fi
 
 
 ###########################################################
 # WE2E test
 ###########################################################
-if [[ "${WE2E_TEST}" == "YES" ]]; then
+if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}/RESTART"
   fn_res="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   
-  if [[ ! -e "${we2e_log_fp}" ]]; then
+  if [ ! -f "${we2e_log_fp}" ]; then
     touch ${we2e_log_fp}
   fi
   # restart files

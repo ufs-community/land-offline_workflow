@@ -38,16 +38,24 @@ esac
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 for itile in {1..6}
 do
-  cp ${DATA_SHARE}/${FILEDATE}.sfc_data.tile${itile}.nc .
+  cp -p ${COMIN}/${FILEDATE}.sfc_data.tile${itile}.nc .
 done
 
 #  convert back to UFS tile 
 echo '************************************************'
 echo 'calling tile2tile' 
 
+# copy restarts into work directory
 for itile in {1..6}
 do
-  cp ${DATA_SHARE}/ufs_land_restart.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc .
+  rst_fn="ufs_land_restart.${YYYY}-${MM}-${DD}_${HH}-00-00.tile${itile}.nc"
+  if [ -f ${DATA_RESTART}/${rst_fn} ]; then
+    cp ${DATA_RESTART}/${rst_fn} .
+  elif [ -f ${WARMSTART_DIR}/${rst_fn} ]; then
+    cp ${WARMSTART_DIR}/${rst_fn} .
+  else
+    err_exit "Initial restart files do not exist"
+  fi
 done
 
 # update tile2tile namelist
@@ -81,11 +89,11 @@ do
 done
 
 # WE2E test
-if [[ "${WE2E_TEST}" == "YES" ]]; then
+if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_res="ufs_land_restart.anal.${YYYY}-${MM}-${DD}_${HH}-00-00.tile"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
-  if [[ ! -e "${we2e_log_fp}" ]]; then
+  if [ ! -f "${we2e_log_fp}" ]; then
     touch ${we2e_log_fp}
   fi
   # restart files

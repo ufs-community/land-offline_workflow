@@ -81,6 +81,7 @@ workflow:
     DATADEP_FILE1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
     DATADEP_FILE2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
     DATADEP_COLDSTART: "<cyclestr>&EXP_BASEDIR;/exp_case/&EXP_CASE_NAME;/task_skip_coldstart_@Y@m@d@H.txt</cyclestr>"
+    DATADEP_SFCDATA: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>" 
   log: "&LOGDIR;/workflow.log"
   tasks:
     task_prep_obs:
@@ -144,6 +145,7 @@ workflow:
       join: "&LOGDIR;/fcst_ic&LOGFN_SUFFIX;"
       memory: 128G
 {%- endif %}
+{%- if app == "LND" %}
     task_pre_anal:
       attrs:
 {%- if coldstart == "YES" %}
@@ -184,6 +186,7 @@ workflow:
             attrs:
               age: 5
             value: "&DATADEP_FILE2;"
+{%- endif %}
 {%- endif %}
     task_analysis:
       attrs:
@@ -226,9 +229,16 @@ workflow:
           taskdep_prep_obs:
             attrs:
               task: prep_obs
+{%- if app == "LND" %}
           taskdep_pre_anal:
             attrs:
               task: pre_anal
+{%- else %}
+          datadep_sfcdata:
+            attrs:
+              age: 5
+            value: "&DATADEP_SFCDATA;"
+{%- endif %}
     task_post_anal:
       attrs:
 {%- if coldstart == "YES" %}

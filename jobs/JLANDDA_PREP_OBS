@@ -76,10 +76,6 @@ mkdir -p ${COMOUTobs}
 export COMOUTplot="${COMOUTplot:-${COMOUT}/plot}"
 mkdir -p ${COMOUTplot}
 
-# Create a teomporary share directory
-export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
-mkdir -p ${DATA_SHARE}
-
 #
 #-----------------------------------------------------------------------
 #

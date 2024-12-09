@@ -40,7 +40,7 @@ B=30 # back ground error std for LETKFOI
 # Import input files
 for itile in {1..6}
 do
-  cp ${DATA_SHARE}/${FILEDATE}.sfc_data.tile${itile}.nc .
+  cp ${DATA_RESTART}/${FILEDATE}.sfc_data.tile${itile}.nc .
 done
 ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
 
@@ -70,7 +70,7 @@ if [ $GFSv17 == "YES" ]; then
 else
   SNOWDEPTHVAR="snwdph"
   # replace field overwrite file
-  cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
 fi
 # FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
 for ens in pos neg
@@ -79,8 +79,8 @@ do
     rm -r $DATA/mem_${ens}
   fi
   mkdir -p $DATA/mem_${ens}
-  cp ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
-  cp ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
+  cp -p ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
+  cp -p ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
 done
 
 # using ioda mods to get a python version with netCDF4
@@ -207,8 +207,8 @@ if [[ $do_DA == "YES" ]]; then
 cat << EOF > apply_incr_nml
 &noahmp_snow
  date_str=${YYYY}${MM}${DD}
- hour_str=$HH
- res=$RES
+ hour_str=${HH}
+ res=${RES}
  frac_grid=$GFSv17
  orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
  otype="C${RES}_oro_data"
@@ -237,7 +237,7 @@ do
   cp -p ${DATA}/${FILEDATE}.sfc_data.tile${itile}.nc ${COMOUT}
 done
 
-if [[ -d output/DA/hofx ]]; then
+if [ -d output/DA/hofx ]; then
   cp -p output/DA/hofx/* ${COMOUThofx}
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
@@ -245,13 +245,13 @@ fi
 ###########################################################
 # WE2E test
 ###########################################################
-if [[ "${WE2E_TEST}" == "YES" ]]; then
+if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"
   fn_inc="${FILEDATE}.xainc.sfc_data.tile"
   fn_hofx="letkf_hofx_ghcn_${PDY}${cyc}.nc"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
-  if [[ ! -e "${we2e_log_fp}" ]]; then
+  if [ ! -f "${we2e_log_fp}" ]; then
     touch ${we2e_log_fp}
   fi
   # surface data tiles

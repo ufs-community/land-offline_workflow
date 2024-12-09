@@ -75,8 +75,8 @@ export COMOUThofx="${COMOUThofx:-${COMOUT}/hofx}"
 mkdir -p ${COMOUThofx}
 
 # Create a teomporary share directory
-export DATA_SHARE="${DATA_SHARE:-${DATAROOT}/DATA_SHARE/${PDY}}"
-mkdir -p ${DATA_SHARE}
+export DATA_RESTART="${DATA_RESTART:-${DATAROOT}/DATA_SHARE/RESTART}"
+mkdir -p ${DATA_RESTART}
 export DATA_HOFX="${DATA_HOFX:-${DATAROOT}/DATA_SHARE/hofx}"
 mkdir -p ${DATA_HOFX}
 
