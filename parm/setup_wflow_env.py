@@ -253,23 +253,23 @@ def set_machine_parm(machine):
         case "hera":
             jedi_path = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic"
             jedi_py_ver = "python3.11"
-            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
+            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "orion":
             jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion"
             jedi_py_ver = "python3.10"
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 40
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "hercules":
             jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_hercules"
             jedi_py_ver = "python3.10"
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
             max_cores_per_node = 80
+            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "singularity":
             jedi_path = "SINGULARITY_WORKING_DIR"
             jedi_py_ver = "python3.11"
-            warmstart_dir = "SINGULARITY_WORKING_DIR"
             max_cores_per_node = 40
+            warmstart_dir = "SINGULARITY_WORKING_DIR"
         case _:
             sys.exit(f"FATAL ERROR: this machine/platform '{lowercase_machine}' is NOT supported yet !!!")
 

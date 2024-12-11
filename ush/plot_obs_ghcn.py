@@ -34,14 +34,10 @@ def main():
     fn_input=yaml_data['fn_input']
     out_title_base=yaml_data['out_title_base']
     out_fn_base=yaml_data['out_fn_base']
-    machine=yaml_data['machine']
-
-    if yaml_data['machine']=='hera':
-        cartopy.config['data_dir']='/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
-    elif yaml_data['machine']=='orion' or yaml_data['machine']=='hercules':
-        cartopy.config['data_dir']='/work/noaa/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
-    elif yaml_data['machine']=='singularity':
-        cartopy.config['data_dir']='SINGULARITY_WORKING_DIR/land-DA_workflow/fix/NaturalEarth'
+    cartopy_ne_path=yaml_data['cartopy_ne_path']
+    
+    # Set the path to Natural Earth dataset
+    cartopy.config['data_dir']=cartopy_ne_path
 
     print(' ===== INPUT: '+fn_input+' ================================')
     # open the data file

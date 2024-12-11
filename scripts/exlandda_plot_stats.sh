@@ -15,8 +15,8 @@ nMM=${NTIME:4:2}
 nDD=${NTIME:6:2}
 nHH=${NTIME:8:2}
 
-DO_PLOT_STATS="NO"
-DO_PLOT_TIME_HISTORY="NO"
+DO_PLOT_STATS="YES"
+DO_PLOT_TIME_HISTORY="YES"
 DO_PLOT_RESTART="YES"
 
 ############################################################
@@ -45,7 +45,7 @@ nbins: ${nbins}
 plottype: '${plottype}'
 title_fig: '${title_fig}'
 output_prefix: '${output_prefix}'
-machine: '${MACHINE}'
+cartopy_ne_path: '${FIXlandda}/NaturalEarth'
 EOF
   
   ${USHlandda}/hofx_analysis_stats.py
@@ -115,7 +115,7 @@ fn_data_ext: '${fn_data_ext}'
 soil_lvl_number: '${soil_level_number}'
 out_title_base: '${out_title_base}'
 out_fn_base: '${out_fn_base}'
-machine: '${MACHINE}'
+cartopy_ne_path: '${FIXlandda}/NaturalEarth'
 EOF
 
   ${USHlandda}/plot_forecast_restart.py

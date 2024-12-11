@@ -48,6 +48,8 @@ do
   else
     err_exit "Initial sfc_data files do not exist"
   fi
+  # copy sfc_data file for comparison
+  cp -p ${sfc_fn} "${sfc_fn}_old"
 done
 # Copy obserbation file to work directory
 ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
@@ -107,7 +109,7 @@ RESP1=$((RES+1))
 
 mkdir -p output/DA/hofx
 # if yaml is specified by user, use that. Otherwise, build the yaml
-if [[ $do_DA == "YES" ]]; then 
+if [ ${do_DA} = "YES" ]; then 
 
   cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
   if [ "${OBS_GHCN}" = "YES" ]; then
@@ -138,7 +140,7 @@ if [[ $do_DA == "YES" ]]; then
   ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
-if [[ $do_HOFX == "YES" ]]; then 
+if [ "${do_HOFX}" = "YES" ]; then 
 
   cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/hofx_land.yaml"
   if [ "${OBS_GHCN}" = "YES" ]; then
@@ -169,7 +171,7 @@ if [[ $do_HOFX == "YES" ]]; then
   ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
-if [[ "$GFSv17" == "NO" ]]; then
+if [ "$GFSv17" = "NO" ]; then
   cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
 else
   cp ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
@@ -185,7 +187,7 @@ fi
 
 echo 'do_landDA: calling fv3-jedi'
 
-if [[ $do_DA == "YES" ]]; then
+if [ "${do_DA}" = "YES" ]; then
   export pgm="fv3jedi_letkf.x"
   . prep_step
   ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
@@ -195,7 +197,7 @@ if [[ $do_DA == "YES" ]]; then
     err_exit "JEDI DA failed"
   fi
 fi 
-if [[ $do_HOFX == "YES" ]]; then
+if [ "${do_HOFX}" = "YES" ]; then
   export pgm="fv3jedi_letkf.x"
   . prep_step
   ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm hofx_land.yaml >>$pgmout 2>errfile
@@ -210,7 +212,7 @@ fi
 # Apply Increment to UFS sfc_data files
 ################################################
 
-if [[ $do_DA == "YES" ]]; then 
+if [ "${do_DA}" = "YES" ]; then 
 
 cat << EOF > apply_incr_nml
 &noahmp_snow
@@ -249,6 +251,43 @@ if [ -d output/DA/hofx ]; then
   cp -p output/DA/hofx/* ${COMOUThofx}
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
+
+
+############################################################
+# Comparison plot of sfc_data by JEDI increment
+############################################################
+DO_PLOT_SFC_COMP="YES"
+if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
+
+  fn_sfc_base="${FILEDATE}.sfc_data.tile"
+  fn_inc_base="${FILEDATE}.xainc.sfc_data.tile"
+  fn_orog_base="C96_oro_data.tile"
+  out_title_base="Land-DA::SFC-DATA::${PDY}::"
+  out_fn_base="landda_comp_sfc_${PDY}_"
+  # zlevel_number is valid only for 3-D fields such as stc/smc/slc
+  zlevel_number="1"
+
+  cat > plot_comp_sfc.yaml <<EOF
+work_dir: '${DATA}'
+fn_sfc_base: '${fn_sfc_base}'
+fn_inc_base: '${fn_inc_base}'
+fn_orog_base: '${fn_orog_base}'
+out_title_base: '${out_title_base}'
+out_fn_base: '${out_fn_base}'
+fix_dir: '${FIXlandda}'
+zlevel_number: '${zlevel_number}'
+EOF
+
+  ${USHlandda}/plot_comp_sfc_data.py
+  if [ $? -ne 0 ]; then
+    err_exit "sfc_data comparison plot failed"
+  fi
+
+  # Copy result file to COMOUT
+  cp -p ${out_fn_base}* ${COMOUTplot}
+
+fi
+
 
 ###########################################################
 # WE2E test

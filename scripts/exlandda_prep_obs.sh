@@ -58,7 +58,7 @@ work_dir: '${DATA}'
 fn_input: '${obs_fn}'
 out_title_base: '${out_title_base}'
 out_fn_base: '${out_fn_base}'
-machine: '${MACHINE}'
+cartopy_ne_path: '${FIXlandda}/NaturalEarth'
 EOF
 
   ${USHlandda}/plot_obs_ghcn.py
