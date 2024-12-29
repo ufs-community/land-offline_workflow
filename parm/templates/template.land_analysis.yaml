@@ -117,6 +117,7 @@ workflow:
       walltime: 00:15:00
       queue: batch
       join: "&LOGDIR;/prep_obs&LOGFN_SUFFIX;"
+      memory: 128G
 {%- if ( app == "ATML" and coldstart == "YES" ) %}
     task_fcst_ic:
       attrs:
