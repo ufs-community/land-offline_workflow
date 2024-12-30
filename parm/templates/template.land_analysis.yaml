@@ -114,7 +114,7 @@ workflow:
       command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "prep_obs" "&HOMElandda;" "&MACHINE;"'
       jobname: prep_obs
       cores: 1
-      walltime: 00:15:00
+      walltime: 00:30:00
       queue: batch
       join: "&LOGDIR;/prep_obs&LOGFN_SUFFIX;"
       memory: 128G
