@@ -6,4 +6,34 @@ start_minute:            0
 start_second:            0
 nhours_fcst:             {{ fcsthr }}
 dt_atmos:                {{ dt_atmos }}
-fhrot:                   0
+fhrot:                   {{ fhrot }}
+
+{%- if app == "ATML" %}
+restart_interval:        {{ restart_interval }}
+quilting:                .true.
+quilting_restart:        .true.
+write_groups:            {{ write_groups }}
+write_tasks_per_group:   {{ write_tasks_per_group }}
+itasks:                  1
+output_history:          .true.
+history_file_on_native_grid: .false.
+write_dopost:            .false.
+write_nsflip:            .true.
+num_files:               2
+filename_base:           'atm' 'sfc'
+output_grid:             cubed_sphere_grid
+output_file:             'netcdf'
+zstandard_level:         0
+ideflate:                0
+quantize_mode:           'quantize_bitround'
+quantize_nsd:            0
+ichunk2d:                0
+jchunk2d:                0
+ichunk3d:                0
+jchunk3d:                0
+kchunk3d:                0
+imo:                     {{ imo }}
+jmo:                     {{ jmo }}
+output_fh:               {{ output_fh }}
+iau_offset:              0
+{%- endif %}

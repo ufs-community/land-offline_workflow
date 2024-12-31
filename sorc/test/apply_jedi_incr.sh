@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -xe
 ################################################
 # pass arguments
 project_binary_dir=$1
@@ -34,7 +34,7 @@ cat << EOF > apply_incr_nml
  res=$RES
  frac_grid=$GFSv17
  orog_path="$TPATH"
- otype="$TSTUB"
+ otype="$fn_orog"
 /
 EOF
 

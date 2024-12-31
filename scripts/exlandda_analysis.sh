@@ -2,7 +2,9 @@
 
 set -xue
 
-TPATH="${FIXlandda}/FV3_fix_tiled/C${RES}"
+# Set other dates
+PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
+
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
@@ -14,8 +16,8 @@ HP=${PTIME:8:2}
 
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
-JEDI_STATICDIR=${JEDI_INSTALL}/jedi-bundle/fv3-jedi/test/Data
-JEDI_EXECDIR=${JEDI_INSTALL}/build/bin
+JEDI_STATICDIR=${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data
+JEDI_EXECDIR=${JEDI_PATH}/build/bin
 
 case $MACHINE in
   "hera")
@@ -32,28 +34,38 @@ case $MACHINE in
     ;;
 esac
 
-YAML_DA=construct
 GFSv17="NO"
 B=30 # back ground error std for LETKFOI
 
-# Import input files
+# copy sfc_data files into work directory
 for itile in {1..6}
 do
-  cp ${DATA_SHARE}/${FILEDATE}.sfc_data.tile${itile}.nc .
+  sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
+  if [ -f ${DATA_RESTART}/${sfc_fn} ]; then
+    cp -p ${DATA_RESTART}/${sfc_fn} .
+  elif [ -f ${WARMSTART_DIR}/${sfc_fn} ]; then
+    cp -p ${WARMSTART_DIR}/${sfc_fn} .
+  else
+    err_exit "Initial sfc_data files do not exist"
+  fi
+  # copy sfc_data file for comparison
+  cp -p ${sfc_fn} "${sfc_fn}_old"
 done
-ln -nsf ${COMIN}/obs/*_${YYYY}${MM}${DD}${HH}.nc .
+# Copy obserbation file to work directory
+ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
 
 # update coupler.res file
 settings="\
-  'yyyy': !!str ${YYYY}
-  'mm': !!str ${MM}
-  'dd': !!str ${DD}
-  'hh': !!str ${HH}
+  'coupler_calendar': ${COUPLER_CALENDAR}
   'yyyp': !!str ${YYYP}
   'mp': !!str ${MP}
   'dp': !!str ${DP}
   'hp': !!str ${HP}
-" # End of settins variable
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+" # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
@@ -63,34 +75,28 @@ ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${f
 # CREATE BACKGROUND ENSEMBLE (LETKFOI)
 ################################################
 
-if [[ ${DAtype} == "letkfoi_snow" ]]; then
-
-  if [ $GFSv17 == "YES" ]; then
-    SNOWDEPTHVAR="snodl"
-  else
-    SNOWDEPTHVAR="snwdph"
-    # replace field overwrite file
-    cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+if [ $GFSv17 == "YES" ]; then
+  SNOWDEPTHVAR="snodl"
+else
+  SNOWDEPTHVAR="snwdph"
+  # replace field overwrite file
+  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+fi
+# FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
+for ens in pos neg
+do
+  if [ -e $DATA/mem_${ens} ]; then
+    rm -r $DATA/mem_${ens}
   fi
-  # FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
-  for ens in pos neg
-  do
-    if [ -e $DATA/mem_${ens} ]; then
-      rm -r $DATA/mem_${ens}
-    fi
-    mkdir -p $DATA/mem_${ens}
-    cp ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
-    cp ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
-  done
+  mkdir -p $DATA/mem_${ens}
+  cp -p ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
+  cp -p ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
+done
 
-  echo 'do_landDA: calling create ensemble'
-
-  # using ioda mods to get a python version with netCDF4
-  ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
-  if [[ $? != 0 ]]; then
-    echo "letkf create failed"
-    exit 10
-  fi
+# using ioda mods to get a python version with netCDF4
+${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
+if [[ $? != 0 ]]; then
+  err_exit "letkf create failed"
 fi
 
 ################################################
@@ -103,17 +109,11 @@ RESP1=$((RES+1))
 
 mkdir -p output/DA/hofx
 # if yaml is specified by user, use that. Otherwise, build the yaml
-if [[ $do_DA == "YES" ]]; then 
+if [ ${do_DA} = "YES" ]; then 
 
-  if [[ $YAML_DA == "construct" ]];then  # construct the yaml
-    cp ${PARMlandda}/jedi/${DAtype}.yaml ${DATA}/letkf_land.yaml
-    for obs in "${OBS_TYPES[@]}";
-    do 
-      cat ${PARMlandda}/jedi/${obs}.yaml >> letkf_land.yaml
-    done
-  else # use specified yaml 
-    echo "Using user specified YAML: ${YAML_DA}"
-    cp ${PARMlandda}/jedi/${YAML_DA} ${DATA}/letkf_land.yaml
+  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
+  if [ "${OBS_GHCN}" = "YES" ]; then
+    cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
   fi
 
   # update jedi yaml file
@@ -128,29 +128,23 @@ if [[ $do_DA == "YES" ]]; then
     'mp': !!str ${MP}
     'dp': !!str ${DP}
     'hp': !!str ${HP}
-    'tstub': ${TSTUB}
-    'tpath': ${TPATH}
+    'fn_orog': C${RES}_oro_data
+    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': false
-  " # End of settins variable
+  " # End of settings variable
 
   fp_template="${DATA}/letkf_land.yaml"
   fn_namelist="${DATA}/letkf_land.yaml"
   ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
-if [[ $do_HOFX == "YES" ]]; then 
+if [ "${do_HOFX}" = "YES" ]; then 
 
-  if [[ $YAML_HOFX == "construct" ]];then  # construct the yaml
-    cp ${PARMlandda}/jedi/${DAtype}.yaml ${DATA}/hofx_land.yaml
-    for obs in "${OBS_TYPES[@]}";
-    do 
-      cat ${PARMlandda}/jedi/${obs}.yaml >> hofx_land.yaml
-    done
-  else # use specified yaml 
-    echo "Using user specified YAML: ${YAML_HOFX}"
-    cp ${PARMlandda}/jedi/${YAML_HOFX} ${DATA}/hofx_land.yaml
+  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/hofx_land.yaml"
+  if [ "${OBS_GHCN}" = "YES" ]; then
+    cat ${PARMlandda}/jedi/GHCN.yaml >> hofx_land.yaml
   fi
 
   # update jedi yaml file
@@ -165,22 +159,22 @@ if [[ $do_HOFX == "YES" ]]; then
     'mp': !!str ${MP}
     'dp': !!str ${DP}
     'hp': !!str ${HP}
-    'tstub': ${TSTUB}
-    'tpath': ${TPATH}
+    'fn_orog': C${RES}_oro_data
+    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
     'res': ${RES}
     'resp1': ${RESP1}
     'driver_obs_only': true
-  " # End of settins variable
+  " # End of settings variable
 
   fp_template="${DATA}/hofx_land.yaml"
   fn_namelist="${DATA}/hofx_land.yaml"
   ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 fi
 
-if [[ "$GFSv17" == "NO" ]]; then
+if [ "$GFSv17" = "NO" ]; then
   cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
 else
-  cp ${JEDI_INSTALL}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
+  cp ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
 fi
 
 ################################################
@@ -193,26 +187,24 @@ fi
 
 echo 'do_landDA: calling fv3-jedi'
 
-if [[ $do_DA == "YES" ]]; then
+if [ "${do_DA}" = "YES" ]; then
   export pgm="fv3jedi_letkf.x"
   . prep_step
   ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
   export err=$?; err_chk
   cp errfile errfile_jedi_letkf
   if [[ $err != 0 ]]; then
-    echo "JEDI DA failed"
-    exit 10
+    err_exit "JEDI DA failed"
   fi
 fi 
-if [[ $do_HOFX == "YES" ]]; then
+if [ "${do_HOFX}" = "YES" ]; then
   export pgm="fv3jedi_letkf.x"
   . prep_step
   ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm hofx_land.yaml >>$pgmout 2>errfile
   export err=$?; err_chk
   cp errfile errfile_jedi_hofx
   if [[ $err != 0 ]]; then
-    echo "JEDI hofx failed"
-    exit 10
+    err_exit "JEDI hofx failed"
   fi
 fi 
 
@@ -220,33 +212,27 @@ fi
 # Apply Increment to UFS sfc_data files
 ################################################
 
-if [[ $do_DA == "YES" ]]; then 
-
-  if [[ $DAtype == "letkfoi_snow" ]]; then 
+if [ "${do_DA}" = "YES" ]; then 
 
 cat << EOF > apply_incr_nml
 &noahmp_snow
  date_str=${YYYY}${MM}${DD}
- hour_str=$HH
- res=$RES
+ hour_str=${HH}
+ res=${RES}
  frac_grid=$GFSv17
- orog_path="$TPATH"
- otype="$TSTUB"
+ orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
+ otype="C${RES}_oro_data"
 /
 EOF
 
-    echo 'do_landDA: calling apply snow increment'
-
-    export pgm="apply_incr.exe"
-    . prep_step
-    # (n=6) -> this is fixed, at one task per tile (with minor code change, could run on a single proc). 
-    ${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
-    export err=$?; err_chk
-    cp errfile errfile_apply_incr
-    if [[ $err != 0 ]]; then
-      echo "apply snow increment failed"
-      exit 10
-    fi
+  export pgm="apply_incr.exe"
+  . prep_step
+  # (n=6) -> this is fixed, at one task per tile (with minor code change, could run on a single proc). 
+  ${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
+  export err=$?; err_chk
+  cp errfile errfile_apply_incr
+  if [[ $err != 0 ]]; then
+    err_exit "apply snow increment failed"
   fi
 
   for itile in {1..6}
@@ -261,19 +247,58 @@ do
   cp -p ${DATA}/${FILEDATE}.sfc_data.tile${itile}.nc ${COMOUT}
 done
 
-if [[ -d output/DA/hofx ]]; then
+if [ -d output/DA/hofx ]; then
   cp -p output/DA/hofx/* ${COMOUThofx}
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
 
+
+############################################################
+# Comparison plot of sfc_data by JEDI increment
+############################################################
+DO_PLOT_SFC_COMP="YES"
+if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
+
+  fn_sfc_base="${FILEDATE}.sfc_data.tile"
+  fn_inc_base="${FILEDATE}.xainc.sfc_data.tile"
+  fn_orog_base="C96_oro_data.tile"
+  out_title_base="Land-DA::SFC-DATA::${PDY}::"
+  out_fn_base="landda_comp_sfc_${PDY}_"
+  # zlevel_number is valid only for 3-D fields such as stc/smc/slc
+  zlevel_number="1"
+
+  cat > plot_comp_sfc.yaml <<EOF
+work_dir: '${DATA}'
+fn_sfc_base: '${fn_sfc_base}'
+fn_inc_base: '${fn_inc_base}'
+fn_orog_base: '${fn_orog_base}'
+out_title_base: '${out_title_base}'
+out_fn_base: '${out_fn_base}'
+fix_dir: '${FIXlandda}'
+zlevel_number: '${zlevel_number}'
+EOF
+
+  ${USHlandda}/plot_comp_sfc_data.py
+  if [ $? -ne 0 ]; then
+    err_exit "sfc_data comparison plot failed"
+  fi
+
+  # Copy result file to COMOUT
+  cp -p ${out_fn_base}* ${COMOUTplot}
+
+fi
+
+
+###########################################################
 # WE2E test
-if [[ "${WE2E_TEST}" == "YES" ]]; then
+###########################################################
+if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"
   fn_inc="${FILEDATE}.xainc.sfc_data.tile"
   fn_hofx="letkf_hofx_ghcn_${PDY}${cyc}.nc"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
-  if [[ ! -e "${we2e_log_fp}" ]]; then
+  if [ ! -f "${we2e_log_fp}" ]; then
     touch ${we2e_log_fp}
   fi
   # surface data tiles

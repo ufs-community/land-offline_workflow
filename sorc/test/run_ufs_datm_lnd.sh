@@ -11,38 +11,11 @@ echo ${project_source_dir}
 
 #
 TEST_NAME=datm_cdeps_lnd_gswp3
-PATHRT=${project_source_dir}/ufs_model.fd/tests
-FIXdir=${project_source_dir}/../fix
+FIXlandda=${project_source_dir}/../fix
 
 source ${project_source_dir}/../parm/detect_platform.sh
-if [[ "${PLATFORM}" == "hera" ]]; then
-  INPUTDATA_ROOT="/scratch2/NAGAPE/epic/UFS-WM_RT/NEMSfv3gfs/input-data-20240501"
-elif [[ "${PLATFORM}" == "orion" ]] || [[ "${PLATFORM}" == "hercules" ]]; then
-  INPUTDATA_ROOT="/work/noaa/epic/UFS-WM_RT/NEMSfv3gfs/input-data-20240501"
-else
-  echo "WARNING: input data path is not specified for this machine."
-  INPUTDATA_ROOT=${FIXdir}
-fi
-export MACHINE_ID=${PLATFORM}
-export RT_COMPILER=${RT_COMPILER:-intel}
-export CREATE_BASELINE=false
-export skip_check_result=false
-export RTVERBOSE=false
-export delete_rundir=false
-export WLCLK=30
 ATOL="1e-7"
-
-source ${PATHRT}/rt_utils.sh
-source ${PATHRT}/default_vars.sh
-source ${PATHRT}/tests/$TEST_NAME
-source ${PATHRT}/atparse.bash
-
-RTPWD=${RTPWD:-$FIXdir/test_base/${TEST_NAME}_${RT_COMPILER}}
-
-if [[ ! -d ${RTPWD} ]]; then
-  echo "Error: cannot find RTPWD, please check!"
-  exit 1
-fi  
+RES="96"
 
 # create test folder
 RUNDIR=${project_binary_dir}/test/${TEST_NAME}
@@ -53,58 +26,70 @@ cd ${RUNDIR}
 # FV3 executable:
 cp ${project_binary_dir}/ufs_model.fd/src/ufs_model.fd-build/ufs_model ./ufs_model
 
-#set multiple input files
-for i in ${FV3_RUN:-fv3_run.IN}
+# Set input files
+cp -p ${project_source_dir}/test/parm/ufs.configure .
+cp -p ${project_source_dir}/test/parm/noahmptable.tbl .
+cp -p ${project_source_dir}/test/parm/fd_ufs.yaml .
+cp -p ${project_source_dir}/test/parm/datm_in .
+cp -p ${project_source_dir}/test/parm/datm.streams .
+cp -p ${project_source_dir}/test/parm/data_table .
+cp -p ${project_source_dir}/test/parm/diag_table .
+cp -p ${project_source_dir}/test/parm/input.nml .
+cp -p ${project_source_dir}/test/parm/model_configure .
+cp -p ${project_source_dir}/test/parm/rpointer.atm .
+cp -p ${project_source_dir}/test/parm/rpointer.cpl .
+
+# Set RESTART directory
+mkdir -p RESTART
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.cpl.r.2000-01-05-00000.nc RESTART/.
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.datm.r.2000-01-05-00000.nc .
+for itile in {1..6}
 do
-  atparse < ${PATHRT}/fv3_conf/${i} >> fv3_run
+  ln -nsf ${FIXlandda}/DATA_RESTART/ufs_land_restart.2000-01-05_00-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.2000-01-05-00000.tile${itile}.nc
 done
 
-if [[ $DATM_CDEPS = 'true' ]] || [[ $FV3 = 'true' ]] || [[ $S2S = 'true' ]]; then
-  if [[ $HAFS = 'false' ]] || [[ $FV3 = 'true' && $HAFS = 'true' ]]; then
-    atparse < ${PATHRT}/parm/${INPUT_NML:-input.nml.IN} > input.nml
-  fi
-fi
+# Set INPUT directory
+mkdir -p INPUT
+cd INPUT
 
-atparse < ${PATHRT}/parm/${MODEL_CONFIGURE:-model_configure.IN} > model_configure
+for itile in {1..6}
+do
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.maximum_snow_albedo.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.slope_type.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_type.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.soil_color.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.substrate_temperature.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_greenness.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}.vegetation_type.tile${itile}.nc .
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc oro_data.tile${itile}.nc
+  ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid.tile${itile}.nc .
+done
 
-#compute_petbounds_and_tasks
-#atparse < ${PATHRT}/parm/${UFS_CONFIGURE:-ufs.configure} > ufs.configure
+ln -nsf ${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_grid_spec.nc C${RES}_mosaic.nc
+for itile in {1..6}
+do
+  ln -nsf ${FIXlandda}/NOAHMP_IC/ufs-land_C${RES}_init_fields.tile${itile}.nc C${RES}.initial.tile${itile}.nc
+done
+cd -
+# Set INPUT_DATM directory
+mkdir -p INPUT_DATM
+ln -nsf ${FIXlandda}/DATM_input_data/gswp3/* INPUT_DATM/.
 
-cp -p ${project_source_dir}/test/parm/ufs.configure .
 NPROCS_FORECAST="13"
-
-# diag table
-if [[ "Q${DIAG_TABLE:-}" != Q ]] ; then
-  atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
-fi
-# Field table
-if [[ "Q${FIELD_TABLE:-}" != Q ]] ; then
-  cp ${PATHRT}/parm/field_table/${FIELD_TABLE} field_table
-fi
-
-# Field Dictionary
-cp ${PATHRT}/parm/fd_ufs.yaml fd_ufs.yaml
-
-# Set up the run directory
-source ./fv3_run
-
-if [[ $DATM_CDEPS = 'true' ]]; then
-  atparse < ${PATHRT}/parm/${DATM_IN_CONFIGURE:-datm_in} > datm_in
-  atparse < ${PATHRT}/parm/${DATM_STREAM_CONFIGURE:-datm.streams.IN} > datm.streams
-fi
-
-# NoahMP table file
-cp ${PATHRT}/parm/noahmptable.tbl noahmptable.tbl
-
 # start runs
+MPIRUN="${MPIRUN:-srun}"
 echo "Start ufs-weather-model run with ${MPIRUN}"
 ${MPIRUN} -n ${NPROCS_FORECAST} ./ufs_model
 
 #
 echo "Now check model output with ufs-wm baseline!"
-for filename in ${LIST_FILES}; do
-  if [[ -f ${RUNDIR}/${filename} ]] ; then
-    echo "Baseline check with ${RTPWD}/${TEST_NAME}/${filename}"
-    ${project_source_dir}/test/compare.py ${RUNDIR}/${filename} ${RTPWD}/${filename} ${ATOL}
-  fi
+path_fbase="${FIXlandda}/test_base/we2e_com/landda.20000105"
+fn_out="ufs.cpld.lnd.out.2000-01-06-00000.tile"
+fn_res="ufs_land_restart.2000-01-06_00-00-00.tile"
+
+# restart files
+for itile in {1..6}
+do
+  ${project_source_dir}/test/compare.py "${path_fbase}/RESTART/${fn_res}${itile}.nc" "${fn_out}${itile}.nc" ${ATOL}
 done
+

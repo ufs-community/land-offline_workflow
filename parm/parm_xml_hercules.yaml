@@ -1,7 +1,0 @@
-machine: hercules
-account: epic
-# exp_basedir: /path/to/parent/directory/of/land-DA_workflow
-exp_basedir: 
-jedi_install: /work/noaa/epic/UFS_Land-DA_Dev/jedi_v7_hercules
-warmstart_dir: /work/noaa/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART
-we2e_test: 'NO'

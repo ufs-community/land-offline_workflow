@@ -9,6 +9,7 @@ Provide a detailed description of what this PR does. What bug does it fix, or wh
 ## Subcomponents involved:
 - [ ] apply_incr.fd (NOAA-PSL/land-apply_jedi_incr)
 - [ ] ufs_model.fd (ufs-community/ufs-weather-model)
+- [ ] UFS_UTILS.fd (ufs-community/UFS_UTILS)
 - [ ] none
 
 ## Linked PR's and Issues:

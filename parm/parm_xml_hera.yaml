@@ -1,7 +1,0 @@
-machine: hera
-account: epic
-# exp_basedir: /path/to/parent/directory/of/land-DA_workflow
-exp_basedir: 
-jedi_install: /scratch2/NAGAPE/epic/UFS_Land-DA_Dev/jedi_v7
-warmstart_dir: /scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/DATA_RESTART
-we2e_test: 'NO'

@@ -7,7 +7,7 @@ project_source_dir=$2
 
 # Prepare runtime environement
 # set date
-export CYMDH=2000010300
+export CYMDH=2000010500
 export YY=`echo $CYMDH | cut -c1-4`
 export MM=`echo $CYMDH | cut -c5-6`
 export DD=`echo $CYMDH | cut -c7-8`
@@ -36,13 +36,13 @@ export EXECDIR=${EXECDIR:-$project_binary_dir/bin}
 export FIXlandda=${FIXlandda:-"`dirname $project_source_dir`/fix"}
 
 # set IODA path
-export IODA_BUILD_DIR=${IODA_BUILD_DIR:-"${JEDI_INSTALL}/build"}
+export IODA_BUILD_DIR=${IODA_BUILD_DIR:-"${JEDI_PATH}/build"}
 export PYTHON_VERSION=`python -c 'import sys; version=sys.version_info[:3]; print("{0}.{1}".format(*version))'`
 export PYTHONPATH=$PYTHONPATH:${IODA_BUILD_DIR}/lib/python${PYTHON_VERSION}/pyioda:${IODA_BUILD_DIR}/lib/pyiodaconv
 
 # JEDI directories
-export JEDI_EXECDIR=${JEDI_EXECDIR:-"${JEDI_INSTALL}/build/bin"}
-export JEDI_STATICDIR=${JEDI_INSTALL}/jedi-bundle/fv3-jedi/test/Data
+export JEDI_EXECDIR=${JEDI_EXECDIR:-"${JEDI_PATH}/build/bin"}
+export JEDI_STATICDIR=${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data
 
 # set executables
 export MPIRUN=${MPIRUN:-`which mpiexec`}
@@ -52,7 +52,7 @@ export PYTHON_EXEC=${PYTHON_EXEC:-`which python`}
 export RES=96
 export atmos_forc=gswp3
 export TPATH="$FIXlandda/FV3_fix_tiled/C${RES}/"
-export TSTUB="oro_C${RES}.mx100"
+export fn_orog="C${RES}_oro_data"
 export GFSv17=NO
 export OBS_TYPES=("GHCN")
 export DAtype=letkfoi_snow

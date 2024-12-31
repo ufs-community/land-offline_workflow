@@ -2,6 +2,9 @@
 
 set -xue
 
+# Set other dates
+NTIME=$($NDATE ${DATE_CYCLE_FREQ_HR} $PDY$cyc)
+
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
@@ -12,113 +15,115 @@ nMM=${NTIME:4:2}
 nDD=${NTIME:6:2}
 nHH=${NTIME:8:2}
 
+DO_PLOT_STATS="YES"
+DO_PLOT_TIME_HISTORY="YES"
+DO_PLOT_RESTART="YES"
+
 ############################################################
 # Stats Plot
 ############################################################
-
-# Path to the directory containing the input file
-INPUTFP="${DATA_HOFX}"
-# Field variable
-FIELDVAR="OMA"
-# Field Range for scatter plot: [Low,High]
-FRLOW=-300
-FRHIGH=300
-# Number of bins in histogram plot
-NBINS=100
-# Plot type (scatter/histogram/both)
-PLOTTYPE="both"
-# Figure title
-FIGTITLE="GHCN Snow Depth (mm)::Obs-Ana::${PDY}"
-# Prefix of output file name
-PREOUTFN="hofx_oma_${PDY}"
-
-cat > plot_hofx.yaml <<EOF
-hofx_files: '${INPUTFP}'
-field_var: '${FIELDVAR}'
-field_range: [${FRLOW},${FRHIGH}]
-nbins: ${NBINS}
-plottype: '${PLOTTYPE}'
-title_fig: '${FIGTITLE}'
-output_prefix: '${PREOUTFN}'
-machine: '${MACHINE}'
+if [ "${DO_PLOT_STATS}" = "YES" ]; then
+  # Field variable
+  field_var="OMA"
+  # Field Range for scatter plot: [Low,High]
+  field_range_low=-300
+  field_range_high=300
+  # Number of bins in histogram plot
+  nbins=100
+  # Plot type (scatter/histogram/both)
+  plottype="both"
+  # Figure title
+  title_fig="GHCN Snow Depth (mm)::Obs-Ana::${PDY}"
+  # Prefix of output file name
+  output_prefix="hofx_oma_${PDY}"
+  
+  cat > plot_hofx.yaml <<EOF
+hofx_files: '${DATA_HOFX}'
+field_var: '${field_var}'
+field_range: [${field_range_low},${field_range_high}]
+nbins: ${nbins}
+plottype: '${plottype}'
+title_fig: '${title_fig}'
+output_prefix: '${output_prefix}'
+cartopy_ne_path: '${FIXlandda}/NaturalEarth'
 EOF
-
-${USHlandda}/hofx_analysis_stats.py
-if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Scatter/Histogram plots failed"
-  exit 33
+  
+  ${USHlandda}/hofx_analysis_stats.py
+  if [ $? -ne 0 ]; then
+    err_exit "Scatter/Histogram plots failed"
+  fi
+  
+  # Copy result files to COMOUT
+  cp -p ${output_prefix}* ${COMOUTplot}
 fi
-
-# Copy result files to COMOUT
-cp -p ${PREOUTFN}* ${COMOUTplot}
 
 
 ############################################################
 # Time-history Plot
 ############################################################
+if [ "${DO_PLOT_TIME_HISTORY}" = "YES" ]; then
+  fn_data_anal_prefix="analysis_"
+  fn_data_anal_suffix=".log"
+  fn_data_fcst_prefix="forecast_"
+  fn_data_fcst_suffix=".log"
+  out_title_anal_base="Land-DA::Analysis::QC SnowDepthGHCN::"
+  out_fn_anal_base="landda_timehistory_"
+  out_title_time="Land-DA::Wall-clock time"
+  out_fn_time="landda_timehistory_wtime"
 
-FN_DATA_ANAL_PREFIX="analysis_"
-FN_DATA_ANAL_SUFFIX=".log"
-FN_DATA_FCST_PREFIX="forecast_"
-FN_DATA_FCST_SUFFIX=".log"
-OUT_TITLE_ANAL_BASE="Land-DA::Analysis::QC SnowDepthGHCN::"
-OUT_FN_ANAL_BASE="landda_timehistory_"
-OUT_TITLE_TIME="Land-DA::Wall-clock time"
-OUT_FN_TIME="landda_timehistory_wtime"
-
-cat > plot_timehistory.yaml <<EOF
+  cat > plot_timehistory.yaml <<EOF
 path_data: '${LOGDIR}'
 work_dir: '${DATA}'
-fn_data_anal_prefix: '${FN_DATA_ANAL_PREFIX}'
-fn_data_anal_suffix: '${FN_DATA_ANAL_SUFFIX}'
-fn_data_fcst_prefix: '${FN_DATA_FCST_PREFIX}'
-fn_data_fcst_suffix: '${FN_DATA_FCST_SUFFIX}'
+fn_data_anal_prefix: '${fn_data_anal_prefix}'
+fn_data_anal_suffix: '${fn_data_anal_suffix}'
+fn_data_fcst_prefix: '${fn_data_fcst_prefix}'
+fn_data_fcst_suffix: '${fn_data_fcst_suffix}'
 nprocs_anal: '${NPROCS_ANALYSIS}'
 nprocs_fcst: '${NPROCS_FORECAST}'
-out_title_anal_base: '${OUT_TITLE_ANAL_BASE}'
-out_fn_anal_base: '${OUT_FN_ANAL_BASE}'
-out_title_time: '${OUT_TITLE_TIME}'
-out_fn_time: '${OUT_FN_TIME}'
+out_title_anal_base: '${out_title_anal_base}'
+out_fn_anal_base: '${out_fn_anal_base}'
+out_title_time: '${out_title_time}'
+out_fn_time: '${out_fn_time}'
 EOF
 
-${USHlandda}/plot_analysis_timehistory.py
-if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Time-history plots failed"
-  exit 44
+  ${USHlandda}/plot_analysis_timehistory.py
+  if [ $? -ne 0 ]; then
+    err_exit "Time-history plots failed"
+  fi
+
+  # Copy result files to COMOUT
+  cp -p ${out_fn_anal_base}* ${COMOUTplot}
+  cp -p ${out_fn_time}* ${COMOUTplot}
 fi
 
-# Copy result files to COMOUT
-cp -p ${OUT_FN_ANAL_BASE}* ${COMOUTplot}
-cp -p ${OUT_FN_TIME}* ${COMOUTplot}
 
-
-############################################################
+###########################################################
 # Restart Plot
-############################################################
+###########################################################
+if [ "${DO_PLOT_RESTART}" = "YES" ]; then
+  fn_data_base="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
+  fn_data_ext=".nc"
+  soil_level_number="1"
+  out_title_base="Land-DA::restart::${nYYYY}-${nMM}-${nDD}_${nHH}::"
+  out_fn_base="landda_out_restart_${nYYYY}-${nMM}-${nDD}_${nHH}_"
 
-FN_DATA_BASE="ufs_land_restart.${nYYYY}-${nMM}-${nDD}_${nHH}-00-00.tile"
-FN_DATA_EXT=".nc"
-SOIL_LEVEL_NUMBER="1"
-OUT_TITLE_BASE="Land-DA::restart::${nYYYY}-${nMM}-${nDD}_${nHH}::"
-OUT_FN_BASE="landda_out_restart_${nYYYY}-${nMM}-${nDD}_${nHH}_"
-
-cat > plot_restart.yaml <<EOF
-path_data: '${COMIN}'
+  cat > plot_restart.yaml <<EOF
+path_data: '${COMIN}/RESTART'
 work_dir: '${DATA}'
-fn_data_base: '${FN_DATA_BASE}'
-fn_data_ext: '${FN_DATA_EXT}'
-soil_lvl_number: '${SOIL_LEVEL_NUMBER}'
-out_title_base: '${OUT_TITLE_BASE}'
-out_fn_base: '${OUT_FN_BASE}'
-machine: '${MACHINE}'
+fn_data_base: '${fn_data_base}'
+fn_data_ext: '${fn_data_ext}'
+soil_lvl_number: '${soil_level_number}'
+out_title_base: '${out_title_base}'
+out_fn_base: '${out_fn_base}'
+cartopy_ne_path: '${FIXlandda}/NaturalEarth'
 EOF
 
-${USHlandda}/plot_forecast_restart.py
-if [[ $? != 0 ]]; then
-  echo "FATAL ERROR: Forecast restart plots failed"
-  exit 44
-fi
+  ${USHlandda}/plot_forecast_restart.py
+  if [ $? -ne 0 ]; then
+    err_exit "Forecast restart plots failed"
+  fi
 
-# Copy result files to COMOUT
-cp -p ${OUT_FN_BASE}* ${COMOUTplot}
+  # Copy result files to COMOUT
+  cp -p ${out_fn_base}* ${COMOUTplot}
+fi
 

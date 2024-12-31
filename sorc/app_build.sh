@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # usage instructions
 usage () {
 cat << EOF_USAGE
@@ -15,8 +17,8 @@ OPTIONS
       compiler to use; default depends on platform
       (e.g. intel | gnu | cray | gccgfortran)
   -a, --app=APPLICATION
-      weather model application to build; for example, ATMAQ for RRFS-AQM
-      (e.g. ATM | ATMAQ | ATMW | S2S | S2SW)
+      weather model application to build; for example, ATML for ATM+LAND
+      (e.g. LND | ATML )
   --ccpp="CCPP_SUITE1,CCPP_SUITE2..."
       CCPP suites (CCPP_SUITES) to include in build; delimited with ','
   --remove
@@ -31,8 +33,6 @@ OPTIONS
       build directory
   --install-dir=INSTALL_DIR
       installation prefix
-  --bin-dir=BIN_DIR
-      installation binary directory name ("exec" by default; any name is available)
   --conda=BUILD_CONDA (on|off|only)
   --conda-dir=CONDA_DIR
       installation location for miniconda (SRW clone conda subdirectory by default)
@@ -57,7 +57,6 @@ Settings:
   HOME_DIR=${HOME_DIR}
   BUILD_DIR=${BUILD_DIR}
   INSTALL_DIR=${INSTALL_DIR}
-  BIN_DIR=${BIN_DIR}
   PLATFORM=${PLATFORM}
   COMPILER=${COMPILER}
   APP=${APPLICATION}
@@ -83,7 +82,6 @@ SORC_DIR=$(cd "$(dirname "$(readlink -f -n "${BASH_SOURCE[0]}" )" )" && pwd -P)
 HOME_DIR="${SORC_DIR}/.."
 BUILD_DIR="${SORC_DIR}/build"
 INSTALL_DIR="${SORC_DIR}/build"
-BIN_DIR="exec"
 CONDA_BUILD_DIR="${SORC_DIR}/conda"
 COMPILER=""
 APPLICATION=""
@@ -126,8 +124,6 @@ while :; do
     --build-dir|--build-dir=) usage_error "$1 requires argument." ;;
     --install-dir=?*) INSTALL_DIR=${1#*=} ;;
     --install-dir|--install-dir=) usage_error "$1 requires argument." ;;
-    --bin-dir=?*) BIN_DIR=${1#*=} ;;
-    --bin-dir|--bin-dir=) usage_error "$1 requires argument." ;;
     --conda=?*) BUILD_CONDA=${1#*=} ;;
     --conda|--conda=) usage_error "$1 requires argument." ;;
     --conda-dir=?*) CONDA_BUILD_DIR=${1#*=} ;;
@@ -154,10 +150,10 @@ COMPILER=$(echo ${COMPILER} | tr '[A-Z]' '[a-z]')
 if [ "${BUILD}" = false ] && [ "${MOVE}" = true ]; then
   if [[ ! ${HOME_DIR} -ef ${INSTALL_DIR} ]]; then
     printf "... Moving pre-compiled executables to designated location ...\n"
-    mkdir -p ${HOME_DIR}/${BIN_DIR}
-    cd "${INSTALL_DIR}/${BIN_DIR}"
+    mkdir -p ${HOME_DIR}/exec
+    cd "${INSTALL_DIR}/exec"
     for file in *; do
-      [ -x "${file}" ] && mv "${file}" "${HOME_DIR}/${BIN_DIR}"
+      [ -x "${file}" ] && mv "${file}" "${HOME_DIR}/exec"
     done
   fi
   exit 0
@@ -182,16 +178,17 @@ if [ "${REMOVE}" = true ]; then
   if [ -d "${BUILD_DIR}" ]; then
     rm -rf ${BUILD_DIR}
   fi
-  printf "Remove BIN_DIR directory\n"
-  printf "  BIN_DIR=${HOME_DIR}/${BIN_DIR}\n"
-  if [ -d "${HOME_DIR}/${BIN_DIR}" ]; then
-    rm -rf "${HOME_DIR}/${BIN_DIR}"
+  printf "Remove exec directory\n"
+  if [ -d "${HOME_DIR}/exec" ]; then
+    rm -rf "${HOME_DIR}/exec"
   fi
   printf "Remove lib directory\n"
-  printf "  LIB_DIR=${HOME_DIR}/lib\n"
+  printf "  LIB_DIR=${HOME_DIR}/lib64\n"
+  if [ -d "${HOME_DIR}/lib64" ]; then
+    rm -rf "${HOME_DIR}/lib64"
+  fi
   if [ -d "${HOME_DIR}/lib" ]; then
     rm -rf "${HOME_DIR}/lib"
-    rm -rf "${HOME_DIR}/lib64"
   fi
   printf "Remove submodules\n"
   if [ -d "${SORC_DIR}/apply_incr.fd" ]; then
@@ -201,6 +198,10 @@ if [ "${REMOVE}" = true ]; then
   if [ -d "${SORC_DIR}/ufs_model.fd" ]; then
     printf "... Remove ufs_model.fd ...\n"
     rm -rf "${SORC_DIR}/ufs_model.fd"
+  fi
+  if [ -d "${SORC_DIR}/UFS_UTILS.fd" ]; then
+    printf "... Remove UFS_UTILS.fd ...\n"
+    rm -rf "${SORC_DIR}/UFS_UTILS.fd"
   fi
 
   cd "${HOME_DIR}"
@@ -305,8 +306,7 @@ fi
 # cmake settings
 CMAKE_SETTINGS="\
  -DCMAKE_BUILD_TYPE=${BUILD_TYPE}\
- -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}\
- -DCMAKE_INSTALL_BINDIR=${BIN_DIR}"
+ -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}"
 
 if [ ! -z "${APPLICATION}" ]; then
   CMAKE_SETTINGS="${CMAKE_SETTINGS} -DAPP=${APPLICATION}"
@@ -359,7 +359,7 @@ if [ "${CLEAN}" = true ]; then
   fi
 else
   printf "... Generate CMAKE configuration ...\n"
-  ecbuild ${SORC_DIR} 2>&1 | tee log.ecbuild
+  ecbuild ${SORC_DIR} ${CMAKE_SETTINGS} 2>&1 | tee log.ecbuild
 
   printf "... Compile executables ...\n"
   make ${MAKE_SETTINGS} 2>&1 | tee log.make
@@ -370,25 +370,27 @@ else
   if [[ "${BUILD}" = false && "${MOVE}" = false ]] || 
      [[ "${BUILD}" = true && "${MOVE}" = true ]]; then
     printf "... Moving pre-compiled executables to designated location ...\n"
-    mkdir -p ${HOME_DIR}/${BIN_DIR}
+    mkdir -p "${HOME_DIR}/exec"
     cd "${INSTALL_DIR}/bin"
-    # copy executables in build/bin to BIN_DIR
+    # copy executables in build/bin to HOME_DIR/exec
     for file in *; do
-      [ -x "${file}" ] && cp "${file}" "${HOME_DIR}/${BIN_DIR}"
+      [ -x "${file}" ] && cp "${file}" "${HOME_DIR}/exec"
     done
     # copy libraries
-    cp -r ${BUILD_DIR}/lib ${HOME_DIR}
-    cp -r ${BUILD_DIR}/lib64 ${HOME_DIR}
-    # copy ufs_model to BIN_DIR
-    cp ${BUILD_DIR}/ufs_model.fd/src/ufs_model.fd-build/ufs_model ${HOME_DIR}/${BIN_DIR}
+    mkdir -p ${HOME_DIR}/lib64
+    cd ${BUILD_DIR}/lib64
+    for file in *; do
+      [ -f "${file}" ] && cp "${file}" "${HOME_DIR}/lib64"
+    done
   fi
 fi
 
 # Link land-DA input files to FIXlandda directory
+ver_fix_data="_v2.1"
 if [ "${PLATFORM}" = "hera" ]; then
-  landda_fix_orig="/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs"
+  landda_fix_orig="/scratch2/NAGAPE/epic/UFS_Land-DA${ver_fix_data}/inputs"
 elif [ "${PLATFORM}" = "orion" ] || [ "${PLATFORM}" = "hercules" ]; then
-  landda_fix_orig="/work/noaa/epic/UFS_Land-DA_Dev/inputs"
+  landda_fix_orig="/work/noaa/epic/UFS_Land-DA${ver_fix_data}/inputs"
 fi
 ln -nsf ${landda_fix_orig}/* ${HOME_DIR}/fix
 

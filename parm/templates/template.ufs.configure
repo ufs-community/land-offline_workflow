@@ -19,17 +19,17 @@ MED_omp_num_threads:            1
 MED_attributes::
   Verbosity = 1
   Diagnostic = 0
-  ATM_model = datm
+  ATM_model = {{ atm_model }}
   LND_model = noahmp
   MED_model = cmeps
   history_n = 6
   history_option = nhours
   history_ymd = -999
-  coupling_mode = ufs.nfrac.aoflux
+  coupling_mode = {{ med_coupling_mode }}
 ::
 
 # ATM #
-ATM_model:                      datm
+ATM_model:                      {{ atm_model }}
 ATM_petlist_bounds:             0 {{ nprocs_atm_m1 }}
 ATM_omp_num_threads:            1
 ATM_attributes::
@@ -46,7 +46,7 @@ LND_attributes::
   Diagnostic = 0
   mosaic_file = INPUT/C96_mosaic.nc
   input_dir = INPUT/
-  ic_type = custom
+  ic_type = {{ lnd_ic_type }}
   layout = {{ lnd_layout_x }}:{{ lnd_layout_y }} # need to be consistent with number of PEs (6*Lx*Ly)
   num_soil_levels = 4
   forcing_height = 10
@@ -69,8 +69,8 @@ LND_attributes::
   surface_thermal_roughness_option = 2
   output_freq = {{ lnd_output_freq_sec }}
   restart_freq = -1
-  calc_snet = .true.
-  initial_albedo = 0.25
+  calc_snet = {{ lnd_calc_snet }}
+  initial_albedo = {{ lnd_initial_albedo }}
 ::
 
 # cold
@@ -102,7 +102,7 @@ ALLCOMP_attributes::
   ScalarFieldIdxGridNTile = 3
   ScalarFieldIdxNextSwCday = 4 # required for data atmosphere configurations
   ScalarFieldName = cpl_scalars
-  start_type = continue
+  start_type = {{ allcomp_start_type }}
   restart_dir = ./RESTART/
   case_name = ufs.cpld
   restart_n = 1
@@ -112,7 +112,7 @@ ALLCOMP_attributes::
   stop_n = 24
   stop_option = nhours
   stop_ymd = -999
-  read_restart = .true.
+  read_restart = {{ allcomp_read_restart }}
   mediator_present = true
   orb_eccen = 1.e36
   orb_iyear = 2000

@@ -71,7 +71,7 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
             files.append(entry.path)
 
     files.sort()
-    print("Files=",files)
+#    print("Files=",files)
 
     nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
     wtime_oops_prefix = "OOPS_STATS util::Timers::Total"
@@ -195,7 +195,9 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
     fp_data_fcst_prefix = os.path.join(path_data,fn_data_fcst_prefix)
     files = []
     for entry in os.scandir(path_data):
-        if entry.is_file() and entry.name.startswith(fn_data_fcst_prefix):
+        if entry.is_file() and \
+           entry.name.startswith(fn_data_fcst_prefix) and \
+           entry.name.endswith(fn_data_fcst_suffix):
             files.append(entry.path)
 
     files.sort()

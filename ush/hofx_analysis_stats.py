@@ -27,17 +27,17 @@ def get_obs_stats(fdir, plottype):
     for fname in os.listdir(fdir):
         print("=== File Name:",fname)
         f=netCDF4.Dataset(fdir+'/'+fname)
-#        print("NETCDF:",f)
+        print("NETCDF:",f)
         obs=f.groups['ObsValue'].variables['totalSnowDepth']
-#        print("ObsValue:",obs)
+        print("ObsValue:",obs)
         ombg=f.groups['ombg'].variables['totalSnowDepth']
-#        print("OMBG:",ombg)
+        print("OMBG:",ombg)
         oman=f.groups['oman'].variables['totalSnowDepth']
-#        print("OMAN:",oman)
+        print("OMAN:",oman)
         qc=f.groups['PreQC'].variables['totalSnowDepth']
-#        print("PreQC:",qc)
+        print("PreQC:",qc)
         obstime=f.groups['MetaData'].variables['dateTime']
-#        print("OBS_TIME:",obstime)
+        print("OBS_TIME:",obstime)
         if plottype=='histogram':
             ombg_=np.ma.masked_where(qc != 0, ombg)
             ombg_=np.ma.masked_where(ombg == 0, ombg_) 
@@ -64,12 +64,9 @@ def get_obs_stats(fdir, plottype):
 
 def plot_scatter():
     print("===== PLOT: SCATTER =====")
-    if yaml_data['machine']=='hera':
-        cartopy.config['data_dir']='/scratch2/NAGAPE/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
-    elif yaml_data['machine']=='orion' or yaml_data['machine']=='hercules':
-        cartopy.config['data_dir']='/work/noaa/epic/UFS_Land-DA_Dev/inputs/NaturalEarth'
-    elif yaml_data['machine']=='singularity':
-        cartopy.config['data_dir']='SINGULARITY_WORKING_DIR/land-DA_workflow/fix/NaturalEarth'
+    
+    # Set the path to Natural Earth dataset
+    cartopy.config['data_dir']=yaml_data['cartopy_ne_path']
 
     field_mean=float("{:.2f}".format(np.mean(np.absolute(field))))
     field_std=float("{:.2f}".format(np.std(np.absolute(field))))

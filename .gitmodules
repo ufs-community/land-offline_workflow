@@ -2,8 +2,13 @@
 	path = sorc/ufs_model.fd
 	url = https://github.com/ufs-community/ufs-weather-model.git
 	ignore = dirty
+
 [submodule "sorc/apply_incr.fd"]
 	path = sorc/apply_incr.fd
 	url = https://github.com/NOAA-PSL/land-apply_jedi_incr.git
         ignore = dirty
 
+[submodule "sorc/UFS_UTILS.fd"]
+	path = sorc/UFS_UTILS.fd
+	url = https://github.com/ufs-community/UFS_UTILS.git
+	ignore = dirty

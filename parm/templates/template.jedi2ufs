@@ -10,7 +10,7 @@
 
   tile_size = {{ res }}
   tile_path = "{{ fix_landda }}/FV3_fix_tiled/C{{ res }}/"
-  tile_fstub = "{{ tstub }}"
+  tile_fstub = "{{ fn_orog }}"
   
 !------------------- only restart conversion -------------------
 ! Time stamp for conversion for restart conversion
