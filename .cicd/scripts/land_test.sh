@@ -74,7 +74,7 @@ status=0
 
 if [[ true = ${LAND_DA_RUN_TESTS:=false} ]] ; then
                                         
-    ls -l sorc/build/bin/*.exe sorc/build/lib/*.so
+    ls -l sorc/build/bin/*.exe sorc/build/lib64/*.so
     status=$?
     if [[ ${status} = 0 ]] ; then
 
@@ -100,7 +100,7 @@ if [[ true = ${LAND_DA_RUN_TESTS:=false} ]] ; then
 	set -x
 	cd -
     else
-	echo "Error: bin/* or lib/* not available."
+	echo "Error: bin/* or lib64/* not available."
     fi
 else
 	echo "Pipeline skipping Tests on ${UFS_PLATFORM} (${machine})"

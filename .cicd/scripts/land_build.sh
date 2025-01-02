@@ -61,7 +61,7 @@ status=${PIPESTATUS[0]}
 cat sorc/build/log.ecbuild sorc/build/log.make >> ${workspace}/${UFS_PLATFORM}-${UFS_COMPILER}-build-log.txt
 echo "Pipeline Completed Land-DA build on ${UFS_PLATFORM} ${UFS_COMPILER}. status=$status"
 
-ls -l sorc/build/bin/*.exe sorc/build/lib/*.so
+ls -l sorc/build/bin/*.exe sorc/build/lib64/*.so
 status=$?
 
 git status -u
