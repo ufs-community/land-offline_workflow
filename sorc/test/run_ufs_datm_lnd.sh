@@ -41,10 +41,8 @@ cp -p ${project_source_dir}/test/parm/rpointer.cpl .
 
 # Set RESTART directory
 mkdir -p RESTART
-#ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.cpl.r.2000-01-05-00000.nc RESTART/.
-#ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.datm.r.2000-01-05-00000.nc .
-ln -nsf ${FIXlandda}/DATA_RESTART_new/ufs.cpld.cpl.r.2000-01-05-00000.nc RESTART/.
-ln -nsf ${FIXlandda}/DATA_RESTART_new/ufs.cpld.datm.r.2000-01-05-00000.nc .
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.cpl.r.2000-01-05-00000.nc RESTART/.
+ln -nsf ${FIXlandda}/DATA_RESTART/ufs.cpld.datm.r.2000-01-05-00000.nc .
 for itile in {1..6}
 do
   ln -nsf ${FIXlandda}/DATA_RESTART/ufs_land_restart.2000-01-05_00-00-00.tile${itile}.nc RESTART/ufs.cpld.lnd.out.2000-01-05-00000.tile${itile}.nc
