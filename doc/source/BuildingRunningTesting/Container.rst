@@ -245,7 +245,23 @@ Configure the Experiment
 
 The user should now see the ``Land-DA_workflow`` and ``jedi-bundle`` directories in the ``$LANDDAROOT`` directory. 
 
-Because of a conda conflict between the container and the host system, it is best to load rocoto separately instead of using workflow files found in the ``modulefiles`` directory. Note that some modules need to be loaded or a path appended before running the following command. Check the ``modulefiles/wflow_<platform>.lua`` to see if that is the case. For Gaea, this path needs to be loaded first ``/ncrc/proj/epic/rocoto/modulefiles/``.
+Because of a conda conflict between the container and the host system, it is best to load rocoto separately instead of using workflow files found in the ``modulefiles`` directory. 
+
+.. note::
+
+   Some modules need to be loaded or a path appended before loading rocoto.
+
+   For Hercules/Orion, add the contrib module before loading rocoto by:
+
+   .. code-block:: console
+
+      module load contrib
+
+   For Gaea, source the following path before loading rocoto by: 
+
+   .. code-block:: console
+
+      module use /ncrc/proj/epic/rocoto/modulefiles/
 
 .. code-block:: console
 
