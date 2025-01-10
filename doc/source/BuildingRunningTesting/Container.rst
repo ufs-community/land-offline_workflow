@@ -269,6 +269,14 @@ Once everything looks good, run the `uwtools <https://github.com/ufs-community/u
 
 A successful run of these commands will output a “0 errors found” message.
 
+.. note:: 
+
+   To run the container on Gaea, the SLURM options in the ``land_analysis.xml`` needs to be modified by running the following command before starting the experiment: 
+
+   .. code-block:: console
+
+      sed -i 's|<queue>batch</queue>|<native> --clusters=c5 --partition=batch --export=NONE</native>|g' land_analysis.xml
+
 .. _RunExptC:
 
 Run the Experiment
