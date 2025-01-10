@@ -232,8 +232,8 @@ Run the ``setup_container.sh`` script with the proper arguments. Ensure ``LANDDA
 
 where:
 
-   * ``-c`` is the compiler on the user's local machine (e.g., ``intel/2022.1.2``)
-   * ``-m`` is the :term:`MPI` on the user's local machine (e.g., ``impi/2022.1.2``)
+   * ``-c`` is the compiler on the user's local machine (e.g., ``intel/2022.1.2``, ``intel-oneapi-compilers/2022.2.1``, ``intel/2023.2.0``)
+   * ``-m`` is the :term:`MPI` on the user's local machine (e.g., ``impi/2022.1.2``, ``intel-oneapi-mpi/2021.7.1``, ``cray-mpich/8.1.28``)
    * ``-i`` is the full path to the container image ( e.g., ``$LANDDAROOT/ubuntu22.04-intel-landda-release-public-v2.0.0.img``).
    
 When using a Singularity container, Intel compilers and Intel :term:`MPI` (preferably 2020 versions or newer) need to be available on the host system to properly launch MPI jobs. Generally, this is accomplished by loading a module with a recent Intel compiler and then loading the corresponding Intel MPI. 
