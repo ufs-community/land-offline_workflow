@@ -47,5 +47,21 @@ else
   echo "FATAL ERROR: task module file does not exist !!!"
 fi
 
+# temporary solution for JCB (will be availalbe in spack-stack 1.7 or above)
+if [ "${task_name}" = "jcb_test" ]; then
+  set +u
+  if [ "${machine}" = "hera" ]; then
+    module use /contrib/miniconda3/modulefiles
+    module load miniconda3/4.12.0
+    conda activate /scratch2/NAGAPE/epic/Chan-hoo.Jeon/PY_VENV/landda_pyenv
+  elif [ "${machine}" = "orion" ] || [ "${machine}" = "hercules" ]; then
+    module load miniconda3/24.3.0
+    source activate base
+    conda activate /work/noaa/epic/chjeon/PY_VENV/landda_pyenv
+  fi
+  set -u
+  conda list
+fi
+
 # Run J-job script
 ${home_dir}/jobs/JLANDDA_${task_name_upper}
