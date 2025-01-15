@@ -49,7 +49,7 @@ FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 
 # Copy input namelist data files
 cp -p "${PARMlandda}/templates/template.noahmptable.tbl" noahmptable.tbl
-cp -p "${PARMlandda}/templates/template.${APP}.fd_ufs.yaml" fd_ufs.yaml
+cp -p "${PARMlandda}/templates/template.fd_ufs.yaml" fd_ufs.yaml
 if [ "${APP}" = "LND" ]; then
   cp -p "${PARMlandda}/templates/template.${APP}.datm_in" datm_in
   cp -p "${PARMlandda}/templates/template.${APP}.datm.streams" datm.streams
