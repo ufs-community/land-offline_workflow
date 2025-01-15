@@ -49,7 +49,7 @@ do
     err_exit "Initial sfc_data files do not exist"
   fi
   # copy sfc_data file for comparison
-  cp -p ${sfc_fn} "${sfc_fn}_old"
+  cp -p ${sfc_fn} "${sfc_fn}_ini"
 done
 # Copy obserbation file to work directory
 ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
@@ -75,7 +75,7 @@ ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${f
 # CREATE BACKGROUND ENSEMBLE (LETKFOI)
 ################################################
 
-if [ $GFSv17 == "YES" ]; then
+if [ "${GFSv17}" = "YES" ]; then
   SNOWDEPTHVAR="snodl"
 else
   SNOWDEPTHVAR="snwdph"
@@ -100,147 +100,107 @@ if [[ $? != 0 ]]; then
 fi
 
 ################################################
-# DETERMINE REQUESTED JEDI TYPE, CONSTRUCT YAMLS
+# RUN JEDI
 ################################################
 
-do_DA="YES"
-do_HOFX="NO"
 RESP1=$((RES+1))
 
 mkdir -p output/DA/hofx
-# if yaml is specified by user, use that. Otherwise, build the yaml
-if [ ${do_DA} = "YES" ]; then 
 
-  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
-  if [ "${OBS_GHCN}" = "YES" ]; then
-    cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
-  fi
-
-  # update jedi yaml file
-  settings="\
-    'yyyy': !!str ${YYYY}
-    'mm': !!str ${MM}
-    'dd': !!str ${DD}
-    'hh': !!str ${HH}
-    'yyyymmdd': !!str ${PDY}
-    'yyyymmddhh': !!str ${PDY}${cyc}
-    'yyyp': !!str ${YYYP}
-    'mp': !!str ${MP}
-    'dp': !!str ${DP}
-    'hp': !!str ${HP}
-    'fn_orog': C${RES}_oro_data
-    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-    'res': ${RES}
-    'resp1': ${RESP1}
-    'driver_obs_only': false
-  " # End of settings variable
-
-  fp_template="${DATA}/letkf_land.yaml"
-  fn_namelist="${DATA}/letkf_land.yaml"
-  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
+cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
+if [ "${OBS_GHCN}" = "YES" ]; then
+  cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
 fi
 
-if [ "${do_HOFX}" = "YES" ]; then 
+# update jedi yaml file
+settings="\
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'yyyymmdd': !!str ${PDY}
+  'yyyymmddhh': !!str ${PDY}${cyc}
+  'yyyp': !!str ${YYYP}
+  'mp': !!str ${MP}
+  'dp': !!str ${DP}
+  'hp': !!str ${HP}
+  'fn_orog': C${RES}_oro_data
+  'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
+  'res': ${RES}
+  'resp1': ${RESP1}
+  'driver_obs_only': false
+" # End of settings variable
 
-  cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/hofx_land.yaml"
-  if [ "${OBS_GHCN}" = "YES" ]; then
-    cat ${PARMlandda}/jedi/GHCN.yaml >> hofx_land.yaml
-  fi
-
-  # update jedi yaml file
-  settings="\
-    'yyyy': !!str ${YYYY}
-    'mm': !!str ${MM}
-    'dd': !!str ${DD}
-    'hh': !!str ${HH}
-    'yyyymmdd': !!str ${PDY}
-    'yyyymmddhh': !!str ${PDY}${cyc}
-    'yyyp': !!str ${YYYP}
-    'mp': !!str ${MP}
-    'dp': !!str ${DP}
-    'hp': !!str ${HP}
-    'fn_orog': C${RES}_oro_data
-    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-    'res': ${RES}
-    'resp1': ${RESP1}
-    'driver_obs_only': true
-  " # End of settings variable
-
-  fp_template="${DATA}/hofx_land.yaml"
-  fn_namelist="${DATA}/hofx_land.yaml"
-  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
-fi
+fp_template="${DATA}/letkf_land.yaml"
+fn_namelist="${DATA}/letkf_land.yaml"
+${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 if [ "$GFSv17" = "NO" ]; then
-  cp ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
 else
-  cp ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
+  cp -p ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
 fi
-
-################################################
-# RUN JEDI
-################################################
 
 if [[ ! -e Data ]]; then
   ln -nsf $JEDI_STATICDIR Data 
 fi
 
-echo 'do_landDA: calling fv3-jedi'
+export pgm="fv3jedi_letkf.x"
+. prep_step
+${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
+export err=$?; err_chk
+cp errfile errfile_jedi_letkf
+if [[ $err != 0 ]]; then
+  err_exit "JEDI DA failed"
+fi
 
-if [ "${do_DA}" = "YES" ]; then
-  export pgm="fv3jedi_letkf.x"
-  . prep_step
-  ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
-  export err=$?; err_chk
-  cp errfile errfile_jedi_letkf
-  if [[ $err != 0 ]]; then
-    err_exit "JEDI DA failed"
-  fi
-fi 
-if [ "${do_HOFX}" = "YES" ]; then
-  export pgm="fv3jedi_letkf.x"
-  . prep_step
-  ${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm hofx_land.yaml >>$pgmout 2>errfile
-  export err=$?; err_chk
-  cp errfile errfile_jedi_hofx
-  if [[ $err != 0 ]]; then
-    err_exit "JEDI hofx failed"
-  fi
-fi 
+# save intermediate sfc_data files
+for itile in {1..6}
+do
+  sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
+  cp -p ${sfc_fn} "${sfc_fn}_old"
+done
 
 ################################################
 # Apply Increment to UFS sfc_data files
 ################################################
-
-if [ "${do_DA}" = "YES" ]; then 
+if [ "${GFSv17}" = "NO" ]; then
+  frac_grid=".false."
+else
+  frac_grid=".true."
+fi
+orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
+orog_fn_base="C${RES}_oro_data"
 
 cat << EOF > apply_incr_nml
 &noahmp_snow
  date_str=${YYYY}${MM}${DD}
  hour_str=${HH}
  res=${RES}
- frac_grid=$GFSv17
- orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
- otype="C${RES}_oro_data"
+ frac_grid=${frac_grid}
+ rst_path="${DATA}"
+ inc_path="${DATA}"
+ orog_path="${orog_path}"
+ otype=${orog_fn_base}
+ ntiles=6
+ ens_size=1
 /
 EOF
 
-  export pgm="apply_incr.exe"
-  . prep_step
-  # (n=6) -> this is fixed, at one task per tile (with minor code change, could run on a single proc). 
-  ${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
-  export err=$?; err_chk
-  cp errfile errfile_apply_incr
-  if [[ $err != 0 ]]; then
-    err_exit "apply snow increment failed"
-  fi
+export pgm="apply_incr.exe"
+. prep_step
+# (n=6): this is fixed, at one task per tile (with minor code change). 
+${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
+export err=$?; err_chk
+cp errfile errfile_apply_incr
+if [[ $err != 0 ]]; then
+  err_exit "apply snow increment failed"
+fi
 
-  for itile in {1..6}
-  do
-    cp -p ${DATA}/${FILEDATE}.xainc.sfc_data.tile${itile}.nc ${COMOUT}
-  done
-
-fi 
+for itile in {1..6}
+do
+  cp -p ${DATA}/${FILEDATE}.xainc.sfc_data.tile${itile}.nc ${COMOUT}
+done 
 
 for itile in {1..6}
 do
@@ -261,7 +221,6 @@ if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
 
   fn_sfc_base="${FILEDATE}.sfc_data.tile"
   fn_inc_base="${FILEDATE}.xainc.sfc_data.tile"
-  fn_orog_base="C96_oro_data.tile"
   out_title_base="Land-DA::SFC-DATA::${PDY}::"
   out_fn_base="landda_comp_sfc_${PDY}_"
   # zlevel_number is valid only for 3-D fields such as stc/smc/slc
@@ -271,7 +230,8 @@ if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
 work_dir: '${DATA}'
 fn_sfc_base: '${fn_sfc_base}'
 fn_inc_base: '${fn_inc_base}'
-fn_orog_base: '${fn_orog_base}'
+orog_path: '${orog_path}'
+orog_fn_base: '${orog_fn_base}'
 out_title_base: '${out_title_base}'
 out_fn_base: '${out_fn_base}'
 fix_dir: '${FIXlandda}'
