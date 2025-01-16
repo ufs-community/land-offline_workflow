@@ -62,7 +62,7 @@ setpdy.sh
 . ./PDY
 
 [[ "$WORKFLOW_MANAGER" = "rocoto" ]] && export COMROOT=$COMROOT
-if [ "${MACHINE}" = "WCOSS2" ]; then
+if [ "${MACHINE}" = "wcoss2" ]; then
   export COMIN="${COMIN:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
   export COMOUT="${COMOUT:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
   export COMINm1="${COMINm1:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDYm1})}"
