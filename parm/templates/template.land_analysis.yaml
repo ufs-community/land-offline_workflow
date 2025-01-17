@@ -85,6 +85,32 @@ workflow:
     DATADEP_SFC2: "<cyclestr>&WARMSTART_DIR;/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>"
   log: "&LOGDIR;/workflow.log"
   tasks:
+    task_jcb_test:
+      attrs:
+{%- if coldstart == "YES" %}
+        cycledefs: cycled_from_second
+{%- else %}
+        cycledefs: cycled
+{%- endif %}
+        maxtries: 2
+      envars:
+        ACCOUNT: "&ACCOUNT;"
+        COMROOT: "&COMROOT;"
+        cyc: "&cyc;"
+        DATAROOT: "&DATAROOT;"
+        HOMElandda: "&HOMElandda;"
+        KEEPDATA: "&KEEPDATA;"
+        MACHINE: "&MACHINE;"
+        model_ver: "&model_ver;"
+        PDY: "&PDY;"
+        SCHED: "&SCHED;"
+      account: "&ACCOUNT;"
+      command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "jcb_test" "&HOMElandda;" "&MACHINE;"'
+      jobname: jcb_test
+      cores: 1
+      walltime: 00:10:00
+      queue: batch
+      join: "&LOGDIR;/jcb_test&LOGFN_SUFFIX;"
     task_prep_obs:
       attrs:
 {%- if coldstart == "YES" %}

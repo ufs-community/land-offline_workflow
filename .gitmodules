@@ -12,3 +12,14 @@
 	path = sorc/UFS_UTILS.fd
 	url = https://github.com/ufs-community/UFS_UTILS.git
 	ignore = dirty
+
+[submodule "sorc/jcb-gdas"]
+	path = sorc/jcb-gdas
+	url = https://github.com/NOAA-EMC/jcb-gdas.git
+        ignore = dirty
+
+[submodule "sorc/jcb-algorithms"]
+	path = sorc/jcb-algorithms
+	url = https://github.com/NOAA-EMC/jcb-algorithms.git
+        ignore = dirty
+

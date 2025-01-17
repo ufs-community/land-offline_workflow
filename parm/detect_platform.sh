@@ -17,8 +17,6 @@ elif [[ -d /glade ]]; then
   PLATFORM="derecho"
 elif [[ -d /lfs4/HFIP ]] ; then
   PLATFORM="jet"
-elif [[ -d /lfs/h2 ]] ; then
-  PLATFORM="wcoss2"
 else
   PLATFORM="unknown"
 fi

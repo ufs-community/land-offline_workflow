@@ -310,8 +310,6 @@ def detect_platform():
         machine = "derecho"
     elif os.path.isdir("/lfs4/HFIP"):
         machine = "jet"
-    elif os.path.isdir("/lfs/h2"):
-        machine = "wcoss2"
     else:
         sys.exit(f"Machine (platform) is not detected. Please set it with -p argument")
 
