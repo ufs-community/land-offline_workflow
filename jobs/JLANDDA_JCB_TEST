@@ -62,16 +62,11 @@ export cycle="${cycle:-t${cyc}z}"
 #. ./PDY
 
 [[ "$WORKFLOW_MANAGER" = "rocoto" ]] && export COMROOT=$COMROOT
-if [ "${MACHINE}" = "wcoss2" ]; then
-  export COMIN="${COMIN:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
-  export COMOUT="${COMOUT:-$(compath.py -o ${NET}/${model_ver}/${RUN}.${PDY})}"
-else
-  export COMIN="${COMIN:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
-  export COMOUT="${COMOUT:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
-fi
+
+export COMIN="${COMIN:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
+export COMOUT="${COMOUT:-${COMROOT}/${NET}/${model_ver}/${RUN}.${PDY}}"
 
 mkdir -p ${COMOUT}
-
 #
 #-----------------------------------------------------------------------
 #
