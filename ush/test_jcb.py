@@ -2,3 +2,4 @@
 
 import jcb
 
+from jcb import render
