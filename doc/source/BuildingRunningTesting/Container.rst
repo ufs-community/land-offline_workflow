@@ -85,9 +85,6 @@ Set a top-level directory location for Land DA work, and navigate to it. For exa
 
 where ``/path/to/landda`` is the path to this top-level directory (e.g., ``/Users/Joe.Schmoe/landda``). 
 
-.. hint::
-   If a ``singularity: command not found`` error message appears in any of the following steps, try running: ``module load singularity`` or (on Derecho) ``module load apptainer``.
-
 NOAA RDHPCS Systems
 ----------------------
 
@@ -185,6 +182,9 @@ To run the container, users must:
 Set Up the Container
 =======================
 
+.. hint::
+   If a ``singularity: command not found`` error message appears in any of the following steps, try running: ``module load singularity`` or (on Derecho) ``module load apptainer``.
+
 Save the location of the container in an environment variable.
 
 .. code-block:: console
@@ -276,6 +276,14 @@ The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_
 
 Save and close the file.
 
+.. note::
+
+   On Orion/Hercules, it is also necessary to update the ``SINGULARITYBIN`` variable in ``run_container_executable.sh``:
+
+   .. code-block:: console
+   
+      SINGULARITYBIN=/apps/spack-managed/gcc-11.3.1/singularity-3.8.7-ks32erwgzkuf52swkxb5pyzeapwz3i7n/bin/singularity
+
 Once everything looks good, run the `uwtools <https://github.com/ufs-community/uwtools>`_ scripts to create the Rocoto XML file:
 
 .. code-block:: console
@@ -292,6 +300,14 @@ A successful run of these commands will output a “0 errors found” message.
    .. code-block:: console
 
       sed -i 's|<queue>batch</queue>|<native> --clusters=c5 --partition=batch --export=NONE</native>|g' land_analysis.xml
+
+.. note::
+
+   On some systems, including Orion, users will need to manually export the path to the Python environment by running: 
+
+   .. code-block:: console
+
+      export PATH=$LANDDAROOT/land-DA_workflow/sorc/conda/envs/land_da/bin:$PATH
 
 .. _RunExptC:
 
