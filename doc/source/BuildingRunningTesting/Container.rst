@@ -303,7 +303,7 @@ A successful run of these commands will output a “0 errors found” message.
 
 .. note::
 
-   On some systems, including Orion, users will need to manually export the path to the Python environment by running: 
+   On some systems, including Orion/Hercules, users will need to manually export the path to the Python environment by running: 
 
    .. code-block:: console
 
