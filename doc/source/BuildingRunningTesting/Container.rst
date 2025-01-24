@@ -249,7 +249,7 @@ Because of a conda conflict between the container and the host system, it is bes
 
 .. note::
 
-   Some modules need to be loaded or a path appended before loading rocoto.
+   On certain systems, some modules need to be loaded or a path appended before loading rocoto.
 
    For Hercules/Orion, add the contrib module before loading rocoto by:
 
