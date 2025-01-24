@@ -287,7 +287,7 @@ A successful run of these commands will output a “0 errors found” message.
 
 .. note:: 
 
-   To run the container on Gaea, the SLURM options in the ``land_analysis.xml`` needs to be modified by running the following command before starting the experiment: 
+   To run the container on Gaea, the SLURM options in the ``land_analysis.xml`` need to be modified by running the following command before starting the experiment: 
 
    .. code-block:: console
 
