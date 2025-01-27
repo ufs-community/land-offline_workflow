@@ -85,9 +85,6 @@ Set a top-level directory location for Land DA work, and navigate to it. For exa
 
 where ``/path/to/landda`` is the path to this top-level directory (e.g., ``/Users/Joe.Schmoe/landda``). 
 
-.. hint::
-   If a ``singularity: command not found`` error message appears in any of the following steps, try running: ``module load singularity`` or (on Derecho) ``module load apptainer``.
-
 NOAA RDHPCS Systems
 ----------------------
 
@@ -185,6 +182,9 @@ To run the container, users must:
 Set Up the Container
 =======================
 
+.. hint::
+   If a ``singularity: command not found`` error message appears in any of the following steps, try running: ``module load singularity`` or (on Derecho) ``module load apptainer``.
+
 Save the location of the container in an environment variable.
 
 .. code-block:: console
@@ -232,8 +232,8 @@ Run the ``setup_container.sh`` script with the proper arguments. Ensure ``LANDDA
 
 where:
 
-   * ``-c`` is the compiler on the user's local machine (e.g., ``intel/2022.1.2``)
-   * ``-m`` is the :term:`MPI` on the user's local machine (e.g., ``impi/2022.1.2``)
+   * ``-c`` is the compiler on the user's local machine (e.g., ``intel/2022.1.2``, ``intel-oneapi-compilers/2022.2.1``, ``intel/2023.2.0``)
+   * ``-m`` is the :term:`MPI` on the user's local machine (e.g., ``impi/2022.1.2``, ``intel-oneapi-mpi/2021.7.1``, ``cray-mpich/8.1.28``)
    * ``-i`` is the full path to the container image ( e.g., ``$LANDDAROOT/ubuntu22.04-intel-landda-release-public-v2.0.0.img``).
    
 When using a Singularity container, Intel compilers and Intel :term:`MPI` (preferably 2020 versions or newer) need to be available on the host system to properly launch MPI jobs. Generally, this is accomplished by loading a module with a recent Intel compiler and then loading the corresponding Intel MPI. 
@@ -245,7 +245,23 @@ Configure the Experiment
 
 The user should now see the ``Land-DA_workflow`` and ``jedi-bundle`` directories in the ``$LANDDAROOT`` directory. 
 
-Because of a conda conflict between the container and the host system, it is best to load rocoto separately instead of using workflow files found in the ``modulefiles`` directory.
+Because of a conda conflict between the container and the host system, it is best to load rocoto separately instead of using workflow files found in the ``modulefiles`` directory. 
+
+.. note::
+
+   On certain systems, some modules need to be loaded or a path appended before loading rocoto.
+
+   For Hercules/Orion, add the contrib module before loading rocoto by:
+
+   .. code-block:: console
+
+      module load contrib
+
+   For Gaea, source the following path before loading rocoto by: 
+
+   .. code-block:: console
+
+      module use /ncrc/proj/epic/rocoto/modulefiles/
 
 .. code-block:: console
 
@@ -260,6 +276,14 @@ The ``setup_container.sh`` script creates the ``parm_xml.yaml`` from the ``parm_
 
 Save and close the file.
 
+.. note::
+
+   On Orion/Hercules, it is also necessary to update the ``SINGULARITYBIN`` variable in ``run_container_executable.sh``:
+
+   .. code-block:: console
+   
+      SINGULARITYBIN=/apps/spack-managed/gcc-11.3.1/singularity-3.8.7-ks32erwgzkuf52swkxb5pyzeapwz3i7n/bin/singularity
+
 Once everything looks good, run the `uwtools <https://github.com/ufs-community/uwtools>`_ scripts to create the Rocoto XML file:
 
 .. code-block:: console
@@ -268,6 +292,22 @@ Once everything looks good, run the `uwtools <https://github.com/ufs-community/u
    ../sorc/conda/envs/land_da/bin/uw rocoto realize --input-file land_analysis.yaml --output-file land_analysis.xml
 
 A successful run of these commands will output a “0 errors found” message.
+
+.. note:: 
+
+   To run the container on Gaea, the SLURM options in the ``land_analysis.xml`` need to be modified by running the following command before starting the experiment: 
+
+   .. code-block:: console
+
+      sed -i 's|<queue>batch</queue>|<native> --clusters=c5 --partition=batch --export=NONE</native>|g' land_analysis.xml
+
+.. note::
+
+   On some systems, including Orion/Hercules, users will need to manually export the path to the Python environment by running: 
+
+   .. code-block:: console
+
+      export PATH=$LANDDAROOT/land-DA_workflow/sorc/conda/envs/land_da/bin:$PATH
 
 .. _RunExptC:
 
