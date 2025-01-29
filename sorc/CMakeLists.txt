@@ -135,6 +135,20 @@ ExternalProject_Add(tile2tile_converter.fd
   STEP_TARGETS build
   )
 
+# IMS Snow cover obs
+list(APPEND IMS_PROC_ARGS
+  "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
+)
+list(APPEND TARGET LIST IMS_proc)
+ExternalProject_Add(IMS_proc
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/IMS_proc
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IMS_proc
+  INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+  CMAKE_ARGS ${IMS_PROC_ARGS}
+  BUILD_ALWAYS TRUE
+  STEP_TARGETS build
+  )
+
 # C-Test
 add_subdirectory(test)
 
