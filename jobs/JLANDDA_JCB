@@ -77,7 +77,7 @@ mkdir -p ${COMOUT}
 export pgmout="${DATA}/OUTPUT.$$"
 #env
 
-${SCRIPTSlandda}/exlandda_jcb_test.sh
+${SCRIPTSlandda}/exlandda_jcb.sh
 #export err=$?; err_chk
 
 if [ -e "$pgmout" ]; then
