@@ -1,10 +1,10 @@
 # JCB general
 algorithm: 3dvar
-algorithm_path: "{{PARMlandda}}/jedi/jcb-algorithms"
-app_path_algorithm: "{{PARMlandda}}/jedi/jcb-gdas/algorithm/snow"
-app_path_model: "{{PARMlandda}}/jedi/jcb-gdas/model/snow"
-app_path_observations: "{{PARMlandda}}/jedi/jcb-gdas/observations/snow"
-app_path_observation_chronicle: "{{PARMlandda}}/jedi/jcb-gdas/observation_chronicle/snow"
+algorithm_path: "{{ PARMlandda }}/jedi/jcb-algorithms"
+app_path_algorithm: "{{ PARMlandda }}/jedi/jcb-gdas/algorithm/snow"
+app_path_model: "{{ PARMlandda }}/jedi/jcb-gdas/model/snow"
+app_path_observations: "{{ PARMlandda }}/jedi/jcb-gdas/observations/snow"
+app_path_observation_chronicle: "{{ PARMlandda }}/jedi/jcb-gdas/observation_chronicle/snow"
 
 # Time window
 window_begin: "{{ snow_window_begin }}"
@@ -13,14 +13,14 @@ bound_to_include: begin
 
 # Geometry
 snow_fv3jedi_files_path: "{{ snow_fv3jedi_files_path }}"
-snow_layout_x: {{ layout_x }}
-snow_layout_y: {{ layout_y }}
-snow_npx_anl: {{ npx_ges }}
-snow_npy_anl: {{ npy_ges }}
-snow_npz_anl: {{ npz_ges }}
-snow_npx_ges: {{ npx_ges }}
-snow_npy_ges: {{ npy_ges }}
-snow_npz_ges: {{ npz_ges }}
+snow_layout_x: {{ snow_layout_x }}
+snow_layout_y: {{ snow_layout_y }}
+snow_npx_anl: {{ snow_npx_anl }}
+snow_npy_anl: {{ snow_npy_anl }}
+snow_npz_anl: {{ snow_npz_anl }}
+snow_npx_ges: {{ snow_npx_ges }}
+snow_npy_ges: {{ snow_npy_ges }}
+snow_npz_ges: {{ snow_npz_ges }}
 snow_orog_files_path: "{{ FIXlandda }}/FV3_fix_tiled/C{{ res }}"
 snow_orog_prefix: "C{{ res }}_oro_data"
 
@@ -31,7 +31,7 @@ minimizer: DRPCG
 number_of_outer_loops: 1
 
 # Background
-snow_background_path: "{{snow_bkg_path}}"
+snow_background_path: "{{ snow_bkg_path }}"
 snow_background_time_fv3: "{{ snow_bkg_time_fv3 }}"
 snow_background_time_iso: "{{ snow_bkg_time_iso }}"
 snow_increment_time_fv3: "{{ snow_bkg_time_fv3 }}"
