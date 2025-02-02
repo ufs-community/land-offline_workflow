@@ -3,8 +3,7 @@
 set -xue
 
 # Set other dates
-#PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
-PTIME=$( date --utc --date "${PDY} ${cyc} UTC - ${DATE_CYCLE_FREQ_HR} hours" "+%Y%m%d%H" )
+PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
 
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
@@ -61,4 +60,4 @@ if [ $? -ne 0 ]; then
   err_exit "Generation of GHCN obs file failed !!!"
 fi
 
-
+cp -p ${jcb_out_fn} ${COMOUT}
