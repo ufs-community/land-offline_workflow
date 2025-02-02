@@ -5,16 +5,16 @@ set -xue
 
 case $MACHINE in
   "hera")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "orion")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "hercules")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   *)
-    RUN_CMD=`which mpiexec`
+    run_cmd=`which mpiexec`
     ;;
 esac
 
@@ -62,11 +62,11 @@ fi
 if [ "${APP}" = "ATML" ]; then
   if [ "${COLDSTART}" = "YES" ] && [ "${PDY}${cyc}" = "${DATE_FIRST_CYCLE:0:10}" ]; then
     settings="\
-      'atm_io_layout_x': ${ATM_IO_LAYOUT_X}
-      'atm_io_layout_y': ${ATM_IO_LAYOUT_Y}
-      'atm_layout_x': ${ATM_LAYOUT_X}
-      'atm_layout_y': ${ATM_LAYOUT_Y}
-      'ccpp_suite': ${CCPP_SUITE}
+      'ATM_IO_LAYOUT_X': ${ATM_IO_LAYOUT_X}
+      'ATM_IO_LAYOUT_Y': ${ATM_IO_LAYOUT_Y}
+      'ATM_LAYOUT_X': ${ATM_LAYOUT_X}
+      'ATM_LAYOUT_Y': ${ATM_LAYOUT_Y}
+      'CCPP_SUITE': ${CCPP_SUITE}
       'external_ic': '.true.'
       'make_nh': '.true.'
       'mountain': '.false.'
@@ -77,11 +77,11 @@ if [ "${APP}" = "ATML" ]; then
     " # End of settings variable
   else
     settings="\
-      'atm_io_layout_x': ${ATM_IO_LAYOUT_X}
-      'atm_io_layout_y': ${ATM_IO_LAYOUT_Y}
-      'atm_layout_x': ${ATM_LAYOUT_X}
-      'atm_layout_y': ${ATM_LAYOUT_Y}
-      'ccpp_suite': ${CCPP_SUITE}
+      'ATM_IO_LAYOUT_X': ${ATM_IO_LAYOUT_X}
+      'ATM_IO_LAYOUT_Y': ${ATM_IO_LAYOUT_Y}
+      'ATM_LAYOUT_X': ${ATM_LAYOUT_X}
+      'ATM_LAYOUT_Y': ${ATM_LAYOUT_Y}
+      'CCPP_SUITE': ${CCPP_SUITE}
       'external_ic': '.false.'
       'make_nh': '.false.'
       'mountain': '.true.'
@@ -113,23 +113,23 @@ else
   allcomp_start_type="continue"
 fi
 
-nprocs_atm_m1=$(( NPROCS_FORECAST_ATM - 1 ))
-nprocs_atm_lnd_m1=$(( NPROCS_FORECAST_ATM + NPROCS_FORECAST_LND - 1 ))
+nprocs_atm_m1=$(( nprocs_forecast_atm - 1 ))
+nprocs_atm_lnd_m1=$(( nprocs_foroecast_atm + nprocs_forecast_lnd - 1 ))
 
 settings="\
   'allcomp_read_restart': ${allcomp_read_restart}
   'allcomp_start_type': ${allcomp_start_type}
   'atm_model': ${atm_model}
-  'dt_runseq': ${DT_RUNSEQ}
-  'lnd_calc_snet': ${LND_CALC_SNET}
-  'lnd_ic_type': ${LND_IC_TYPE}
-  'lnd_initial_albedo': ${LND_INITIAL_ALBEDO}
-  'lnd_layout_x': ${LND_LAYOUT_X}
-  'lnd_layout_y': ${LND_LAYOUT_Y}
-  'lnd_output_freq_sec': ${LND_OUTPUT_FREQ_SEC}
-  'med_coupling_mode': ${MED_COUPLING_MODE}
+  'DT_RUNSEQ': ${DT_RUNSEQ}
+  'LND_CALC_SNET': ${LND_CALC_SNET}
+  'LND_IC_TYPE': ${LND_IC_TYPE}
+  'LND_INITIAL_ALBEDO': ${LND_INITIAL_ALBEDO}
+  'LND_LAYOUT_X': ${LND_LAYOUT_X}
+  'LND_LAYOUT_Y': ${LND_LAYOUT_Y}
+  'LND_OUTPUT_FREQ_SEC': ${LND_OUTPUT_FREQ_SEC}
+  'MED_COUPLING_MODE': ${MED_COUPLING_MODE}
   'nprocs_atm_m1': ${nprocs_atm_m1}
-  'nprocs_forecast_atm': ${NPROCS_FORECAST_ATM}
+  'nprocs_forecast_atm': ${nprocs_forecast_atm}
   'nprocs_atm_lnd_m1': ${nprocs_atm_lnd_m1}
 " # End of settings variable
 
@@ -143,16 +143,16 @@ settings="\
   'mm': !!str ${MM}
   'dd': !!str ${DD}
   'hh': !!str ${HH}
-  'app': ${APP}
-  'dt_atmos': ${DT_ATMOS}
-  'fcsthr': ${FCSTHR}
-  'fhrot': ${FHROT}
-  'imo': ${IMO}
-  'jmo': ${JMO}
-  'output_fh': ${OUTPUT_FH}
-  'restart_interval': ${RESTART_INTERVAL}
-  'write_groups': ${WRITE_GROUPS}
-  'write_tasks_per_group': ${WRITE_TASKS_PER_GROUP}
+  'APP': ${APP}
+  'DT_ATMOS': ${DT_ATMOS}
+  'FCSTHR': ${FCSTHR}
+  'FHROT': ${FHROT}
+  'IMO': ${IMO}
+  'JMO': ${JMO}
+  'OUTPUT_FH': ${OUTPUT_FH}
+  'RESTART_INTERVAL': ${RESTART_INTERVAL}
+  'WRITE_GROUPS': ${WRITE_GROUPS}
+  'WRITE_TASKS_PER_GROUP': ${WRITE_TASKS_PER_GROUP}
 " # End of settings variable
 
 fp_template="${PARMlandda}/templates/template.model_configure"
@@ -333,10 +333,10 @@ if [ "${APP}" = "LND" ]; then
 fi
 
 # start runs
-echo "Start ufs-cdeps-land model run with TASKS: ${NPROCS_FORECAST}"
+echo "Start ufs-cdeps-land model run with TASKS: ${nprocs_forecast}"
 export pgm="ufs_model"
 . prep_step
-${RUN_CMD} -n ${NPROCS_FORECAST} ${EXEClandda}/$pgm >>$pgmout 2>errfile
+${run_cmd} -n ${nproocs_forecast} ${EXEClandda}/$pgm >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_ufs_model
 if [[ $err != 0 ]]; then

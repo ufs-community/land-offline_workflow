@@ -20,21 +20,6 @@ FREQ=$((${FCSTHR}*3600))
 RDD=$((${FCSTHR}/24))
 RHH=$((${FCSTHR}%24))
 
-case $MACHINE in
-  "hera")
-    RUN_CMD="srun"
-    ;;
-  "orion")
-    RUN_CMD="srun"
-    ;;
-  "hercules")
-    RUN_CMD="srun"
-    ;;
-  *)
-    RUN_CMD=`which mpiexec`
-    ;;
-esac
-
 FILEDATE=${YYYY}${MM}${DD}.${HH}0000
 for itile in {1..6}
 do

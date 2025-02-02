@@ -21,8 +21,8 @@ snow_npz_anl: {{ snow_npz_anl }}
 snow_npx_ges: {{ snow_npx_ges }}
 snow_npy_ges: {{ snow_npy_ges }}
 snow_npz_ges: {{ snow_npz_ges }}
-snow_orog_files_path: "{{ FIXlandda }}/FV3_fix_tiled/C{{ res }}"
-snow_orog_prefix: "C{{ res }}_oro_data"
+snow_orog_files_path: "{{ FIXlandda }}/FV3_fix_tiled/C{{ RES }}"
+snow_orog_prefix: "C{{ RES }}_oro_data"
 
 # Minimization
 analysis_variables: [totalSnowDepth]
@@ -38,13 +38,17 @@ snow_increment_time_fv3: "{{ snow_bkg_time_fv3 }}"
 snow_increment_time_iso: "{{ snow_bkg_time_iso }}"
 
 # Background error
-snow_bump_data_directory: "{{ DATA }}/berror"
+snow_bump_data_directory: "{{ snow_bump_data_dir }}"
 
 # Observation
 observations:
 #- adpsfc_snow
+{%- if OBS_GHCN %}
 - ghcn_snow
-#- ims_snow
+{%- endif %}
+{%- if OBS_IMS %}
+- ims_snow
+{%- endif %}
 #- sfcsno
 #- snocvr_snow
 

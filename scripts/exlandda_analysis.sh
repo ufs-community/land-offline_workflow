@@ -21,16 +21,16 @@ JEDI_EXECDIR=${JEDI_PATH}/build/bin
 
 case $MACHINE in
   "hera")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "orion")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "hercules")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   *)
-    RUN_CMD=`which mpiexec`
+    run_cmd=`which mpiexec`
     ;;
 esac
 
@@ -147,7 +147,7 @@ fi
 
 export pgm="fv3jedi_letkf.x"
 . prep_step
-${RUN_CMD} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
+${run_cmd} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_jedi_letkf
 if [[ $err != 0 ]]; then
@@ -190,7 +190,7 @@ EOF
 export pgm="apply_incr.exe"
 . prep_step
 # (n=6): this is fixed, at one task per tile (with minor code change). 
-${RUN_CMD} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
+${run_cmd} -n 6 ${EXEClandda}/$pgm >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_apply_incr
 if [[ $err != 0 ]]; then
