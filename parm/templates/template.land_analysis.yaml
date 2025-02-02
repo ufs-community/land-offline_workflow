@@ -107,10 +107,11 @@ workflow:
         OBS_GHCN: "&OBS_GHCN;"
         OBS_IMS: "&OBS_IMS;"
         PDY: "&PDY;"
+        RES: "&RES;"
         SCHED: "&SCHED;"
       account: "&ACCOUNT;"
       command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "jcb" "&HOMElandda;" "&MACHINE;"'
-      jobname: jcb_test
+      jobname: jcb
       cores: 1
       walltime: 00:10:00
       queue: batch

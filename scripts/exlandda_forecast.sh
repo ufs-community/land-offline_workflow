@@ -114,7 +114,7 @@ else
 fi
 
 nprocs_atm_m1=$(( nprocs_forecast_atm - 1 ))
-nprocs_atm_lnd_m1=$(( nprocs_foroecast_atm + nprocs_forecast_lnd - 1 ))
+nprocs_atm_lnd_m1=$(( nprocs_forecast_atm + nprocs_forecast_lnd - 1 ))
 
 settings="\
   'allcomp_read_restart': ${allcomp_read_restart}
@@ -336,7 +336,7 @@ fi
 echo "Start ufs-cdeps-land model run with TASKS: ${nprocs_forecast}"
 export pgm="ufs_model"
 . prep_step
-${run_cmd} -n ${nproocs_forecast} ${EXEClandda}/$pgm >>$pgmout 2>errfile
+${run_cmd} -n ${nprocs_forecast} ${EXEClandda}/$pgm >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_ufs_model
 if [[ $err != 0 ]]; then
