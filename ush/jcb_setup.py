@@ -6,7 +6,7 @@ import yaml
 from jcb import render
 
 # =================================================================== CHJ =====
-def jedi_config_yaml(input_yaml_fn, output_yaml_fn):
+def jedi_config_yaml(input_yaml_fn, output_yaml_fn, frac_grid):
 
     try:
         with open(input_yaml_fn, 'r') as f:
@@ -17,6 +17,12 @@ def jedi_config_yaml(input_yaml_fn, output_yaml_fn):
         print(f''' FATAL ERROR: Input YAML file {input_yaml_file} does not exist! ''')
 
     jedi_config_dict = render(input_yaml_dict)
+    #print(jedi_config_dict)
+
+    if frac_grid.lower() == "false":
+        print("TEST")
+        jedi_config_dict["cost function"]["background"]["state variables"][0] = 'snwdph'
+        jedi_config_dict["final"]["increment"]["output"]["state component"]["state variables"][0] = 'snwdph'
 
     with open(output_yaml_fn, 'w') as f:
         yaml.dump(jedi_config_dict, f, default_flow_style=False, sort_keys=False)
@@ -41,6 +47,13 @@ def parse_args(argv):
         required=True,
         help="Output YAML file name.",
     )
+    parser.add_argument(
+        "-g",
+        "--frac_grid",
+        dest="frac_grid",
+        required=True,
+        help="Flag for fractional grid.",
+    )
     return parser.parse_args(argv)
 
 
@@ -50,5 +63,6 @@ if __name__ == "__main__":
     jedi_config_yaml(
         input_yaml_fn=args.input_yaml_fn,
         output_yaml_fn=args.output_yaml_fn,
+        frac_grid=args.frac_grid,
     )
 

@@ -48,6 +48,7 @@ def setup_wflow_env(machine):
     # Add extra parameters
     config_parm["exp_basedir"] = exp_basedir
     config_parm["MACHINE"] = machine
+    config_parm["res_p1"] = int(config_parm.get("RES")) + 1
 
     # Read input YAML file
     yaml_file = "config.yaml"
@@ -230,6 +231,7 @@ def set_default_parm():
         "NET": "landda",
         "NPROCS_ANALYSIS": 6,
         "NPROCS_FCST_IC": 36,
+        "NPZ": 127,
         "OBSDIR": "",
         "OBS_GHCN": "YES",
         "OBS_IMS": "NO",

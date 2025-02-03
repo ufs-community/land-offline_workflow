@@ -23,7 +23,7 @@ if [ "${OBS_GHCN}" = "YES" ]; then
   # so that obs are within DA window.
   obs_fn="ghcn_snwd_ioda_${YYYP}${MP}${DP}${HP}.nc"
   obs_fp="${OBSDIR}/GHCN/${YYYY}/${obs_fn}"
-  out_fn="GHCN_${YYYY}${MM}${DD}${HH}.nc"
+  out_fn="ghcn_snow_${PDY}${cyc}.nc"
 
   # check obs is available
   if [ -f "${obs_fp}" ]; then

@@ -73,6 +73,8 @@ if [ "${APP}" = "ATML" ]; then
       'na_init': '1'
       'nggps_ic': '.true.'
       'nstf_name': '2,1,0,0,0'
+      'NPZ': ${NPZ}
+      'res_p1': ${res_p1}
       'warm_start': '.false.'
     " # End of settings variable
   else
@@ -88,6 +90,8 @@ if [ "${APP}" = "ATML" ]; then
       'na_init': '0'
       'nggps_ic': '.false.'
       'nstf_name': '2,0,0,0,0'
+      'NPZ': ${NPZ}
+      'res_p1': ${res_p1}
       'warm_start': '.true.'
     " # End of settings variable
   fi

@@ -24,9 +24,11 @@ snow_npz_ges: {{ snow_npz_ges }}
 snow_orog_files_path: "{{ FIXlandda }}/FV3_fix_tiled/C{{ RES }}"
 snow_orog_prefix: "C{{ RES }}"
 
-# Minimization
+# Final/minimization
 analysis_variables: [totalSnowDepth]
 final_diagnostics_departures: anlmob
+final_increment_file: snow_final_increment_fms
+final_prints_frequency: "{{ final_prints_frequency }}"
 minimizer: DRPCG
 number_of_outer_loops: 1
 
@@ -58,5 +60,4 @@ snow_obsdatain_prefix: "{{ snow_obsdatain_prefix }}"
 snow_obsdataout_path: "{{ snow_obsdataout_path }}"
 snow_obsdataout_prefix: "{{ snow_obsdataout_prefix }}"
 snow_obsdataout_suffix: "{{ snow_obsdataout_suffix }}"
-observation_from_jcb: {{ obs_from_jcb }}
 

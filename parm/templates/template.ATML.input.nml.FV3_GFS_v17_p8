@@ -24,10 +24,10 @@
 &fv_core_nml
   layout = {{ ATM_LAYOUT_X }},{{ ATM_LAYOUT_Y }}
   io_layout = {{ ATM_IO_LAYOUT_X }},{{ ATM_IO_LAYOUT_Y }}
-  npx = 97
-  npy = 97
+  npx = {{ res_p1 }}
+  npy = {{ res_p1 }}
   ntiles = 6
-  npz = 127
+  npz = {{ NPZ }}
   dz_min = 6
   psm_bc = 1
   grid_type = -1

@@ -35,7 +35,6 @@ case $MACHINE in
 esac
 
 GFSv17="NO"
-B=30 # back ground error std for LETKFOI
 
 # copy sfc_data files into work directory
 for itile in {1..6}
@@ -52,7 +51,7 @@ do
   cp -p ${sfc_fn} "${sfc_fn}_ini"
 done
 # Copy obserbation file to work directory
-ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
+ln -nsf ${COMIN}/obs/${PDY}${cyc}_ghcn_snow.nc .
 
 # update coupler.res file
 settings="\
@@ -71,75 +70,12 @@ fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
-################################################
-# CREATE BACKGROUND ENSEMBLE (LETKFOI)
-################################################
-
-if [ "${GFSv17}" = "YES" ]; then
-  SNOWDEPTHVAR="snodl"
-else
-  SNOWDEPTHVAR="snwdph"
-  # replace field overwrite file
-  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
-fi
-# FOR LETKFOI, CREATE THE PSEUDO-ENSEMBLE
-for ens in pos neg
-do
-  if [ -e $DATA/mem_${ens} ]; then
-    rm -r $DATA/mem_${ens}
-  fi
-  mkdir -p $DATA/mem_${ens}
-  cp -p ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
-  cp -p ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
-done
-
-# using ioda mods to get a python version with netCDF4
-${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR $B
-if [[ $? != 0 ]]; then
-  err_exit "letkf create failed"
-fi
 
 ################################################
 # RUN JEDI
 ################################################
 
-RESP1=$((RES+1))
-
 mkdir -p output/DA/hofx
-
-cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
-if [ "${OBS_GHCN}" = "YES" ]; then
-  cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
-fi
-
-# update jedi yaml file
-settings="\
-  'yyyy': !!str ${YYYY}
-  'mm': !!str ${MM}
-  'dd': !!str ${DD}
-  'hh': !!str ${HH}
-  'yyyymmdd': !!str ${PDY}
-  'yyyymmddhh': !!str ${PDY}${cyc}
-  'yyyp': !!str ${YYYP}
-  'mp': !!str ${MP}
-  'dp': !!str ${DP}
-  'hp': !!str ${HP}
-  'fn_orog': C${RES}_oro_data
-  'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-  'res': ${RES}
-  'resp1': ${RESP1}
-  'driver_obs_only': false
-" # End of settings variable
-
-fp_template="${DATA}/letkf_land.yaml"
-fn_namelist="${DATA}/letkf_land.yaml"
-${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
-
-if [ "$GFSv17" = "NO" ]; then
-  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
-else
-  cp -p ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
-fi
 
 if [[ ! -e Data ]]; then
   ln -nsf $JEDI_STATICDIR Data 
@@ -147,7 +83,7 @@ fi
 
 export pgm="fv3jedi_letkf.x"
 . prep_step
-${run_cmd} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm letkf_land.yaml >>$pgmout 2>errfile
+${run_cmd} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm jedi_snow.yaml >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_jedi_letkf
 if [[ $err != 0 ]]; then
