@@ -51,10 +51,6 @@ done
 # Copy obserbation file to work directory
 ln -nsf "${COMIN}/obs/ghcn_snow_${PDY}${cyc}.nc" obs_${cycle}.ghcn_snow.nc
 
-# Copy JEDI input yaml file to work directory
-jcb_out_fn="jedi_snow.yaml"
-cp -p "${COMIN}/${jcb_out_fn}" .
-
 # update coupler.res file
 settings="\
   'coupler_calendar': ${COUPLER_CALENDAR}
@@ -72,6 +68,73 @@ fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
+# Prepare JEDI input yaml file
+if [ "{JEDI_ALGORITHM}" = "3dvar" ]; then
+  jedi_nml_fn="jedi_3dvar_snow_nml.yaml"
+  cp -p "${COMIN}/${jedi_nml_fn}" .
+  jedi_exe_fn="fv3jedi_var.x"
+else # letkf
+  # Create background ensenble (LETKFOI)
+  if [ "${FRAC_GRID}" = "YES" ]; then
+    SNOWDEPTHVAR="snodl"
+  else
+    SNOWDEPTHVAR="snwdph"
+    # replace field overwrite file
+    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+  fi
+  # For LETKFOI, create pseudo-ensemble
+  for ens in pos neg
+  do
+    if [ -e $DATA/mem_${ens} ]; then
+      rm -r $DATA/mem_${ens}
+    fi
+    mkdir -p $DATA/mem_${ens}
+    cp -p ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
+    cp -p ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
+  done
+  # using ioda mods to get a python version with netCDF4
+  ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR 30
+  if [[ $? != 0 ]]; then
+    err_exit "letkf create failed"
+  fi
+
+  # Create JEDI input yaml
+  jedi_nml_fn="jedi_letkfoi_snow.yaml"
+  cp "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
+  if [ "${OBS_GHCN}" = "YES" ]; then
+    cat ${PARMlandda}/jedi/GHCN.yaml >> ${jedi_nml_fn}
+  fi
+  # update JEDI yaml file
+  settings="\
+  'yyyy': !!str ${YYYY}
+  'mm': !!str ${MM}
+  'dd': !!str ${DD}
+  'hh': !!str ${HH}
+  'yyyymmdd': !!str ${PDY}
+  'yyyymmddhh': !!str ${PDY}${cyc}
+  'yyyp': !!str ${YYYP}
+  'mp': !!str ${MP}
+  'dp': !!str ${DP}
+  'hp': !!str ${HP}
+  'fn_orog': C${RES}_oro_data
+  'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
+  'res': ${RES}
+  'resp1': ${res_p1}
+  'driver_obs_only': false
+" # End of settings variable
+
+  fp_template="${DATA}/${jedi_nml_fn}"
+  ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${jedi_nml_fn}"
+
+  if [ "${FRAC_GRID}" = "NO" ]; then
+    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+  else
+    cp -p ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
+  fi
+  # Set JEDI executable
+  jedi_exe_fn="fv3jedi_letkf.x"
+fi
+
 
 ################################################
 # RUN JEDI
@@ -83,9 +146,9 @@ if [[ ! -e Data ]]; then
   ln -nsf $JEDI_STATICDIR Data 
 fi
 
-export pgm="fv3jedi_letkf.x"
+export pgm="${jedi_exe_fn}"
 . prep_step
-${run_cmd} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm jedi_snow.yaml >>$pgmout 2>errfile
+${run_cmd} -n ${NPROCS_ANALYSIS} ${JEDI_EXECDIR}/$pgm ${jedi_nml_fn} >>$pgmout 2>errfile
 export err=$?; err_chk
 cp errfile errfile_jedi_letkf
 if [[ $err != 0 ]]; then
@@ -103,7 +166,17 @@ done
 # Apply Increment to UFS sfc_data files
 ################################################
 
-frac_grid="${FRAC_GRID,,}"
+# temporary for apply_incr
+for itile in {1..6}
+do
+  ln -nsf ${FILEDATE}.snowinc.sfc_data.tile${itile}.nc ${FILEDATE}.xainc.sfc_data.tile${itile}.nc
+done
+
+if [ "${FRAC_GRID}" = "NO" ]; then
+  frac_grid=".false."
+else
+  frac_grid=".true."
+fi
 orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
 orog_fn_base="C${RES}_oro_data"
 
@@ -112,7 +185,7 @@ cat << EOF > apply_incr_nml
  date_str=${YYYY}${MM}${DD}
  hour_str=${HH}
  res=${RES}
- frac_grid=".${frac_grid}."
+ frac_grid="${frac_grid}"
  rst_path="${DATA}"
  inc_path="${DATA}"
  orog_path="${orog_path}"
@@ -190,7 +263,7 @@ fi
 if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"
-  fn_inc="${FILEDATE}.xainc.sfc_data.tile"
+  fn_inc="${FILEDATE}.snowinc.sfc_data.tile"
   fn_hofx="letkf_hofx_ghcn_${PDY}${cyc}.nc"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   if [ ! -f "${we2e_log_fp}" ]; then
@@ -204,7 +277,7 @@ if [ "${WE2E_TEST}" == "YES" ]; then
   # increment tiles
   for itile in {1..6}
   do
-    ${USHlandda}/compare.py "${path_fbase}/${fn_inc}${itile}.nc" "${COMOUT}/${fn_inc}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "ANALYSIS" ${FILEDATE} "xinc.tile${itile}"
+    ${USHlandda}/compare.py "${path_fbase}/${fn_inc}${itile}.nc" "${COMOUT}/${fn_inc}${itile}.nc" ${WE2E_ATOL} ${we2e_log_fp} "ANALYSIS" ${FILEDATE} "snowinc.tile${itile}"
   done
   # H(x)
   ${USHlandda}/compare.py "${path_fbase}/hofx/${fn_hofx}" "${COMOUT}/hofx/${fn_hofx}" ${WE2E_ATOL} ${we2e_log_fp} "ANALYSIS" ${FILEDATE} "HofX"

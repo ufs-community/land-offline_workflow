@@ -7,7 +7,7 @@
       obsdatain:
         engine:
           type: H5File
-          obsfile: GHCN_{{ yyyymmddhh }}.nc
+          obsfile: obs_t{{ hh }}z.ghcn_snow.nc
       obsdataout:
         engine:
           type: H5File
