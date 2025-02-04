@@ -49,7 +49,8 @@ do
   cp -p ${sfc_fn} "${sfc_fn}_ini"
 done
 # Copy obserbation file to work directory
-ln -nsf "${COMIN}/obs/ghcn_snow_${PDY}${cyc}.nc" obs_${cycle}.ghcn_snow.nc
+mkdir -p ${DATA}/obs
+ln -nsf "${COMIN}/obs/ghcn_snow_${PDY}${cyc}.nc" "${DATA}/obs/obs_${cycle}.ghcn_snow.nc"
 
 # update coupler.res file
 settings="\
@@ -69,19 +70,25 @@ fn_namelist="${DATA}/${FILEDATE}.coupler.res"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
 # Prepare JEDI input yaml file
-if [ "{JEDI_ALGORITHM}" = "3dvar" ]; then
-  jedi_nml_fn="jedi_3dvar_snow_nml.yaml"
+if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
+  # Set up backgroud directory
+  mkdir -p ${DATA}/bkg
+  for itile in {1..6}
+  do
+    sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
+    sfc_bkg_fn="${PDY}_${cyc}0000.sfc_data.tile${itile}.nc"
+    cp -p ${sfc_fn} "${DATA}/bkg/${sfc_bkg_fn}"
+    ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc" "${DATA}/bkg/."
+  done
+  cp -p ${FILEDATE}.coupler.res ${DATA}/bkg
+
+  # Copy JEDI yaml file
+  jedi_nml_fn="jedi_jcb_snow_nml.yaml"
   cp -p "${COMIN}/${jedi_nml_fn}" .
+
+  # Set JEDI executable
   jedi_exe_fn="fv3jedi_var.x"
 else # letkf
-  # Create background ensenble (LETKFOI)
-  if [ "${FRAC_GRID}" = "YES" ]; then
-    SNOWDEPTHVAR="snodl"
-  else
-    SNOWDEPTHVAR="snwdph"
-    # replace field overwrite file
-    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
-  fi
   # For LETKFOI, create pseudo-ensemble
   for ens in pos neg
   do
@@ -90,7 +97,7 @@ else # letkf
     fi
     mkdir -p $DATA/mem_${ens}
     cp -p ${FILEDATE}.sfc_data.tile*.nc ${DATA}/mem_${ens}
-    cp -p ${DATA}/${FILEDATE}.coupler.res ${DATA}/mem_${ens}/${FILEDATE}.coupler.res
+    cp -p ${FILEDATE}.coupler.res ${DATA}/mem_${ens}
   done
   # using ioda mods to get a python version with netCDF4
   ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR 30
@@ -100,7 +107,7 @@ else # letkf
 
   # Create JEDI input yaml
   jedi_nml_fn="jedi_letkfoi_snow.yaml"
-  cp "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
+  cp -p "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
   if [ "${OBS_GHCN}" = "YES" ]; then
     cat ${PARMlandda}/jedi/GHCN.yaml >> ${jedi_nml_fn}
   fi
@@ -126,11 +133,6 @@ else # letkf
   fp_template="${DATA}/${jedi_nml_fn}"
   ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${jedi_nml_fn}"
 
-  if [ "${FRAC_GRID}" = "NO" ]; then
-    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
-  else
-    cp -p ${JEDI_PATH}/jedi-bundle/fv3-jedi/test/Data/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
-  fi
   # Set JEDI executable
   jedi_exe_fn="fv3jedi_letkf.x"
 fi
@@ -142,8 +144,18 @@ fi
 
 mkdir -p output/DA/hofx
 
-if [[ ! -e Data ]]; then
-  ln -nsf $JEDI_STATICDIR Data 
+# Copy static data files
+mkdir -p ${DATA}/Data/fv3files
+cp -p ${PARMlandda}/jedi/fv3files/fmsmpp.nml ${DATA}/Data/fv3files/.
+cp -p ${PARMlandda}/jedi/fv3files/field_table ${DATA}/Data/fv3files/.
+ln -nsf ${JEDI_STATICDIR}/fv3files/akbk${NPZ}.nc4 ${DATA}/Data/fv3files/akbk.nc4
+if [ "${FRAC_GRID}" = "NO" ]; then
+  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
+  cp -p ${PARMlandda}/jedi/fv3files/fv3jedi_fieldmetadata_restart_nofrac.yaml ${DATA}/Data/fv3files/fv3jedi_fieldmetadata_restart.yaml
+else
+  cp -p ${JEDI_STATICDIR}/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
+  cp -p ${PARMlandda}/jedi/fv3files/fv3jedi_fieldmetadata_restart.yaml ${DATA}/Data/fv3files/fv3jedi_fie
+ldmetadata_restart.yaml
 fi
 
 export pgm="${jedi_exe_fn}"

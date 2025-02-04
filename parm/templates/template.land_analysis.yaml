@@ -253,6 +253,7 @@ workflow:
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
         NPROCS_ANALYSIS: "&NPROCS_ANALYSIS;"
+        NPZ: "&NPZ;"
         OBS_GHCN: "&OBS_GHCN;"
         PDY: "&PDY;"
         RES: "&RES;"

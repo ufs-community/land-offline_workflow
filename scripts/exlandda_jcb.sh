@@ -43,7 +43,7 @@ settings="\
   'snow_bkg_time_fv3': !!str ${snow_bkg_time_fv3}
   'snow_bkg_time_iso': !!str ${snow_bkg_time_iso}
   'snow_bump_data_dir': ./berror
-  'snow_obsdatain_path': ${COMOUT}/obs
+  'snow_obsdatain_path': ./obs
   'snow_obsdatain_prefix': "obs_${cycle}."
   'snow_obsdataout_path': ./output
   'snow_obsdataout_prefix': "diag_"
@@ -55,7 +55,7 @@ settings="\
 template_fp="${PARMlandda}/jedi/jcb-base_snow.yaml.j2"
 jcb_base_fn="jcb-base_snow.yaml"
 jcb_base_fp="${DATA}/${jcb_base_fn}"
-jcb_out_fn="gdas_snow_nml.yaml"
+jcb_out_fn="jedi_jcb_snow_nml.yaml"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${template_fp}" -o "${jcb_base_fp}"
 
 ${USHlandda}/jcb_setup.py -i "${jcb_base_fn}" -o "${jcb_out_fn}" -g "${FRAC_GRID}"
