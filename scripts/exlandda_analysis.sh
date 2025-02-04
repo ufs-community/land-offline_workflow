@@ -34,8 +34,6 @@ case $MACHINE in
     ;;
 esac
 
-GFSv17="NO"
-
 # copy sfc_data files into work directory
 for itile in {1..6}
 do
@@ -51,7 +49,11 @@ do
   cp -p ${sfc_fn} "${sfc_fn}_ini"
 done
 # Copy obserbation file to work directory
-ln -nsf ${COMIN}/obs/${PDY}${cyc}_ghcn_snow.nc .
+ln -nsf "${COMIN}/obs/ghcn_snow_${PDY}${cyc}.nc" obs_${cycle}.ghcn_snow.nc
+
+# Copy JEDI input yaml file to work directory
+jcb_out_fn="jedi_snow.yaml"
+cp -p "${COMIN}/${jcb_out_fn}" .
 
 # update coupler.res file
 settings="\
@@ -100,11 +102,8 @@ done
 ################################################
 # Apply Increment to UFS sfc_data files
 ################################################
-if [ "${GFSv17}" = "NO" ]; then
-  frac_grid=".false."
-else
-  frac_grid=".true."
-fi
+
+frac_grid="${FRAC_GRID,,}"
 orog_path="${FIXlandda}/FV3_fix_tiled/C${RES}"
 orog_fn_base="C${RES}_oro_data"
 
@@ -113,7 +112,7 @@ cat << EOF > apply_incr_nml
  date_str=${YYYY}${MM}${DD}
  hour_str=${HH}
  res=${RES}
- frac_grid=${frac_grid}
+ frac_grid=".${frac_grid}."
  rst_path="${DATA}"
  inc_path="${DATA}"
  orog_path="${orog_path}"
@@ -135,7 +134,7 @@ fi
 
 for itile in {1..6}
 do
-  cp -p ${DATA}/${FILEDATE}.xainc.sfc_data.tile${itile}.nc ${COMOUT}
+  cp -p ${DATA}/${FILEDATE}.snowinc.sfc_data.tile${itile}.nc ${COMOUT}
 done 
 
 for itile in {1..6}
@@ -156,7 +155,7 @@ DO_PLOT_SFC_COMP="YES"
 if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
 
   fn_sfc_base="${FILEDATE}.sfc_data.tile"
-  fn_inc_base="${FILEDATE}.xainc.sfc_data.tile"
+  fn_inc_base="${FILEDATE}.snowinc.sfc_data.tile"
   out_title_base="Land-DA::SFC-DATA::${PDY}::"
   out_fn_base="landda_comp_sfc_${PDY}_"
   # zlevel_number is valid only for 3-D fields such as stc/smc/slc

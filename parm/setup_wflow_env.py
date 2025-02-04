@@ -213,6 +213,7 @@ def set_default_parm():
         "EXP_CASE_NAME": None,
         "FCSTHR": 24,
         "FHROT": 0,
+        "FRAC_GRID": "false",
         "IC_DATA_MODEL": "GFS",
         "IMO": 384,
         "JEDI_PATH": "/path/to/jedi/install/dir",

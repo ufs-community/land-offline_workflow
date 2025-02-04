@@ -34,6 +34,7 @@ workflow:
     EXP_CASE_NAME: "{{ EXP_CASE_NAME }}"
     FCSTHR: "{{ FCSTHR }}"
     FHROT: "{{ FHROT }}"
+    FRAC_GRID: "{{ FRAC_GRID }}"
     IC_DATA_MODEL: "{{ IC_DATA_MODEL }}"
     IMO: "{{ IMO }}"
     JEDI_PATH: "{{ JEDI_PATH }}"
@@ -102,6 +103,7 @@ workflow:
         cyc: "&cyc;"
         DATAROOT: "&DATAROOT;"
         DATE_CYCLE_FREQ_HR: "&DATE_CYCLE_FREQ_HR;"
+        FRAC_GRID: "&FRAC_GRID;"
         HOMElandda: "&HOMElandda;"
         KEEPDATA: "&KEEPDATA;"
         MACHINE: "&MACHINE;"
@@ -241,6 +243,7 @@ workflow:
         DATAROOT: "&DATAROOT;"
         DATE_CYCLE_FREQ_HR: "&DATE_CYCLE_FREQ_HR;"
         KEEPDATA: "&KEEPDATA;"
+        FRAC_GRID: "&FRAC_GRID;"
         HOMElandda: "&HOMElandda;"
         JEDI_PATH: "&JEDI_PATH;"
         LOGDIR: "&LOGDIR;"
@@ -267,6 +270,9 @@ workflow:
           taskdep_prep_obs:
             attrs:
               task: prep_obs
+          taskdep_jcb:
+            attrs:
+              task: jcb
 {%- if APP == "LND" %}
           taskdep_pre_anal:
             attrs:

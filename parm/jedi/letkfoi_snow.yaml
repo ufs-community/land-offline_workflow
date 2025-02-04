@@ -1,0 +1,58 @@
+geometry:
+  fms initialization:
+    namelist filename: Data/fv3files/fmsmpp.nml
+    field table filename: Data/fv3files/field_table
+  akbk: Data/fv3files/akbk64.nc4
+  npx: {{ resp1 }}
+  npy: {{ resp1 }}
+  npz: 64
+  field metadata override: gfs-land.yaml
+  time invariant fields:
+    state fields:
+      datetime: {{ yyyp }}-{{ mp }}-{{ dp }}T{{ hp }}:00:00Z
+      filetype: fms restart
+      skip coupler file: true
+      state variables: [orog_filt]
+      datapath: {{ datapath }}
+      filename_orog: {{ fn_orog }}.nc
+    derived fields: [nominal_surface_pressure]
+
+time window:
+  begin: {{ yyyp }}-{{ mp }}-{{ dp }}T{{ hp }}:00:00Z
+  length: PT24H
+
+background:
+ date: &date {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
+ members:
+   - datetime: {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
+     filetype: fms restart
+     state variables: [snwdph,vtype,slmsk]
+     datapath: mem_pos/
+     filename_sfcd: {{ yyyymmdd }}.{{ hh }}0000.sfc_data.nc
+     filename_cplr: {{ yyyymmdd }}.{{ hh }}0000.coupler.res
+   - datetime: {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
+     filetype: fms restart
+     state variables: [snwdph,vtype,slmsk]
+     datapath: mem_neg/
+     filename_sfcd: {{ yyyymmdd }}.{{ hh }}0000.sfc_data.nc
+     filename_cplr: {{ yyyymmdd }}.{{ hh }}0000.coupler.res
+
+driver:
+  save posterior mean: false
+  save posterior mean increment: true
+  save posterior ensemble: false
+  run as observer only: {{ driver_obs_only }}
+
+local ensemble DA:
+  solver: LETKF
+  inflation:
+    rtps: 0.0
+    rtpp: 0.0
+    mult: 1.0
+
+output increment:
+  filetype: fms restart
+  filename_sfcd: xainc.sfc_data.nc
+
+observations:
+  observers:

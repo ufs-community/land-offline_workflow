@@ -29,7 +29,7 @@ settings="\
   'RES': ${RES}
   'snow_window_begin': !!str ${snow_window_begin}
   'snow_window_length': ${snow_window_length}
-  'snow_fv3jedi_files_path': ${DATA}/fv3jedi
+  'snow_fv3jedi_files_path': ${DATA}/Data/fv3files
   'snow_layout_x': 1
   'snow_layout_y': 1
   'snow_npx_anl': ${res_p1}
@@ -54,10 +54,10 @@ settings="\
 template_fp="${PARMlandda}/jedi/jcb-base_snow.yaml.j2"
 jcb_base_fn="jcb-base_snow.yaml"
 jcb_base_fp="${DATA}/${jcb_base_fn}"
-jcb_out_fn="jedi_snow.yaml"
+jcb_out_fn="gdas_snow_config.yaml"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${template_fp}" -o "${jcb_base_fp}"
 
-${USHlandda}/jcb_setup.py -i "${jcb_base_fn}" -o "${jcb_out_fn}" -g false
+${USHlandda}/jcb_setup.py -i "${jcb_base_fn}" -o "${jcb_out_fn}" -g "${FRAC_GRID}"
 if [ $? -ne 0 ]; then
   err_exit "Generation of JEDI YAML file by JCB failed !!!"
 fi
