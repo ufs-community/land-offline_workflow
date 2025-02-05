@@ -23,3 +23,7 @@
 	url = https://github.com/NOAA-EMC/jcb-algorithms.git
         ignore = dirty
 
+[submodule "sorc/IMS_proc"]
+        path = sorc/IMS_proc
+        url = https://github.com/NOAA-PSL/land-SCF_proc.git
+        ignore = dirty

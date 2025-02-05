@@ -203,6 +203,10 @@ if [ "${REMOVE}" = true ]; then
     printf "... Remove UFS_UTILS.fd ...\n"
     rm -rf "${SORC_DIR}/UFS_UTILS.fd"
   fi
+  if [ -d "${SORC_DIR}/IMS_proc" ]; then
+    printf "... Remove IMS_proc ...\n"
+    rm -rf "${SORC_DIR}/IMS_proc"
+  fi
 
   cd "${HOME_DIR}"
   git submodule update --init --recursive

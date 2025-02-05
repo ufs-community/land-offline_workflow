@@ -1,0 +1,53 @@
+  - obs space:
+      name: SnowDepthIMS
+      distribution:
+         name: Halo
+         halo size: 250e3
+      simulated variables: [totalSnowDepth]
+      observed variables: [totalSnowDepth]
+      obsdatain:
+        engine:
+          type: H5File
+          obsfile: ioda.IMSscf.{{ yyyymmddhh }}.{{ tstub }}.nc
+      obsdataout:
+        engine:
+          type: H5File
+          obsfile: output/DA/hofx/letkf_hofx_ims_{{ yyyymmddhh }}.nc
+    obs operator:
+      name: Identity
+    obs error:
+      covariance model: diagonal
+    obs localizations:
+    - localization method: Horizontal SOAR
+      lengthscale: 250e3
+      soar horizontal decay: 0.000021
+      max nobs: 1
+    obs filters:
+    - filter: Perform Action
+      filter variables:
+      - name: totalSnowDepth
+      action:
+        name: assign error
+        error parameter: 40.0
+    - filter: Bounds Check # negative / missing snow
+      filter variables:
+      - name: totalSnowDepth
+      minvalue: 0.0
+    - filter: Domain Check # land only
+      where:
+      - variable:
+          name: GeoVaLs/slmsk
+        minvalue: 0.5
+        maxvalue: 1.5
+    - filter: RejectList  # no land-ice
+      where:
+      - variable:
+          name: GeoVaLs/vtype
+        minvalue: 14.5
+        maxvalue: 15.5
+    - filter: Background Check # gross error check
+      filter variables:
+      - name: totalSnowDepth
+      threshold: 6.25
+      action:
+        name: reject

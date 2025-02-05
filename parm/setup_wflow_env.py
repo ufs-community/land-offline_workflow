@@ -229,7 +229,7 @@ def set_default_parm():
         "nprocs_analysis": 6,
         "nprocs_fcst_ic": 36,
         "obsdir": "",
-        "obs_ghcn": "YES",
+        "obs_type": "GHCN",
         "output_fh": "1 -1",
         "res": 96,
         "restart_interval": "12 -1",
