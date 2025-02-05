@@ -52,7 +52,14 @@ do
   cp -p ${sfc_fn} "${sfc_fn}_ini"
 done
 # Copy obserbation file to work directory
-ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
+# TODO: Figure out if this var can be passed in through the yaml file
+# TODO: same with this var at line 141 
+TSTUB=C96.mx100_oro_data # oro_C96.mx100
+if [ "${OBS_TYPE}" = "GHCN" ]; then
+  ln -nsf ${COMIN}/obs/GHCN_${YYYY}${MM}${DD}${HH}.nc .
+elif [ "${OBS_TYPE}" = "IMS" ]; then
+  ln -nsf ${COMIN}/obs/ioda.IMSscf.${YYYY}${MM}${DD}.${TSTUB}.nc .
+fi
 
 # update coupler.res file
 settings="\
@@ -108,8 +115,10 @@ RESP1=$((RES+1))
 mkdir -p output/DA/hofx
 
 cp "${PARMlandda}/jedi/letkfoi_snow.yaml" "${DATA}/letkf_land.yaml"
-if [ "${OBS_GHCN}" = "YES" ]; then
+if [ "${OBS_TYPE}" = "GHCN" ]; then
   cat ${PARMlandda}/jedi/GHCN.yaml >> letkf_land.yaml
+elif [ "${OBS_TYPE}" = "IMS" ]; then
+  cat ${PARMlandda}/jedi/IMS.yaml >> letkf_land.yaml
 fi
 
 # update jedi yaml file
@@ -129,6 +138,7 @@ settings="\
   'res': ${RES}
   'resp1': ${RESP1}
   'driver_obs_only': false
+  'tstub': C96.mx100_oro_data
 " # End of settings variable
 
 fp_template="${DATA}/letkf_land.yaml"
