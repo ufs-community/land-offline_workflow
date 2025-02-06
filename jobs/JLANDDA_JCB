@@ -58,8 +58,8 @@ export RUN="${RUN:-landda}"
 
 # Run setpdy to initialize PDYm and PDYp variables
 export cycle="${cycle:-t${cyc}z}"
-#setpdy.sh
-#. ./PDY
+setpdy.sh
+. ./PDY
 
 [[ "$WORKFLOW_MANAGER" = "rocoto" ]] && export COMROOT=$COMROOT
 
@@ -75,10 +75,10 @@ mkdir -p ${COMOUT}
 #-----------------------------------------------------------------------
 #
 export pgmout="${DATA}/OUTPUT.$$"
-#env
+env
 
-${SCRIPTSlandda}/exlandda_jcb_test.sh
-#export err=$?; err_chk
+${SCRIPTSlandda}/exlandda_jcb.sh
+export err=$?; err_chk
 
 if [ -e "$pgmout" ]; then
   cat $pgmout

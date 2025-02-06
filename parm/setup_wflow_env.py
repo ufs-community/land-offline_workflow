@@ -34,7 +34,7 @@ def setup_wflow_env(machine):
     home_dir = os.path.dirname(parm_dir)
     print(f''' Home directory (HOMEdir): {home_dir} ''')
     exp_basedir = os.path.dirname(home_dir)
-    print(f''' Experimental base directory (EXP_BASEDIR): {exp_basedir} ''')
+    print(f''' Experimental base directory (exp_basedir): {exp_basedir} ''')
 
     # Set default values of input parameters
     config_parm = set_default_parm()
@@ -47,7 +47,8 @@ def setup_wflow_env(machine):
 
     # Add extra parameters
     config_parm["exp_basedir"] = exp_basedir
-    config_parm["machine"] = machine
+    config_parm["MACHINE"] = machine
+    config_parm["res_p1"] = int(config_parm.get("RES")) + 1
 
     # Read input YAML file
     yaml_file = "config.yaml"
@@ -64,28 +65,28 @@ def setup_wflow_env(machine):
             config_parm[key] = value
 
     # Create an experimental case directory
-    if config_parm.get("exp_case_name") is None:
-        exp_case_name = f'''{config_parm.get("app")}_{config_parm.get("run")}'''
-        config_parm.update({'exp_case_name': exp_case_name})
+    if config_parm.get("EXP_CASE_NAME") is None:
+        exp_case_name = f'''{config_parm.get("APP")}_{config_parm.get("RUN")}'''
+        config_parm.update({'EXP_CASE_NAME': exp_case_name})
     else:
-        exp_case_name = config_parm.get("exp_case_name")
+        exp_case_name = config_parm.get("EXP_CASE_NAME")
 
     # Calculate date for the second cycle
-    date_first_cycle = config_parm.get("date_first_cycle")
-    date_cycle_freq_hr = config_parm.get("date_cycle_freq_hr")
+    date_first_cycle = config_parm.get("DATE_FIRST_CYCLE")
+    date_cycle_freq_hr = config_parm.get("DATE_CYCLE_FREQ_HR")
     next_date = datetime.strptime(str(date_first_cycle), "%Y%m%d%H") + timedelta(hours=date_cycle_freq_hr)
     date_second_cycle = next_date.strftime("%Y%m%d%H")
     config_parm["date_second_cycle"] = date_second_cycle
 
     # Calculate HPC parameter values
-    app = config_parm.get("app")
-    atm_layout_x = config_parm.get("atm_layout_x")
-    atm_layout_y = config_parm.get("atm_layout_y")
-    atm_io_layout_x = config_parm.get("atm_io_layout_x")
-    atm_io_layout_y = config_parm.get("atm_io_layout_y")    
-    lnd_layout_x = config_parm.get("lnd_layout_x")
-    lnd_layout_y = config_parm.get("lnd_layout_y")
-    max_cores_per_node = config_parm.get("max_cores_per_node")
+    app = config_parm.get("APP")
+    atm_layout_x = config_parm.get("ATM_LAYOUT_X")
+    atm_layout_y = config_parm.get("ATM_LAYOUT_Y")
+    atm_io_layout_x = config_parm.get("ATM_IO_LAYOUT_X")
+    atm_io_layout_y = config_parm.get("ATM_IO_LAYOUT_Y")    
+    lnd_layout_x = config_parm.get("LND_LAYOUT_X")
+    lnd_layout_y = config_parm.get("LND_LAYOUT_Y")
+    max_cores_per_node = config_parm.get("MAX_CORES_PER_NODE")
 
     nprocs_forecast_lnd = 6*lnd_layout_x*lnd_layout_y
     if app == "ATML":
@@ -166,8 +167,8 @@ def setup_wflow_env(machine):
     # Add links to log/tmp/com directories within exp_case directory
     envir = config_parm.get("envir")
     model_ver = config_parm.get("model_ver")    
-    net = config_parm.get("net")
-    run = config_parm.get("run")
+    net = config_parm.get("NET")
+    run = config_parm.get("RUN")
     ptmp = os.path.join(exp_basedir,"ptmp")
     log_dir_src = os.path.join(ptmp, envir, "com/output/logs")
     log_dir_dst = os.path.join(exp_case_path, "log_dir")
@@ -180,7 +181,7 @@ def setup_wflow_env(machine):
     os.symlink(com_dir_src, com_dir_dst)
 
     # Create coldstart txt file for the first cycle when APP = LND
-    coldstart = config_parm.get("coldstart")
+    coldstart = config_parm.get("COLDSTART")
     if app == "LND" and coldstart == "YES":
         fn_pass = f"task_skip_coldstart_{date_first_cycle}.txt"
         open(os.path.join(exp_case_path,fn_pass), 'a').close()
@@ -192,52 +193,57 @@ def set_default_parm():
 # =================================================================== CHJ =====
 
     default_config = {
-        "account": "epic",
-        "app": "LND",
-        "atm_io_layout_x": 1,
-        "atm_io_layout_y": 1,
-        "atm_layout_x": 3,
-        "atm_layout_y": 8,
+        "ACCOUNT": "epic",
+        "APP": "LND",
+        "ATM_IO_LAYOUT_X": 1,
+        "ATM_IO_LAYOUT_Y": 1,
+        "ATM_LAYOUT_X": 3,
+        "ATM_LAYOUT_Y": 8,
+        "ATMOS_FORC": "gswp3",
         "COMINgdas": "",
-        "ccpp_suite": "FV3_GFS_v17_p8",
-        "coldstart": "NO",
-        "coupler_calendar": 2,
-        "date_cycle_freq_hr": 24,
-        "date_first_cycle": 200001030000,
-        "date_last_cycle": 200001040000,
-        "dt_atmos": 900,
-        "dt_runseq": 3600,
+        "CCPP_SUITE": "FV3_GFS_v17_p8",
+        "COLDSTART": "NO",
+        "COUPLER_CALENDAR": 2,
+        "DATE_CYCLE_FREQ_HR": 24,
+        "DATE_FIRST_CYCLE": 200001030000,
+        "DATE_LAST_CYCLE": 200001040000,
+        "DT_ATMOS": 900,
+        "DT_RUNSEQ": 3600,
         "envir": "test",
-        "exp_case_name": None,
-        "fcsthr": 24,
-        "fhrot": 0,
-        "ic_data_model": "GFS",
-        "imo": 384,
-        "jedi_path": "/path/to/jedi/install/dir",
-        "jedi_py_ver": "python3.10",
-        "jmo": 190,
-        "lnd_calc_snet": ".true.",
-        "lnd_ic_type": "custom",
-        "lnd_initial_albedo": 0.25,
-        "lnd_layout_x": 1,
-        "lnd_layout_y": 2,
-        "lnd_output_freq_sec": 21600,
-        "machine": "/machine/platform/name",
-        "med_coupling_mode": "ufs.nfrac.aoflux",
+        "EXP_CASE_NAME": None,
+        "FCSTHR": 24,
+        "FHROT": 0,
+        "FRAC_GRID": "NO",
+        "IC_DATA_MODEL": "GFS",
+        "IMO": 384,
+        "JEDI_ALGORITHM": "letkf",
+        "JEDI_PATH": "/path/to/jedi/install/dir",
+        "JEDI_PY_VER": "python3.10",
+        "JMO": 190,
+        "KEEPDATA": "YES",
+        "LND_CALC_SNET": ".true.",
+        "LND_IC_TYPE": "custom",
+        "LND_INITIAL_ALBEDO": 0.25,
+        "LND_LAYOUT_X": 1,
+        "LND_LAYOUT_Y": 2,
+        "LND_OUTPUT_FREQ_SEC": 21600,
+        "MACHINE": "/machine/platform/name",
+        "MED_COUPLING_MODE": "ufs.nfrac.aoflux",
         "model_ver": "v2.1.0",
-        "net": "landda",
-        "nprocs_analysis": 6,
-        "nprocs_fcst_ic": 36,
-        "obsdir": "",
-        "obs_ghcn": "YES",
-        "output_fh": "1 -1",
-        "res": 96,
-        "restart_interval": "12 -1",
-        "run": "landda",
-        "warmstart_dir": "/path/to/wart/start/dir",
-        "we2e_test": "NO",
-        "write_groups": 1,
-        "write_tasks_per_group": 6,
+        "NET": "landda",
+        "NPROCS_ANALYSIS": 6,
+        "NPROCS_FCST_IC": 36,
+        "NPZ": 127,
+        "OBSDIR": "",
+        "OBS_TYPE": "GHCN",
+        "OUTPUT_FH": "1 -1",
+        "RES": 96,
+        "RESTART_INTERVAL": "12 -1",
+        "RUN": "landda",
+        "WARMSTART_DIR": "/path/to/wart/start/dir",
+        "WE2E_TEST": "NO",
+        "WRITE_GROUPS": 1,
+        "WRITE_TASKS_PER_GROUP": 6,
     }
 
     return default_config
@@ -251,28 +257,28 @@ def set_machine_parm(machine):
     lowercase_machine = machine.lower()
     match lowercase_machine:
         case "hera":
-            jedi_path = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic"
-            max_cores_per_node = 40
-            warmstart_dir = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
+            JEDI_PATH = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic"
+            MAX_CORES_PER_NODE = 40
+            WARMSTART_DIR = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "orion":
-            jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion"
-            max_cores_per_node = 40
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
+            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion"
+            MAX_CORES_PER_NODE = 40
+            WARMSTART_DIR = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "hercules":
-            jedi_path = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_hercules"
-            max_cores_per_node = 80
-            warmstart_dir = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
+            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_hercules"
+            MAX_CORES_PER_NODE = 80
+            WARMSTART_DIR = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "singularity":
-            jedi_path = "SINGULARITY_WORKING_DIR"
-            max_cores_per_node = 40
-            warmstart_dir = "SINGULARITY_WORKING_DIR"
+            JEDI_PATH = "SINGULARITY_WORKING_DIR"
+            MAX_CORES_PER_NODE = 40
+            WARMSTART_DIR = "SINGULARITY_WORKING_DIR"
         case _:
             sys.exit(f"FATAL ERROR: this machine/platform '{lowercase_machine}' is NOT supported yet !!!")
 
     machine_config = {
-        "jedi_path": jedi_path,
-        "max_cores_per_node": max_cores_per_node,
-        "warmstart_dir": warmstart_dir,
+        "JEDI_PATH": JEDI_PATH,
+        "MAX_CORES_PER_NODE": MAX_CORES_PER_NODE,
+        "WARMSTART_DIR": WARMSTART_DIR,
     }
 
     return machine_config
@@ -287,7 +293,7 @@ def parse_args(argv):
 
     parser.add_argument(
         "-p", "--platform",
-        dest="machine",
+        dest="MACHINE",
 #        required=True,
         help="Platform (machine) name.",
     )
@@ -321,9 +327,9 @@ def detect_platform():
 # Main call ========================================================= CHJ =====
 if __name__=='__main__':
     args = parse_args(sys.argv[1:])
-    machine=args.machine
-    if machine is None:
-        machine = detect_platform()
+    MACHINE=args.MACHINE
+    if MACHINE is None:
+        MACHINE = detect_platform()
    
-    setup_wflow_env(machine)
+    setup_wflow_env(MACHINE)
 

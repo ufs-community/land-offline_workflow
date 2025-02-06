@@ -7,71 +7,75 @@ workflow:
   cycledef:
     - attrs:
         group: cycled
-      spec: {{ date_first_cycle }}00 {{ date_last_cycle }}00 {{ date_cycle_freq_hr }}:00:00
+      spec: {{ DATE_FIRST_CYCLE }}00 {{ DATE_LAST_CYCLE }}00 {{ DATE_CYCLE_FREQ_HR }}:00:00
     - attrs:
         group: first_cycle
-      spec: {{ date_first_cycle }}00 {{ date_first_cycle }}00 {{ date_cycle_freq_hr }}:00:00
+      spec: {{ DATE_FIRST_CYCLE }}00 {{ DATE_FIRST_CYCLE }}00 {{ DATE_CYCLE_FREQ_HR }}:00:00
     - attrs:
         group: cycled_from_second
-      spec: {{ date_second_cycle }}00 {{ date_last_cycle }}00 {{ date_cycle_freq_hr }}:00:00
+      spec: {{ date_second_cycle }}00 {{ DATE_LAST_CYCLE }}00 {{ DATE_CYCLE_FREQ_HR }}:00:00
   entities:
-    ACCOUNT: "{{ account }}"
-    APP: "{{ app }}"
-    ATM_IO_LAYOUT_X: "{{ atm_io_layout_x }}"
-    ATM_IO_LAYOUT_Y: "{{ atm_io_layout_y }}"
-    ATM_LAYOUT_X: "{{ atm_layout_x }}"
-    ATM_LAYOUT_Y: "{{ atm_layout_y }}"
-    ATMOS_FORC: "gswp3"
-    CCPP_SUITE: "{{ ccpp_suite }}"
-    COLDSTART: "{{ coldstart }}"
-    COUPLER_CALENDAR: "{{ coupler_calendar }}"
-    DATE_CYCLE_FREQ_HR: "{{ date_cycle_freq_hr }}"
-    DATE_FIRST_CYCLE: "{{ date_first_cycle }}"
-    DT_ATMOS: "{{ dt_atmos }}"
-    DT_RUNSEQ: "{{ dt_runseq }}"
+    ACCOUNT: "{{ ACCOUNT }}"
+    APP: "{{ APP }}"
+    ATM_IO_LAYOUT_X: "{{ ATM_IO_LAYOUT_X }}"
+    ATM_IO_LAYOUT_Y: "{{ ATM_IO_LAYOUT_Y }}"
+    ATM_LAYOUT_X: "{{ ATM_LAYOUT_X }}"
+    ATM_LAYOUT_Y: "{{ ATM_LAYOUT_Y }}"
+    ATMOS_FORC: "{{ ATMOS_FORC }}"
+    CCPP_SUITE: "{{ CCPP_SUITE }}"
+    COLDSTART: "{{ COLDSTART }}"
+    COUPLER_CALENDAR: "{{ COUPLER_CALENDAR }}"
+    DATE_CYCLE_FREQ_HR: "{{ DATE_CYCLE_FREQ_HR }}"
+    DATE_FIRST_CYCLE: "{{ DATE_FIRST_CYCLE }}"
+    DT_ATMOS: "{{ DT_ATMOS }}"
+    DT_RUNSEQ: "{{ DT_RUNSEQ }}"
     envir: "{{ envir }}"
-    EXP_BASEDIR: "{{ exp_basedir }}"
-    EXP_CASE_NAME: "{{ exp_case_name }}"
-    FCSTHR: "{{ fcsthr }}"
-    FHROT: "{{ fhrot }}"
-    IC_DATA_MODEL: "{{ ic_data_model }}"
-    IMO: "{{ imo }}"
-    JEDI_PATH: "{{ jedi_path }}"
-    JEDI_PY_VER: "{{ jedi_py_ver }}"
-    JMO: "{{ jmo }}"
-    KEEPDATA: "YES"
-    LND_CALC_SNET: "{{ lnd_calc_snet }}"
-    LND_IC_TYPE: "{{ lnd_ic_type }}"
-    LND_INITIAL_ALBEDO: "{{ lnd_initial_albedo }}"
-    LND_LAYOUT_X: "{{ lnd_layout_x }}"
-    LND_LAYOUT_Y: "{{ lnd_layout_y }}"
-    LND_OUTPUT_FREQ_SEC: "{{ lnd_output_freq_sec }}"
-    MACHINE: "{{ machine }}"
-    MED_COUPLING_MODE: "{{ med_coupling_mode }}"
+    exp_basedir: "{{ exp_basedir }}"
+    EXP_CASE_NAME: "{{ EXP_CASE_NAME }}"
+    FCSTHR: "{{ FCSTHR }}"
+    FHROT: "{{ FHROT }}"
+    FRAC_GRID: "{{ FRAC_GRID }}"
+    IC_DATA_MODEL: "{{ IC_DATA_MODEL }}"
+    IMO: "{{ IMO }}"
+    JEDI_ALGORITHM: "{{ JEDI_ALGORITHM }}"
+    JEDI_PATH: "{{ JEDI_PATH }}"
+    JEDI_PY_VER: "{{ JEDI_PY_VER }}"
+    JMO: "{{ JMO }}"
+    KEEPDATA: "{{ KEEPDATA }}"
+    LND_CALC_SNET: "{{ LND_CALC_SNET }}"
+    LND_IC_TYPE: "{{ LND_IC_TYPE }}"
+    LND_INITIAL_ALBEDO: "{{ LND_INITIAL_ALBEDO }}"
+    LND_LAYOUT_X: "{{ LND_LAYOUT_X }}"
+    LND_LAYOUT_Y: "{{ LND_LAYOUT_Y }}"
+    LND_OUTPUT_FREQ_SEC: "{{ LND_OUTPUT_FREQ_SEC }}"
+    MACHINE: "{{ MACHINE }}"
+    MED_COUPLING_MODE: "{{ MED_COUPLING_MODE }}"
     model_ver: "{{ model_ver }}"
-    NET: "{{ net }}"
-    NNODES_FORECAST: "{{ nnodes_forecast }}"
-    NPROCS_ANALYSIS: "{{ nprocs_analysis }}"
-    NPROCS_FCST_IC: "{{ nprocs_fcst_ic }}"
-    NPROCS_FORECAST: "{{ nprocs_forecast }}"
-    NPROCS_FORECAST_ATM: "{{ nprocs_forecast_atm }}"
-    NPROCS_FORECAST_LND: "{{ nprocs_forecast_lnd }}"
-    NPROCS_PER_NODE: "{{ nprocs_per_node }}"
-    OBSDIR: "{{ obsdir }}"
-    OBS_GHCN: "{{ obs_ghcn }}"
-    OUTPUT_FH: "{{ output_fh }}"
-    RES: "{{ res }}"
-    RESTART_INTERVAL: "{{ restart_interval }}"
-    RUN: "{{ run }}"
+    NET: "{{ NET }}"
+    NPROCS_ANALYSIS: "{{ NPROCS_ANALYSIS }}"
+    NPROCS_FCST_IC: "{{ NPROCS_FCST_IC }}"
+    NPZ: "{{ NPZ }}"
+    nnodes_forecast: "{{ nnodes_forecast }}"
+    nprocs_forecast: "{{ nprocs_forecast }}"
+    nprocs_forecast_atm: "{{ nprocs_forecast_atm }}"
+    nprocs_forecast_lnd: "{{ nprocs_forecast_lnd }}"
+    nprocs_per_node: "{{ nprocs_per_node }}"
+    OBSDIR: "{{ OBSDIR }}"
+    OBS_TYPE: "{{ OBS_TYPE }}"
+    OUTPUT_FH: "{{ OUTPUT_FH }}"
+    RES: "{{ RES }}"
+    RESTART_INTERVAL: "{{ RESTART_INTERVAL }}"
+    RUN: "{{ RUN }}"
+    res_p1: "{{ res_p1 }}"
     SCHED: "slurm"
-    WARMSTART_DIR: "{{ warmstart_dir }}"
-    WE2E_TEST: "{{ we2e_test }}"
+    WARMSTART_DIR: "{{ WARMSTART_DIR }}"
+    WE2E_TEST: "{{ WE2E_TEST }}"
     WE2E_ATOL: "1e-7"
     WE2E_LOG_FN: "we2e.log"
-    WRITE_GROUPS: "{{ write_groups }}"
-    WRITE_TASKS_PER_GROUP: "{{ write_tasks_per_group }}"
-    HOMElandda: "&EXP_BASEDIR;/land-DA_workflow"
-    PTMP: "&EXP_BASEDIR;/ptmp"
+    WRITE_GROUPS: "{{ WRITE_GROUPS }}"
+    WRITE_TASKS_PER_GROUP: "{{ WRITE_TASKS_PER_GROUP }}"
+    HOMElandda: "&exp_basedir;/land-DA_workflow"
+    PTMP: "&exp_basedir;/ptmp"
     COMROOT: "&PTMP;/&envir;/com"
     DATAROOT: "&PTMP;/&envir;/tmp"
     LOGDIR: "&COMROOT;/output/logs"
@@ -80,14 +84,14 @@ workflow:
     cyc: "<cyclestr>@H</cyclestr>"
     DATADEP_LRST1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
     DATADEP_LRST2: "<cyclestr>&WARMSTART_DIR;/ufs_land_restart.@Y-@m-@d_@H-00-00.tile6.nc</cyclestr>"
-    DATADEP_COLDSTART: "<cyclestr>&EXP_BASEDIR;/exp_case/&EXP_CASE_NAME;/task_skip_coldstart_@Y@m@d@H.txt</cyclestr>"
+    DATADEP_COLDSTART: "<cyclestr>&exp_basedir;/exp_case/&EXP_CASE_NAME;/task_skip_coldstart_@Y@m@d@H.txt</cyclestr>"
     DATADEP_SFC1: "<cyclestr>&DATAROOT;/DATA_SHARE/RESTART/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>" 
     DATADEP_SFC2: "<cyclestr>&WARMSTART_DIR;/@Y@m@d.@H0000.sfc_data.tile6.nc</cyclestr>"
   log: "&LOGDIR;/workflow.log"
   tasks:
-    task_jcb_test:
+    task_jcb:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -98,22 +102,29 @@ workflow:
         COMROOT: "&COMROOT;"
         cyc: "&cyc;"
         DATAROOT: "&DATAROOT;"
+        DATE_CYCLE_FREQ_HR: "&DATE_CYCLE_FREQ_HR;"
+        FRAC_GRID: "&FRAC_GRID;"
         HOMElandda: "&HOMElandda;"
+        JEDI_ALGORITHM: "&JEDI_ALGORITHM;"
         KEEPDATA: "&KEEPDATA;"
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
+        NPZ: "&NPZ;"
+        OBS_TYPE: "&OBS_TYPE;"
         PDY: "&PDY;"
+        RES: "&RES;"
+        res_p1: "&res_p1;"
         SCHED: "&SCHED;"
       account: "&ACCOUNT;"
-      command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "jcb_test" "&HOMElandda;" "&MACHINE;"'
-      jobname: jcb_test
+      command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "jcb" "&HOMElandda;" "&MACHINE;"'
+      jobname: jcb
       cores: 1
       walltime: 00:10:00
       queue: batch
-      join: "&LOGDIR;/jcb_test&LOGFN_SUFFIX;"
+      join: "&LOGDIR;/jcb&LOGFN_SUFFIX;"
     task_prep_obs:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -133,7 +144,7 @@ workflow:
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
         OBSDIR: "&OBSDIR;"
-        OBS_GHCN: "&OBS_GHCN;"
+        OBS_TYPE: "&OBS_TYPE;"
         PDY: "&PDY;"
         SCHED: "&SCHED;"
       account: "&ACCOUNT;"
@@ -144,7 +155,7 @@ workflow:
       queue: batch
       join: "&LOGDIR;/prep_obs&LOGFN_SUFFIX;"
       memory: 128G
-{%- if ( app == "ATML" and coldstart == "YES" ) %}
+{%- if ( APP == "ATML" and COLDSTART == "YES" ) %}
     task_fcst_ic:
       attrs:
         cycledefs: first_cycle
@@ -173,10 +184,10 @@ workflow:
       join: "&LOGDIR;/fcst_ic&LOGFN_SUFFIX;"
       memory: 128G
 {%- endif %}
-{%- if app == "LND" %}
+{%- if APP == "LND" %}
     task_pre_anal:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -209,7 +220,7 @@ workflow:
             attrs:
               age: 5
             value: "&DATADEP_LRST1;"
-{%- if coldstart == "NO" %}
+{%- if COLDSTART == "NO" %}
           datadep_lrst2:
             attrs:
               age: 5
@@ -218,7 +229,7 @@ workflow:
 {%- endif %}
     task_analysis:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -232,15 +243,19 @@ workflow:
         DATAROOT: "&DATAROOT;"
         DATE_CYCLE_FREQ_HR: "&DATE_CYCLE_FREQ_HR;"
         KEEPDATA: "&KEEPDATA;"
+        FRAC_GRID: "&FRAC_GRID;"
         HOMElandda: "&HOMElandda;"
+        JEDI_ALGORITHM: "&JEDI_ALGORITHM;"
         JEDI_PATH: "&JEDI_PATH;"
         LOGDIR: "&LOGDIR;"
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
         NPROCS_ANALYSIS: "&NPROCS_ANALYSIS;"
-        OBS_GHCN: "&OBS_GHCN;"
+        NPZ: "&NPZ;"
+        OBS_TYPE: "&OBS_TYPE;"
         PDY: "&PDY;"
         RES: "&RES;"
+        res_p1: "&res_p1;"
         SCHED: "&SCHED;"
         WARMSTART_DIR: "&WARMSTART_DIR;"
         WE2E_TEST: "&WE2E_TEST;"
@@ -258,7 +273,10 @@ workflow:
           taskdep_prep_obs:
             attrs:
               task: prep_obs
-{%- if app == "LND" %}
+          taskdep_jcb:
+            attrs:
+              task: jcb
+{%- if APP == "LND" %}
           taskdep_pre_anal:
             attrs:
               task: pre_anal
@@ -275,7 +293,7 @@ workflow:
 {%- endif %}
     task_post_anal:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -351,15 +369,17 @@ workflow:
         MED_COUPLING_MODE: "&MED_COUPLING_MODE;"
         model_ver: "&model_ver;"
         NET: "&NET;"
-        NNODES_FORECAST: "&NNODES_FORECAST;"
-        NPROCS_FORECAST: "&NPROCS_FORECAST;"
-        NPROCS_FORECAST_ATM: "&NPROCS_FORECAST_ATM;"
-        NPROCS_FORECAST_LND: "&NPROCS_FORECAST_LND;"
-        NPROCS_PER_NODE: "&NPROCS_PER_NODE;"
+        NPZ: "&NPZ;"
+        nnodes_forecast: "&nnodes_forecast;"
+        nprocs_forecast: "&nprocs_forecast;"
+        nprocs_forecast_atm: "&nprocs_forecast_atm;"
+        nprocs_forecast_lnd: "&nprocs_forecast_lnd;"
+        nprocs_per_node: "&nprocs_per_node;"
         OUTPUT_FH: "&OUTPUT_FH;"
         PDY: "&PDY;"
         RES: "&RES;"
         RESTART_INTERVAL: "&RESTART_INTERVAL;"
+        res_p1: "&res_p1;"
         SCHED: "&SCHED;"
         WARMSTART_DIR: "&WARMSTART_DIR;"
         WE2E_TEST: "&WE2E_TEST;"
@@ -370,7 +390,7 @@ workflow:
       account: "&ACCOUNT;"
       command: '&HOMElandda;/parm/task_load_modules_run_jjob.sh "forecast" "&HOMElandda;" "&MACHINE;"'
       jobname: forecast
-      nodes: "&NNODES_FORECAST;:ppn=&NPROCS_PER_NODE;"
+      nodes: "&nnodes_forecast;:ppn=&nprocs_per_node;"
       walltime: 00:30:00
       queue: batch
       join: "&LOGDIR;/forecast&LOGFN_SUFFIX;"
@@ -388,7 +408,7 @@ workflow:
             value: "&DATADEP_COLDSTART;"
     task_plot_stats:
       attrs:
-{%- if coldstart == "YES" %}
+{%- if COLDSTART == "YES" %}
         cycledefs: cycled_from_second
 {%- else %}
         cycledefs: cycled
@@ -406,7 +426,7 @@ workflow:
         MACHINE: "&MACHINE;"
         model_ver: "&model_ver;"
         NPROCS_ANALYSIS: "&NPROCS_ANALYSIS;"
-        NPROCS_FORECAST: "&NPROCS_FORECAST;"
+        nprocs_forecast: "&nprocs_forecast;"
         PDY: "&PDY;"
         RUN: "&RUN;"
         SCHED: "&SCHED;"

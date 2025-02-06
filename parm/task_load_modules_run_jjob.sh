@@ -48,7 +48,7 @@ else
 fi
 
 # temporary solution for JCB (will be availalbe in spack-stack 1.7 or above)
-if [ "${task_name}" = "jcb_test" ]; then
+if [ "${task_name}" = "jcb" ]; then
   set +u
   if [ "${machine}" = "hera" ]; then
     module use /contrib/miniconda3/modulefiles

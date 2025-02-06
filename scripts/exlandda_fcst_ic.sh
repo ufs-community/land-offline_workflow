@@ -5,16 +5,16 @@ set -xue
 
 case $MACHINE in
   "hera")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "orion")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   "hercules")
-    RUN_CMD="srun"
+    run_cmd="srun"
     ;;
   *)
-    RUN_CMD=`which mpiexec`
+    run_cmd=`which mpiexec`
     ;;
 esac
 
@@ -82,7 +82,7 @@ settings="
  'cycle_day': ${DD}
  'cycle_hour': ${HH}
  'input_type': ${input_type}
- 'res': ${RES}
+ 'RES': ${RES}
 "
 
 fp_template="${PARMlandda}/templates/template.chgres_cube"
@@ -99,7 +99,7 @@ ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${f
 export pgm="chgres_cube"
 
 . prep_step
-eval ${RUN_CMD} -n ${NPROCS_FCST_IC} ${EXEClandda}/$pgm >>$pgmout 2>errfile
+eval ${run_cmd} -n ${NPROCS_FCST_IC} ${EXEClandda}/$pgm >>$pgmout 2>errfile
 export err=$?; err_chk
 
 cp -p ${DATA}/gfs_ctrl.nc ${COMOUT}

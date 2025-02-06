@@ -25,7 +25,7 @@ MED_attributes::
   history_n = 6
   history_option = nhours
   history_ymd = -999
-  coupling_mode = {{ med_coupling_mode }}
+  coupling_mode = {{ MED_COUPLING_MODE }}
 ::
 
 # ATM #
@@ -46,8 +46,8 @@ LND_attributes::
   Diagnostic = 0
   mosaic_file = INPUT/C96_mosaic.nc
   input_dir = INPUT/
-  ic_type = {{ lnd_ic_type }}
-  layout = {{ lnd_layout_x }}:{{ lnd_layout_y }} # need to be consistent with number of PEs (6*Lx*Ly)
+  ic_type = {{ LND_IC_TYPE }}
+  layout = {{ LND_LAYOUT_X }}:{{ LND_LAYOUT_Y }} # need to be consistent with number of PEs (6*Lx*Ly)
   num_soil_levels = 4
   forcing_height = 10
   soil_level_thickness = 0.10:0.30:0.60:1.00
@@ -67,15 +67,15 @@ LND_attributes::
   surface_evap_resistance_option = 1 # not used, it is fixed to 4 in sfc_noahmp_drv.F90
   glacier_option = 1
   surface_thermal_roughness_option = 2
-  output_freq = {{ lnd_output_freq_sec }}
+  output_freq = {{ LND_OUTPUT_FREQ_SEC }}
   restart_freq = -1
-  calc_snet = {{ lnd_calc_snet }}
-  initial_albedo = {{ lnd_initial_albedo }}
+  calc_snet = {{ LND_CALC_SNET }}
+  initial_albedo = {{ LND_INITIAL_ALBEDO }}
 ::
 
 # cold
 runSeq::
-@{{ dt_runseq }}
+@{{ DT_RUNSEQ }}
    MED med_phases_prep_atm
    MED -> ATM :remapMethod=redist
    ATM

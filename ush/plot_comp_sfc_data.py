@@ -64,7 +64,7 @@ def main():
     # get sfc data after analysis
     sfc2_data, sfc2_slmsk = get_sfc(work_dir,fn_sfc_base,sfc_var_nm,zlvl,'after')
     # get sfc increment data of analysis
-    sfc_xainc_data, sfc_xainc_slmsk = get_sfc(work_dir,fn_inc_base,sfc_var_nm,zlvl,'xainc')
+    sfc_xainc_data, sfc_xainc_slmsk = get_sfc(work_dir,fn_inc_base,sfc_var_nm,zlvl,'inc')
     # compare sfc1 and sfc2
     compare_sfc(sfc1_data,sfc2_data,sfc_xainc_data,sfc_var_nm)
     # diagnosis
@@ -80,7 +80,7 @@ def diag_data(sfc1_data,sfc2_data,sfc_xainc_data,slmsk,sfc1_slmsk,sfc2_slmsk,sfc
     print(f'''slmsk: original: {slmsk.shape} : max={np.max(slmsk)} : min={np.min(slmsk)}''')
     print(f'''slmsk: before  : {sfc1_slmsk.shape} : max={np.max(sfc1_slmsk)} : min={np.min(sfc1_slmsk)}''')
     print(f'''slmsk: after   : {sfc2_slmsk.shape} : max={np.max(sfc2_slmsk)} : min={np.min(sfc2_slmsk)}''')
-    print(f'''slmsk: xainc   : {sfc_xainc_slmsk.shape} : max={np.max(sfc_xainc_slmsk)} : min={np.min(sfc_xainc_slmsk)}''')
+    print(f'''slmsk: inc     : {sfc_xainc_slmsk.shape} : max={np.max(sfc_xainc_slmsk)} : min={np.min(sfc_xainc_slmsk)}''')
     print(' orog     :: 0 = non-land, 1 = land ')
     print(' sfc_data :: 0 = sea     , 1 = land, 2 = sea-ice ')
     print(' ===== Cross-check of Sea-Land masks =====')
@@ -169,7 +169,7 @@ def get_sfc(path_sfc,fn_sfc_base,sfc_var_nm,zlvl,sfc_opt):
             print(sfc_data.shape)
             print(slmsk_data.shape)
 
-        if sfc_opt == 'xainc':
+        if sfc_opt == 'inc':
             sfc_data2d=np.squeeze(sfc_data,axis=(0,1))
             slmsk_data2d=np.squeeze(slmsk_data,axis=(0,1))
         else:
@@ -187,7 +187,7 @@ def get_sfc(path_sfc,fn_sfc_base,sfc_var_nm,zlvl,sfc_opt):
     sfc_var=np.vstack(sfc_data_all)
     sfc_slmsk=np.vstack(sfc_slmsk_all)
 
-    if sfc_opt == 'xainc':
+    if sfc_opt == 'inc':
         plot_increment(sfc_var,sfc_var_nm,sfc_opt)
     else:
         plot_data(sfc_var,sfc_var_nm,sfc_opt)

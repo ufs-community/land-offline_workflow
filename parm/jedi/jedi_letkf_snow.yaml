@@ -2,10 +2,10 @@ geometry:
   fms initialization:
     namelist filename: Data/fv3files/fmsmpp.nml
     field table filename: Data/fv3files/field_table
-  akbk: Data/fv3files/akbk64.nc4
-  npx: {{ resp1 }}
-  npy: {{ resp1 }}
-  npz: 64
+  akbk: Data/fv3files/akbk.nc4
+  npx: {{ res_p1 }}
+  npy: {{ res_p1 }}
+  npz: {{ NPZ }}
   field metadata override: gfs-land.yaml
   time invariant fields:
     state fields:
@@ -52,7 +52,7 @@ local ensemble DA:
 
 output increment:
   filetype: fms restart
-  filename_sfcd: xainc.sfc_data.nc
+  filename_sfcd: snowinc.sfc_data.nc
 
 observations:
   observers:

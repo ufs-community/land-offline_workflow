@@ -4,16 +4,16 @@ start_day:               {{ dd }}
 start_hour:              {{ hh }}
 start_minute:            0
 start_second:            0
-nhours_fcst:             {{ fcsthr }}
-dt_atmos:                {{ dt_atmos }}
-fhrot:                   {{ fhrot }}
+nhours_fcst:             {{ FCSTHR }}
+dt_atmos:                {{ DT_ATMOS }}
+fhrot:                   {{ FHROT }}
 
-{%- if app == "ATML" %}
-restart_interval:        {{ restart_interval }}
+{%- if APP == "ATML" %}
+restart_interval:        {{ RESTART_INTERVAL }}
 quilting:                .true.
 quilting_restart:        .true.
-write_groups:            {{ write_groups }}
-write_tasks_per_group:   {{ write_tasks_per_group }}
+write_groups:            {{ WRITE_GROUPS }}
+write_tasks_per_group:   {{ WRITE_TASKS_PER_GROUP }}
 itasks:                  1
 output_history:          .true.
 history_file_on_native_grid: .false.
@@ -32,8 +32,8 @@ jchunk2d:                0
 ichunk3d:                0
 jchunk3d:                0
 kchunk3d:                0
-imo:                     {{ imo }}
-jmo:                     {{ jmo }}
-output_fh:               {{ output_fh }}
+imo:                     {{ IMO }}
+jmo:                     {{ JMO }}
+output_fh:               {{ OUTPUT_FH }}
 iau_offset:              0
 {%- endif %}
