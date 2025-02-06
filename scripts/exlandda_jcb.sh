@@ -3,23 +3,30 @@
 set -xue
 
 # Set other dates
-PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
-
 YYYY=${PDY:0:4}
 MM=${PDY:4:2}
 DD=${PDY:6:2}
 HH=${cyc}
+cdate="${PDY}${cyc}"
+
+PTIME=$($NDATE -${DATE_CYCLE_FREQ_HR} $PDY$cyc)
 YYYP=${PTIME:0:4}
 MP=${PTIME:4:2}
 DP=${PTIME:6:2}
 HP=${PTIME:8:2}
 
-cdate="${PDY}${cyc}"
-final_prints_frequency="PT12H"
+cycle_freq_hr_half=$(( DATE_CYCLE_FREQ_HR / 2 ))
+HPTIME=$($NDATE -${cycle_freq_hr_half} $PDY$cyc)
+YYYHP=${HPTIME:0:4}
+MHP=${HPTIME:4:2}
+DHP=${HPTIME:6:2}
+HHP=${HPTIME:8:2}
+
+final_prints_frequency="PT${cycle_freq_hr_half}H"
 snow_bkg_time_fv3="${YYYY}${MM}${DD}_${HH}0000"
 snow_bkg_time_iso="${YYYY}-${MM}-${DD}T${HH}:00:00Z"
 snow_fv3jedi_files_path="./Data/fv3files"
-snow_window_begin="${YYYP}-${MP}-${DP}T${HP}:00:00Z"
+snow_window_begin="${YYYHP}-${MHP}-${DHP}T${HHP}:00:00Z"
 snow_window_length="PT${DATE_CYCLE_FREQ_HR}H"
 
 # update jcb-base yaml file
@@ -45,7 +52,7 @@ settings="\
   'snow_bump_data_dir': ./berror
   'snow_obsdatain_path': ./obs
   'snow_obsdatain_prefix': "obs_${cycle}."
-  'snow_obsdataout_path': ./output
+  'snow_obsdataout_path': ./diags
   'snow_obsdataout_prefix': "diag_"
   'snow_obsdataout_suffix': "_${cdate}.nc"
   'OBS_GHCN': ${OBS_GHCN}

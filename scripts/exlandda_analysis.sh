@@ -69,10 +69,15 @@ fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
+# Output directory
+mkdir -p ${DATA}/diags
+
 # Prepare JEDI input yaml file
 if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
-  # Set up backgroud directory
+  # Set up backgroud and output directories
+  mkdir -p ${DATA}/anl
   mkdir -p ${DATA}/bkg
+
   for itile in {1..6}
   do
     sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
@@ -88,7 +93,13 @@ if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
 
   # Set JEDI executable
   jedi_exe_fn="fv3jedi_var.x"
+
 else # letkf
+  if [ "${FRAC_GRID}" = "YES" ]; then
+    snowdepth_vn="snodl"
+  else
+    snowdepth_vn="snwdph"
+  fi
   # For LETKFOI, create pseudo-ensemble
   for ens in pos neg
   do
@@ -100,7 +111,7 @@ else # letkf
     cp -p ${FILEDATE}.coupler.res ${DATA}/mem_${ens}
   done
   # using ioda mods to get a python version with netCDF4
-  ${USHlandda}/letkf_create_ens.py $FILEDATE $SNOWDEPTHVAR 30
+  ${USHlandda}/letkf_create_ens.py $FILEDATE $snowdepth_vn 30
   if [[ $? != 0 ]]; then
     err_exit "letkf create failed"
   fi
@@ -125,8 +136,8 @@ else # letkf
   'hp': !!str ${HP}
   'fn_orog': C${RES}_oro_data
   'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-  'res': ${RES}
-  'resp1': ${res_p1}
+  'NPZ': ${NPZ}
+  'res_p1': ${res_p1}
   'driver_obs_only': false
 " # End of settings variable
 
@@ -141,8 +152,6 @@ fi
 ################################################
 # RUN JEDI
 ################################################
-
-mkdir -p output/DA/hofx
 
 # Copy static data files
 mkdir -p ${DATA}/Data/fv3files
@@ -227,8 +236,8 @@ do
   cp -p ${DATA}/${FILEDATE}.sfc_data.tile${itile}.nc ${COMOUT}
 done
 
-if [ -d output/DA/hofx ]; then
-  cp -p output/DA/hofx/* ${COMOUThofx}
+if [ -d diags ]; then
+  cp -p diags/* ${COMOUThofx}
   ln -nsf ${COMOUThofx}/* ${DATA_HOFX}
 fi
 
@@ -276,7 +285,7 @@ if [ "${WE2E_TEST}" == "YES" ]; then
   path_fbase="${FIXlandda}/test_base/we2e_com/${RUN}.${PDY}"
   fn_sfc="${FILEDATE}.sfc_data.tile"
   fn_inc="${FILEDATE}.snowinc.sfc_data.tile"
-  fn_hofx="letkf_hofx_ghcn_${PDY}${cyc}.nc"
+  fn_hofx="diag_ghcn_snow_${PDY}${cyc}.nc"
   we2e_log_fp="${LOGDIR}/${WE2E_LOG_FN}"
   if [ ! -f "${we2e_log_fp}" ]; then
     touch ${we2e_log_fp}

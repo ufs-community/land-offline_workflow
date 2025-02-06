@@ -10,6 +10,7 @@ DT_RUNSEQ: 3600
 envir: test_lnd_warm
 EXP_CASE_NAME: lnd_warmstart_00
 FCSTHR: 24
+JEDI_ALGORITHM: letkf
 LND_CALC_SNET: .true.
 LND_IC_TYPE: custom
 LND_INITIAL_ALBEDO: 0.25
@@ -20,6 +21,7 @@ MED_COUPLING_MODE: ufs.nfrac.aoflux
 model_ver: v2.1.0
 net: landda
 NPROCS_ANALYSIS: 6
+NPZ: 64
 RES: 96
 RUN: landda
 WE2E_TEST: 'NO'

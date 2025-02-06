@@ -16,6 +16,7 @@ EXP_CASE_NAME: atml_warmstart_00
 FCSTHR: 24
 FHROT: 0
 IMO: 384
+JEDI_ALGORITHM: letkf
 JMO: 190
 LND_CALC_SNET: .false.
 LND_IC_TYPE: sfc
@@ -27,6 +28,7 @@ MED_COUPLING_MODE: ufs.frac
 model_ver: v2.1.0
 net: landda
 NPROCS_ANALYSIS: 6
+NPZ: 127
 OUTPUT_FH: '6 -1'
 RES: 96
 RESTART_INTERVAL: '6 -1'

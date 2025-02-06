@@ -11,7 +11,7 @@
       obsdataout:
         engine:
           type: H5File
-          obsfile: output/DA/hofx/letkf_hofx_ghcn_{{ yyyymmddhh }}.nc
+          obsfile: diags/diag_ghcn_snow_{{ yyyymmddhh }}.nc
     obs operator:
       name: Identity
     obs error:
