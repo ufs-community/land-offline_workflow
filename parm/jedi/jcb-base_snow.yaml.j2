@@ -44,15 +44,14 @@ snow_bump_data_directory: "{{ snow_bump_data_dir }}"
 
 # Observation
 observations:
-#- adpsfc_snow
-{%- if OBS_GHCN %}
+{%- if OBS_TYPE == "GHCN" %}
 - ghcn_snow
-{%- endif %}
-{%- if OBS_IMS %}
+{%- elif OBS_TYPE == "IMS" %}
 - ims_snow
-{%- endif %}
+#- adpsfc_snow
 #- sfcsno
 #- snocvr_snow
+{%- endif %}
 
 # GHCN
 snow_obsdatain_path: "{{ snow_obsdatain_path }}"

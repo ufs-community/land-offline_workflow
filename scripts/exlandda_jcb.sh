@@ -55,8 +55,7 @@ settings="\
   'snow_obsdataout_path': ./diags
   'snow_obsdataout_prefix': "diag_"
   'snow_obsdataout_suffix': "_${cdate}.nc"
-  'OBS_GHCN': ${OBS_GHCN}
-  'OBS_IMS': ${OBS_IMS}
+  'OBS_TYPE': ${OBS_TYPE}
 " # End of settings variable
 
 template_fp="${PARMlandda}/jedi/jcb-base_snow.yaml.j2"

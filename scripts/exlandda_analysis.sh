@@ -50,7 +50,8 @@ do
 done
 # Copy obserbation file to work directory
 mkdir -p ${DATA}/obs
-ln -nsf "${COMIN}/obs/ghcn_snow_${PDY}${cyc}.nc" "${DATA}/obs/obs_${cycle}.ghcn_snow.nc"
+obs_type_lower="${OBS_TYPE,,}"
+ln -nsf "${COMIN}/obs/${obs_type_lower}_snow_${PDY}${cyc}.nc" "${DATA}/obs/obs.${cycle}.${obs_type_lower}_snow.nc"
 
 # update coupler.res file
 settings="\
@@ -100,7 +101,7 @@ else # letkf
   else
     snowdepth_vn="snwdph"
   fi
-  # For LETKFOI, create pseudo-ensemble
+  # For LETKF, create pseudo-ensemble
   for ens in pos neg
   do
     if [ -e $DATA/mem_${ens} ]; then
@@ -117,11 +118,10 @@ else # letkf
   fi
 
   # Create JEDI input yaml
-  jedi_nml_fn="jedi_letkfoi_snow.yaml"
+  jedi_nml_fn="jedi_letkf_snow.yaml"
   cp -p "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
-  if [ "${OBS_GHCN}" = "YES" ]; then
-    cat ${PARMlandda}/jedi/GHCN.yaml >> ${jedi_nml_fn}
-  fi
+  cat ${PARMlandda}/jedi/${OBS_TYPE}.yaml >> ${jedi_nml_fn}
+
   # update JEDI yaml file
   settings="\
   'yyyy': !!str ${YYYY}
