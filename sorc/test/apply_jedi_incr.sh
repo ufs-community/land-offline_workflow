@@ -44,6 +44,11 @@ do
   cp $i .
 done
 
+for itile in {1..6}
+do
+  ln -nsf ${FILEDATE}.snowinc.sfc_data.tile${itile}.nc ${FILEDATE}.xainc.sfc_data.tile${itile}.nc
+done
+
 echo "============================= calling apply snow increment"
 #
 ${MPIRUN} -n $NPROC ${EXECDIR}/${TEST_EXEC}
