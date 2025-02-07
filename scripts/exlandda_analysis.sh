@@ -136,9 +136,9 @@ else # letkf
   'hp': !!str ${HP}
   'fn_orog': C${RES}_oro_data
   'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
+  'DATE_CYCLE_FREQ_HR': ${DATE_CYCLE_FREQ_HR}
   'NPZ': ${NPZ}
   'res_p1': ${res_p1}
-  'driver_obs_only': false
 " # End of settings variable
 
   fp_template="${DATA}/${jedi_nml_fn}"

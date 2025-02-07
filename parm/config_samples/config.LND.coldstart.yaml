@@ -21,7 +21,7 @@ MED_COUPLING_MODE: ufs.nfrac.aoflux
 model_ver: v2.1.0
 net: landda
 NPROCS_ANALYSIS: 6
-NPZ: 64
+NPZ: 127
 RES: 96
 RUN: landda
 WE2E_TEST: 'NO'

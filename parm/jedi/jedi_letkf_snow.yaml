@@ -19,10 +19,9 @@ geometry:
 
 time window:
   begin: {{ yyyp }}-{{ mp }}-{{ dp }}T{{ hp }}:00:00Z
-  length: PT24H
+  length: PT{{ DATE_CYCLE_FREQ_HR }}H
 
 background:
- date: &date {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
  members:
    - datetime: {{ yyyy }}-{{ mm }}-{{ dd }}T{{ hh }}:00:00Z
      filetype: fms restart
@@ -41,7 +40,7 @@ driver:
   save posterior mean: false
   save posterior mean increment: true
   save posterior ensemble: false
-  run as observer only: {{ driver_obs_only }}
+  update obs config with geometry info: false
 
 local ensemble DA:
   solver: LETKF
