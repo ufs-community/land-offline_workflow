@@ -296,6 +296,7 @@ if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
 work_dir: '${DATA}'
 fn_sfc_base: '${fn_sfc_base}'
 fn_inc_base: '${fn_inc_base}'
+jedi_exe: '${JEDI_ALGORITHM}'
 orog_path: '${orog_path}'
 orog_fn_base: '${orog_fn_base}'
 out_title_base: '${out_title_base}'
