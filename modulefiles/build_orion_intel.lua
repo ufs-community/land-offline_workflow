@@ -49,5 +49,3 @@ setenv("CXX", "mpiicpc")
 setenv("FC", "mpiifort")
 setenv("CMAKE_Platform", "orion.intel")
 
-setenv("EPICHOME", "/work/noaa/epic/UFS_Land-DA_v2.1")
-setenv("JEDI_PATH", "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion")

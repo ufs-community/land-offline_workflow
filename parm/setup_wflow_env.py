@@ -257,15 +257,15 @@ def set_machine_parm(machine):
     lowercase_machine = machine.lower()
     match lowercase_machine:
         case "hera":
-            JEDI_PATH = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v7_ic"
+            JEDI_PATH = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/jedi_v8_ic"
             MAX_CORES_PER_NODE = 40
             WARMSTART_DIR = "/scratch2/NAGAPE/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "orion":
-            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_orion"
+            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v8_ic_orion"
             MAX_CORES_PER_NODE = 40
             WARMSTART_DIR = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "hercules":
-            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v7_ic_hercules"
+            JEDI_PATH = "/work/noaa/epic/UFS_Land-DA_v2.1/jedi_v8_ic_hercules"
             MAX_CORES_PER_NODE = 80
             WARMSTART_DIR = "/work/noaa/epic/UFS_Land-DA_v2.1/inputs/DATA_RESTART"
         case "singularity":

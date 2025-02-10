@@ -66,9 +66,9 @@ settings="\
   'hp': !!str ${HP}
   'fn_orog': C${RES}_oro_data
   'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
+  'DATE_CYCLE_FREQ_HR': 24
   'NPZ': 64
   'res_p1': ${RESP1}
-  'driver_obs_only': false
 " # End of settins variable
 fp_template="letkf_land.yaml"
 fn_namelist="letkf_land.yaml"

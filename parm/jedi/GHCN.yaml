@@ -1,8 +1,7 @@
   - obs space:
       name: SnowDepthGHCN
       distribution: 
-        name: Halo
-        halo size: 250e3
+        name: InefficientDistribution
       simulated variables: [totalSnowDepth]
       obsdatain:
         engine:
