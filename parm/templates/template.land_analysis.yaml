@@ -421,6 +421,7 @@ workflow:
         DATAROOT: "&DATAROOT;"
         DATE_CYCLE_FREQ_HR: "&DATE_CYCLE_FREQ_HR;"
         HOMElandda: "&HOMElandda;"
+        JEDI_ALGORITHM: "&JEDI_ALGORITHM;"
         KEEPDATA: "&KEEPDATA;"
         LOGDIR: "&LOGDIR;"
         MACHINE: "&MACHINE;"

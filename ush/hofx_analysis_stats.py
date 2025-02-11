@@ -14,7 +14,7 @@ import matplotlib.ticker
 import matplotlib as mpl
 from matplotlib.colors import ListedColormap
 
-def get_obs_stats(fdir, plottype):
+def get_obs_stats(fdir, plottype, jedi_exe):
     global lat,lon
     omb_=[]
     oma_=[]    
@@ -30,8 +30,12 @@ def get_obs_stats(fdir, plottype):
         print("NETCDF:",f)
         obs=f.groups['ObsValue'].variables['totalSnowDepth']
         print("ObsValue:",obs)
-        ombg=f.groups['ombg'].variables['totalSnowDepth']
-        print("OMBG:",ombg)
+        if jedi_exe == 'letkf':
+          ombg=f.groups['ombg'].variables['totalSnowDepth']
+          print("OMBG:",ombg)
+        else:
+          ombg=np.zeros(obs.shape)
+          print("WARNING: ombg is not set in obs output file !!!")
         oman=f.groups['oman'].variables['totalSnowDepth']
         print("OMAN:",oman)
         qc=f.groups['PreQC'].variables['totalSnowDepth']
@@ -135,7 +139,7 @@ if __name__ == '__main__':
     f.close()
     print("YAML_DATA:",yaml_data)
 
-    oma,omb,lat,lon=get_obs_stats(yaml_data['hofx_files'],yaml_data['plottype'])    
+    oma,omb,lat,lon=get_obs_stats(yaml_data['hofx_files'],yaml_data['plottype'],yaml_data['jedi_exe'])
     if yaml_data['field_var']=='OMA':
         field=oma
     if yaml_data['field_var']=='OMB':

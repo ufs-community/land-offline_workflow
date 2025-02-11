@@ -41,6 +41,7 @@ if [ "${DO_PLOT_STATS}" = "YES" ]; then
 hofx_files: '${DATA_HOFX}'
 field_var: '${field_var}'
 field_range: [${field_range_low},${field_range_high}]
+jedi_exe: '${JEDI_ALGORITHM}'
 nbins: ${nbins}
 plottype: '${plottype}'
 title_fig: '${title_fig}'
