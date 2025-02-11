@@ -67,7 +67,7 @@ if [ "${DO_PLOT_TIME_HISTORY}" = "YES" ]; then
   fn_data_anal_suffix=".log"
   fn_data_fcst_prefix="forecast_"
   fn_data_fcst_suffix=".log"
-  out_title_anal_base="Land-DA::Analysis::QC SnowDepthGHCN::"
+  out_title_anal_base="Land-DA::Analysis::QC SnowDepth::"
   out_fn_anal_base="landda_timehistory_"
   out_title_time="Land-DA::Wall-clock time"
   out_fn_time="landda_timehistory_wtime"
@@ -79,8 +79,10 @@ fn_data_anal_prefix: '${fn_data_anal_prefix}'
 fn_data_anal_suffix: '${fn_data_anal_suffix}'
 fn_data_fcst_prefix: '${fn_data_fcst_prefix}'
 fn_data_fcst_suffix: '${fn_data_fcst_suffix}'
+jedi_exe: '${JEDI_ALGORITHM}'
 nprocs_anal: '${NPROCS_ANALYSIS}'
 nprocs_fcst: '${nprocs_forecast}'
+obs_type: '${OBS_TYPE}'
 out_title_anal_base: '${out_title_anal_base}'
 out_fn_anal_base: '${out_fn_anal_base}'
 out_title_time: '${out_title_time}'

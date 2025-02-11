@@ -38,8 +38,10 @@ def main():
     fn_data_anal_suffix = yaml_data['fn_data_anal_suffix']
     fn_data_fcst_prefix = yaml_data['fn_data_fcst_prefix']
     fn_data_fcst_suffix = yaml_data['fn_data_fcst_suffix']
+    jedi_exe = yaml_data['jedi_exe']
     nprocs_anal = yaml_data['nprocs_anal']
     nprocs_fcst = yaml_data['nprocs_fcst']
+    obs_type = yaml_data['obs_type']
     out_title_anal_base = yaml_data['out_title_anal_base']
     out_fn_anal_base = yaml_data['out_fn_anal_base']
     out_title_time = yaml_data['out_title_time']
@@ -51,13 +53,13 @@ def main():
 
     # plot time-history
     for var_nm in var_list:
-        var_dict_anal = get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_anal,var_nm)
+        var_dict_anal = get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,jedi_exe,nprocs_anal,var_nm)
         var_dict_fcst = get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_fcst)
-        plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm)
+        plot_data(var_dict_anal,var_dict_fcst,obs_type,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm)
 
 
 # Get data from files =============================================== CHJ =====
-def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_anal,var_nm):
+def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,jedi_exe,nprocs_anal,var_nm):
 # =================================================================== CHJ =====
 
     print(' ===== var name: '+var_nm+' ========================')
@@ -73,7 +75,10 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
     files.sort()
 #    print("Files=",files)
 
-    nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
+    if jedi_exe == 'letkf':
+        nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
+    else:
+        nobs_qc_prefix = "QC Snow depth totalSnowDepth"
     wtime_oops_prefix = "OOPS_STATS util::Timers::Total"
 
     file_date = []
@@ -86,7 +91,7 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
     for file_fp in files:
         file_date_raw = file_fp.removeprefix(fp_data_anal_prefix)
         file_date_raw = file_date_raw.removesuffix(fn_data_anal_suffix)
-        file_date_tmp = f"{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}"
+        file_date_tmp = f'''{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}'''
         file_date.append(file_date_tmp)
         print("File date=",file_date_tmp)
 
@@ -210,7 +215,7 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
     for file_fp in files:
         file_date_raw = file_fp.removeprefix(fp_data_fcst_prefix)
         file_date_raw = file_date_raw.removesuffix(fn_data_fcst_suffix)
-        file_date_tmp = f"{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}"
+        file_date_tmp = f'''{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}'''
         file_date.append(file_date_tmp)
         print("File date=",file_date_tmp)
 
@@ -241,10 +246,10 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
 
 
 # Plot data ========================================================= CHJ =====
-def plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm):
+def plot_data(var_dict_anal,var_dict_fcst,obs_type,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm):
 # =================================================================== CHJ =====
 
-    out_title_anal = out_title_anal_base+var_nm
+    out_title_anal = f'''{out_title_anal_base}::{obs_type}::{var_nm}'''
     out_fn_anal = out_fn_anal_base+var_nm
 
     dfa = pd.DataFrame(var_dict_anal)
@@ -263,7 +268,7 @@ def plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,o
     axes[0].plot(dfa['Date'],dfa['Max'],'s-.',color='red',mfc='none',linewidth=ln_wdth,markersize=mk_sz,label='Max')
     axes[0].set_ylabel('Min / Max', fontsize=txt_fnt-1)
     axes[0].tick_params(axis="y",labelsize=txt_fnt-2)
-    axes[0].legend(fontsize=txt_fnt-1, loc='center right')
+    axes[0].legend(fontsize=txt_fnt-1, loc='center left')
     axes[0].grid(linewidth=0.2)
 
     axes[1].plot(dfa['Date'],dfa['RMS'],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz)

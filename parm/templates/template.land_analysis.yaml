@@ -428,6 +428,7 @@ workflow:
         model_ver: "&model_ver;"
         NPROCS_ANALYSIS: "&NPROCS_ANALYSIS;"
         nprocs_forecast: "&nprocs_forecast;"
+        OBS_TYPE: "&OBS_TYPE;"
         PDY: "&PDY;"
         RUN: "&RUN;"
         SCHED: "&SCHED;"
