@@ -41,6 +41,7 @@ if [ "${DO_PLOT_STATS}" = "YES" ]; then
 hofx_files: '${DATA_HOFX}'
 field_var: '${field_var}'
 field_range: [${field_range_low},${field_range_high}]
+jedi_exe: '${JEDI_ALGORITHM}'
 nbins: ${nbins}
 plottype: '${plottype}'
 title_fig: '${title_fig}'
@@ -66,10 +67,7 @@ if [ "${DO_PLOT_TIME_HISTORY}" = "YES" ]; then
   fn_data_anal_suffix=".log"
   fn_data_fcst_prefix="forecast_"
   fn_data_fcst_suffix=".log"
-  out_title_anal_base="Land-DA::Analysis::QC SnowDepthGHCN::"
-  out_fn_anal_base="landda_timehistory_"
-  out_title_time="Land-DA::Wall-clock time"
-  out_fn_time="landda_timehistory_wtime"
+  out_fn_base="landda_timehistory"
 
   cat > plot_timehistory.yaml <<EOF
 path_data: '${LOGDIR}'
@@ -78,12 +76,11 @@ fn_data_anal_prefix: '${fn_data_anal_prefix}'
 fn_data_anal_suffix: '${fn_data_anal_suffix}'
 fn_data_fcst_prefix: '${fn_data_fcst_prefix}'
 fn_data_fcst_suffix: '${fn_data_fcst_suffix}'
+jedi_exe: '${JEDI_ALGORITHM}'
 nprocs_anal: '${NPROCS_ANALYSIS}'
 nprocs_fcst: '${nprocs_forecast}'
-out_title_anal_base: '${out_title_anal_base}'
-out_fn_anal_base: '${out_fn_anal_base}'
-out_title_time: '${out_title_time}'
-out_fn_time: '${out_fn_time}'
+obs_type: '${OBS_TYPE}'
+out_fn_base: '${out_fn_base}'
 EOF
 
   ${USHlandda}/plot_analysis_timehistory.py
@@ -92,8 +89,7 @@ EOF
   fi
 
   # Copy result files to COMOUT
-  cp -p ${out_fn_anal_base}* ${COMOUTplot}
-  cp -p ${out_fn_time}* ${COMOUTplot}
+  cp -p ${out_fn_base}* ${COMOUTplot}
 fi
 
 

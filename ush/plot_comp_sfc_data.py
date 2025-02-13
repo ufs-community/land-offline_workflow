@@ -51,6 +51,7 @@ def main():
     out_title_base=yaml_data['out_title_base']
     out_fn_base=yaml_data['out_fn_base']
     fix_dir=yaml_data['fix_dir']
+    jedi_exe=yaml_data['jedi_exe']
 
     # Set the path to Natural Earth dataset
     cartopy.config['data_dir']=os.path.join(fix_dir,"NaturalEarth")
@@ -60,11 +61,11 @@ def main():
     # get lon, lat from orography
     slmsk=get_geo(orog_path,orog_fn_base)
     # get sfc data before analysis
-    sfc1_data, sfc1_slmsk = get_sfc(work_dir,fn_sfc_base,sfc_var_nm,zlvl,'before')
+    sfc1_data, sfc1_slmsk = get_sfc(work_dir,fn_sfc_base,sfc_var_nm,zlvl,jedi_exe,'before')
     # get sfc data after analysis
-    sfc2_data, sfc2_slmsk = get_sfc(work_dir,fn_sfc_base,sfc_var_nm,zlvl,'after')
+    sfc2_data, sfc2_slmsk = get_sfc(work_dir,fn_sfc_base,sfc_var_nm,zlvl,jedi_exe,'after')
     # get sfc increment data of analysis
-    sfc_xainc_data, sfc_xainc_slmsk = get_sfc(work_dir,fn_inc_base,sfc_var_nm,zlvl,'inc')
+    sfc_xainc_data, sfc_xainc_slmsk = get_sfc(work_dir,fn_inc_base,sfc_var_nm,zlvl,jedi_exe,'inc')
     # compare sfc1 and sfc2
     compare_sfc(sfc1_data,sfc2_data,sfc_xainc_data,sfc_var_nm)
     # diagnosis
@@ -142,7 +143,7 @@ def get_geo(orog_path,orog_fn_base):
 
 
 # Get sfc_data from files and plot ================================== CHJ =====
-def get_sfc(path_sfc,fn_sfc_base,sfc_var_nm,zlvl,sfc_opt):
+def get_sfc(path_sfc,fn_sfc_base,sfc_var_nm,zlvl,jedi_exe,sfc_opt):
 # =================================================================== CHJ =====
 
     print(' ===== sfc files: '+sfc_var_nm+' :: '+sfc_opt+' ===============================')
@@ -163,7 +164,13 @@ def get_sfc(path_sfc,fn_sfc_base,sfc_var_nm,zlvl,sfc_opt):
 
         # Extract variable
         sfc_data=np.ma.masked_invalid(sfc[sfc_var_nm].data)
-        slmsk_data=np.ma.masked_invalid(sfc['slmsk'].data)
+        if jedi_exe == '3dvar' and sfc_opt == 'inc':
+            slmsk_data=np.zeros(sfc_data.shape)
+            if itp == 1:
+                print(f'''!!! S-L mask is not available in inc files for 3D-VAR: set to zeros !!!''')
+        else:
+          slmsk_data=np.ma.masked_invalid(sfc['slmsk'].data)
+
         if itp == 1:
             print(sfc)
             print(sfc_data.shape)

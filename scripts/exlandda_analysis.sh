@@ -78,19 +78,56 @@ if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
   # Set up backgroud and output directories
   mkdir -p ${DATA}/anl
   mkdir -p ${DATA}/bkg
+  mkdir -p ${DATA}/test
 
   for itile in {1..6}
   do
     sfc_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
-    sfc_bkg_fn="${PDY}_${cyc}0000.sfc_data.tile${itile}.nc"
+    sfc_bkg_fn="${FILEDATE}.sfc_data.tile${itile}.nc"
     cp -p ${sfc_fn} "${DATA}/bkg/${sfc_bkg_fn}"
     ln -nsf "${FIXlandda}/FV3_fix_tiled/C${RES}/C${RES}_oro_data.tile${itile}.nc" "${DATA}/bkg/."
   done
   cp -p ${FILEDATE}.coupler.res ${DATA}/bkg
 
-  # Copy JEDI yaml file
-  jedi_nml_fn="jedi_jcb_snow_nml.yaml"
-  cp -p "${COMIN}/${jedi_nml_fn}" .
+  use_jcb="NO"
+  if [ "use_jcb" == "YES" ]; then
+    # Copy JEDI yaml file
+    jedi_nml_fn="jedi_jcb_snow_nml.yaml"
+    cp -p "${COMIN}/${jedi_nml_fn}" .
+  else
+    # Create JEDI input yaml
+    jedi_nml_fn="jedi_3dvar_snow.yaml"
+    cp -p "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
+
+    cycle_freq_hr_half=$(( DATE_CYCLE_FREQ_HR / 2 ))
+    HPTIME=$($NDATE -${cycle_freq_hr_half} $PDY$cyc)
+    YYYHP=${HPTIME:0:4}
+    MHP=${HPTIME:4:2}
+    DHP=${HPTIME:6:2}
+    HHP=${HPTIME:8:2}
+
+    # update JEDI yaml file
+    settings="\
+    'yyyy': !!str ${YYYY}
+    'mm': !!str ${MM}
+    'dd': !!str ${DD}
+    'hh': !!str ${HH}
+    'yyyymmdd': !!str ${PDY}
+    'yyyymmddhh': !!str ${PDY}${cyc}
+    'yyyhp': !!str ${YYYHP}
+    'mhp': !!str ${MHP}
+    'dhp': !!str ${DHP}
+    'hhp': !!str ${HHP}
+    'fn_orog': C${RES}_oro_data
+    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
+    'DATE_CYCLE_FREQ_HR': ${DATE_CYCLE_FREQ_HR}
+    'NPZ': ${NPZ}
+    'res_p1': ${res_p1}
+" # End of settings variable
+
+    fp_template="${DATA}/${jedi_nml_fn}"
+    ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${jedi_nml_fn}"
+  fi
 
   # Set JEDI executable
   jedi_exe_fn="fv3jedi_var.x"
@@ -259,6 +296,7 @@ if [ "${DO_PLOT_SFC_COMP}" = "YES" ]; then
 work_dir: '${DATA}'
 fn_sfc_base: '${fn_sfc_base}'
 fn_inc_base: '${fn_inc_base}'
+jedi_exe: '${JEDI_ALGORITHM}'
 orog_path: '${orog_path}'
 orog_fn_base: '${orog_fn_base}'
 out_title_base: '${out_title_base}'

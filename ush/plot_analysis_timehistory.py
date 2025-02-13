@@ -38,12 +38,11 @@ def main():
     fn_data_anal_suffix = yaml_data['fn_data_anal_suffix']
     fn_data_fcst_prefix = yaml_data['fn_data_fcst_prefix']
     fn_data_fcst_suffix = yaml_data['fn_data_fcst_suffix']
+    jedi_exe = yaml_data['jedi_exe']
     nprocs_anal = yaml_data['nprocs_anal']
     nprocs_fcst = yaml_data['nprocs_fcst']
-    out_title_anal_base = yaml_data['out_title_anal_base']
-    out_fn_anal_base = yaml_data['out_fn_anal_base']
-    out_title_time = yaml_data['out_title_time']
-    out_fn_time = yaml_data['out_fn_time']
+    obs_type = yaml_data['obs_type']
+    out_fn_base = yaml_data['out_fn_base']
 
     var_list = ["totalSnowDepth"]
     nprocs_anal = int(nprocs_anal)
@@ -51,13 +50,13 @@ def main():
 
     # plot time-history
     for var_nm in var_list:
-        var_dict_anal = get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_anal,var_nm)
+        var_dict_anal = get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,jedi_exe,nprocs_anal,var_nm)
         var_dict_fcst = get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_fcst)
-        plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm)
+        plot_data(var_dict_anal,var_dict_fcst,jedi_exe,obs_type,out_fn_base,work_dir,var_nm)
 
 
 # Get data from files =============================================== CHJ =====
-def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_anal,var_nm):
+def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,jedi_exe,nprocs_anal,var_nm):
 # =================================================================== CHJ =====
 
     print(' ===== var name: '+var_nm+' ========================')
@@ -73,20 +72,26 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
     files.sort()
 #    print("Files=",files)
 
-    nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
+    if jedi_exe == 'letkf':
+        nobs_qc_prefix = "QC SnowDepthGHCN totalSnowDepth"
+    else:
+        nobs_qc_prefix = "QC Snow depth totalSnowDepth"
     wtime_oops_prefix = "OOPS_STATS util::Timers::Total"
 
     file_date = []
     min_val_final = []
     max_val_final = []
     rms_val_final = []
+    min_val_lstm1 = []
+    max_val_lstm1 = []
+    rms_val_lstm1 = []
     nobs_qc_final = []
     nobs_in_final = []
     wtime_oops = []
     for file_fp in files:
         file_date_raw = file_fp.removeprefix(fp_data_anal_prefix)
         file_date_raw = file_date_raw.removesuffix(fn_data_anal_suffix)
-        file_date_tmp = f"{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}"
+        file_date_tmp = f'''{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}'''
         file_date.append(file_date_tmp)
         print("File date=",file_date_tmp)
 
@@ -139,18 +144,24 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
 
         if not min_val_file:
             min_val_final.append(None)
+            min_val_lstm1.append(None)
         else:
             min_val_final.append(min_val_file[-1])
+            min_val_lstm1.append(min_val_file[-2])
 
         if not max_val_file:
             max_val_final.append(None)
+            max_val_lstm1.append(None)
         else:
             max_val_final.append(max_val_file[-1])
+            max_val_lstm1.append(max_val_file[-2])
 
         if not rms_val_file:
             rms_val_final.append(None)
+            rms_val_lstm1.append(None)
         else:
             rms_val_final.append(rms_val_file[-1])
+            rms_val_lstm1.append(rms_val_file[-2])
 
         if not nobs_qc_file:
             nobs_qc_final.append(None)
@@ -177,6 +188,9 @@ def get_data_analysis(path_data,fn_data_anal_prefix,fn_data_anal_suffix,nprocs_a
         "Min": min_val_final,
         "Max": max_val_final,
         "RMS": rms_val_final,
+        "Min_m1": min_val_lstm1,
+        "Max_m1": max_val_lstm1,
+        "RMS_m1": rms_val_lstm1,
         "nobs_QC": nobs_qc_final,
         "nobs_in": nobs_in_final,
         "wtime_oops": wtime_oops,
@@ -210,7 +224,7 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
     for file_fp in files:
         file_date_raw = file_fp.removeprefix(fp_data_fcst_prefix)
         file_date_raw = file_date_raw.removesuffix(fn_data_fcst_suffix)
-        file_date_tmp = f"{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}"
+        file_date_tmp = f'''{file_date_raw[0:4]}-{file_date_raw[4:6]}-{file_date_raw[6:8]}-{file_date_raw[8:10]}'''
         file_date.append(file_date_tmp)
         print("File date=",file_date_tmp)
 
@@ -241,11 +255,10 @@ def get_data_forecast(path_data,fn_data_fcst_prefix,fn_data_fcst_suffix,nprocs_f
 
 
 # Plot data ========================================================= CHJ =====
-def plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,out_title_time,out_fn_time,work_dir,var_nm):
+def plot_data(var_dict_anal,var_dict_fcst,jedi_exe,obs_type,out_fn_base,work_dir,var_nm):
 # =================================================================== CHJ =====
 
-    out_title_anal = out_title_anal_base+var_nm
-    out_fn_anal = out_fn_anal_base+var_nm
+    global txt_fnt,ln_wdth,mk_sz
 
     dfa = pd.DataFrame(var_dict_anal)
     dff = pd.DataFrame(var_dict_fcst)
@@ -254,40 +267,25 @@ def plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,o
     ln_wdth=0.75
     mk_sz=3
     
-    # PLOT 1
+    # PLOT max/min/RMS/QC obs
+    if jedi_exe == '3dvar':
+        # analysis
+        out_title_qc = f'''Land-DA::Analysis::{jedi_exe}::{obs_type}::{var_nm}'''
+        out_fn_qc = f'''{out_fn_base}_anal_{var_nm}'''
+        plot_his_qc(dfa,'Min_m1','Max_m1','RMS_m1',out_title_qc,out_fn_qc,work_dir,'anal')
+        # increment
+        out_title_qc = f'''Land-DA::Increment::{jedi_exe}::{obs_type}::{var_nm}'''
+        out_fn_qc = f'''{out_fn_base}_inc_{var_nm}'''
+        plot_his_qc(dfa,'Min','Max','RMS',out_title_qc,out_fn_qc,work_dir,'inc')
+    else:
+        out_title_qc = f'''Land-DA::Analysis::{jedi_exe}::{obs_type}::{var_nm}'''
+        out_fn_qc = f'''{out_fn_base}_anal_{var_nm}'''
+        plot_his_qc(dfa,'Min','Max','RMS',out_title_qc,out_fn_qc,work_dir,'anal')
+
+    # PLOT: wall-clock time of OOPS
     # figsize=(width,height) in inches
-    fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True, figsize=(6,6))
-    fig.suptitle(out_title_anal,fontsize=txt_fnt+1,y=0.97)
-
-    axes[0].plot(dfa['Date'],dfa['Min'],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz,label='Min')
-    axes[0].plot(dfa['Date'],dfa['Max'],'s-.',color='red',mfc='none',linewidth=ln_wdth,markersize=mk_sz,label='Max')
-    axes[0].set_ylabel('Min / Max', fontsize=txt_fnt-1)
-    axes[0].tick_params(axis="y",labelsize=txt_fnt-2)
-    axes[0].legend(fontsize=txt_fnt-1, loc='center right')
-    axes[0].grid(linewidth=0.2)
-
-    axes[1].plot(dfa['Date'],dfa['RMS'],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz)
-    axes[1].set_ylabel('RMS', fontsize=txt_fnt-1)
-    axes[1].tick_params(axis="y",labelsize=txt_fnt-2)
-    axes[1].grid(linewidth=0.2)
-
-    axes[2].plot(dfa['Date'],dfa['nobs_in'],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz,label='N_obs:raw')
-    axes[2].plot(dfa['Date'],dfa['nobs_QC'],'s-.',color='red',mfc='none',linewidth=ln_wdth,markersize=mk_sz,label='N_obs:QC')
-    axes[2].set_xlabel('Date', fontsize=txt_fnt-1)
-    axes[2].set_ylabel('Number of observations', fontsize=txt_fnt-1)
-    axes[2].tick_params(axis="x",labelsize=txt_fnt-2)
-    axes[2].tick_params(axis="y",labelsize=txt_fnt-2)
-    axes[2].legend(fontsize=txt_fnt-1, loc='center right')
-    axes[2].grid(linewidth=0.2)
-
-    plt.xticks(rotation=30, ha='right')
-    plt.tight_layout()
-    # Output figure
-    ndpi = 300
-    out_file(work_dir,out_fn_anal,ndpi)
-
-    # PLOT 2
-    # figsize=(width,height) in inches
+    out_title_time = "Land-DA::Wall-clock time::OOPS"
+    out_fn_time = f'''{out_fn_base}_wtime'''
     fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=(6,4))
     fig.suptitle(out_title_time,fontsize=txt_fnt+1,y=0.95)
 
@@ -309,6 +307,42 @@ def plot_data(var_dict_anal,var_dict_fcst,out_title_anal_base,out_fn_anal_base,o
     # Output figure
     ndpi = 300
     out_file(work_dir,out_fn_time,ndpi)
+
+
+# Plot time-history of QC data ====================================== CHJ =====
+def plot_his_qc(dfa,min_var,max_var,rms_var,out_title_qc,out_fn_qc,work_dir,qc_type):
+# =================================================================== CHJ =====
+
+    # figsize=(width,height) in inches
+    fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True, figsize=(6,6))
+    fig.suptitle(out_title_qc,fontsize=txt_fnt+1,y=0.97)
+
+    axes[0].plot(dfa['Date'],dfa[min_var],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz,label='Min')
+    axes[0].plot(dfa['Date'],dfa[max_var],'s-.',color='red',mfc='none',linewidth=ln_wdth,markersize=mk_sz,label='Max')
+    axes[0].set_ylabel('Min / Max', fontsize=txt_fnt-1)
+    axes[0].tick_params(axis="y",labelsize=txt_fnt-2)
+    axes[0].legend(fontsize=txt_fnt-1, loc='center')
+    axes[0].grid(linewidth=0.2)
+
+    axes[1].plot(dfa['Date'],dfa[rms_var],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz)
+    axes[1].set_ylabel('RMS', fontsize=txt_fnt-1)
+    axes[1].tick_params(axis="y",labelsize=txt_fnt-2)
+    axes[1].grid(linewidth=0.2)
+
+    axes[2].plot(dfa['Date'],dfa['nobs_in'],'o-',color='blue',linewidth=ln_wdth,markersize=mk_sz,label='N_obs:raw')
+    axes[2].plot(dfa['Date'],dfa['nobs_QC'],'s-.',color='red',mfc='none',linewidth=ln_wdth,markersize=mk_sz,label='N_obs:QC')
+    axes[2].set_xlabel('Date', fontsize=txt_fnt-1)
+    axes[2].set_ylabel('Number of observations', fontsize=txt_fnt-1)
+    axes[2].tick_params(axis="x",labelsize=txt_fnt-2)
+    axes[2].tick_params(axis="y",labelsize=txt_fnt-2)
+    axes[2].legend(fontsize=txt_fnt-1, loc='center right')
+    axes[2].grid(linewidth=0.2)
+
+    plt.xticks(rotation=30, ha='right')
+    plt.tight_layout()
+    # Output figure
+    ndpi = 300
+    out_file(work_dir,out_fn_qc,ndpi)
 
 
 # Output file ======================================================= CHJ =====
