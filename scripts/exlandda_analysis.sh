@@ -89,45 +89,9 @@ if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
   done
   cp -p ${FILEDATE}.coupler.res ${DATA}/bkg
 
-  use_jcb="NO"
-  if [ "use_jcb" == "YES" ]; then
-    # Copy JEDI yaml file
-    jedi_nml_fn="jedi_jcb_snow_nml.yaml"
-    cp -p "${COMIN}/${jedi_nml_fn}" .
-  else
-    # Create JEDI input yaml
-    jedi_nml_fn="jedi_3dvar_snow.yaml"
-    cp -p "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
-
-    cycle_freq_hr_half=$(( DATE_CYCLE_FREQ_HR / 2 ))
-    HPTIME=$($NDATE -${cycle_freq_hr_half} $PDY$cyc)
-    YYYHP=${HPTIME:0:4}
-    MHP=${HPTIME:4:2}
-    DHP=${HPTIME:6:2}
-    HHP=${HPTIME:8:2}
-
-    # update JEDI yaml file
-    settings="\
-    'yyyy': !!str ${YYYY}
-    'mm': !!str ${MM}
-    'dd': !!str ${DD}
-    'hh': !!str ${HH}
-    'yyyymmdd': !!str ${PDY}
-    'yyyymmddhh': !!str ${PDY}${cyc}
-    'yyyhp': !!str ${YYYHP}
-    'mhp': !!str ${MHP}
-    'dhp': !!str ${DHP}
-    'hhp': !!str ${HHP}
-    'fn_orog': C${RES}_oro_data
-    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-    'DATE_CYCLE_FREQ_HR': ${DATE_CYCLE_FREQ_HR}
-    'NPZ': ${NPZ}
-    'res_p1': ${res_p1}
-" # End of settings variable
-
-    fp_template="${DATA}/${jedi_nml_fn}"
-    ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${jedi_nml_fn}"
-  fi
+  # Copy JEDI yaml file
+  jedi_nml_fn="jedi_${JEDI_ALGORITHM}_snow.yaml"
+  cp -p "${COMIN}/${jedi_nml_fn}" .
 
   # Set JEDI executable
   jedi_exe_fn="fv3jedi_var.x"

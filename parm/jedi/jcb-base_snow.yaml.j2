@@ -1,10 +1,15 @@
 # JCB general
-algorithm: 3dvar
-algorithm_path: "{{ PARMlandda }}/jedi/jcb-algorithms"
-app_path_algorithm: "{{ PARMlandda }}/jedi/jcb-gdas/algorithm/snow"
-app_path_model: "{{ PARMlandda }}/jedi/jcb-gdas/model/snow"
-app_path_observations: "{{ PARMlandda }}/jedi/jcb-gdas/observations/snow"
-app_path_observation_chronicle: "{{ PARMlandda }}/jedi/jcb-gdas/observation_chronicle/snow"
+algorithm: 3dvar_skylab
+#algorithm_path: "{{ PARMlandda }}/jedi/jcb-algorithms"
+#app_path_algorithm: "{{ PARMlandda }}/jedi/jcb-gdas/algorithm/snow"
+#app_path_model: "{{ PARMlandda }}/jedi/jcb-gdas/model/snow"
+#app_path_observations: "{{ PARMlandda }}/jedi/jcb-gdas/observations/snow"
+#app_path_observation_chronicle: "{{ PARMlandda }}/jedi/jcb-gdas/observation_chronicle/snow"
+algorithm_path: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-algorithms"
+app_path_algorithm: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/algorithm/snow"
+app_path_model: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/model/snow"
+app_path_observations: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/observations/snow"
+app_path_observation_chronicle: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/observation_chronicle/snow"
 
 # Time window
 window_begin: "{{ snow_window_begin }}"
@@ -26,9 +31,9 @@ snow_orog_prefix: "C{{ RES }}"
 
 # Final/minimization
 analysis_variables: [totalSnowDepth]
-final_diagnostics_departures: anlmob
-final_increment_file: snow_final_increment_fms
-final_prints_frequency: "{{ final_prints_frequency }}"
+final_diagnostics_departures: oman
+final_increment_file: snow_final_increment_fms_skylab
+snow_final_inc_file_path: {{ snow_final_inc_file_path }}
 minimizer: DRPCG
 number_of_outer_loops: 1
 
@@ -41,6 +46,9 @@ snow_increment_time_iso: "{{ snow_bkg_time_iso }}"
 
 # Background error
 snow_bump_data_directory: "{{ snow_bump_data_dir }}"
+
+# Output
+output_file: snow_output_skylab
 
 # Observation
 observations:
