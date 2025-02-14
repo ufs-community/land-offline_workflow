@@ -51,7 +51,12 @@ done
 # Copy obserbation file to work directory
 mkdir -p ${DATA}/obs
 obs_type_lower="${OBS_TYPE,,}"
-ln -nsf "${COMIN}/obs/${obs_type_lower}_snow_${PDY}${cyc}.nc" "${DATA}/obs/obs.${cycle}.${obs_type_lower}_snow.nc"
+if [ "${obs_type_lower}" = "ghcn" ]; then
+  obs_suffix="${obs_type_lower}_snow_skylab.nc"
+else
+  obs_suffix="${obs_type_lower}_snow.nc"
+fi
+ln -nsf "${COMIN}/obs/${obs_type_lower}_snow_${PDY}${cyc}.nc" "${DATA}/obs/obs.${cycle}.${obs_suffix}"
 
 # update coupler.res file
 settings="\
@@ -70,11 +75,25 @@ fp_template="${PARMlandda}/templates/template.coupler.res"
 fn_namelist="${DATA}/${FILEDATE}.coupler.res"
 ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${fn_namelist}"
 
+# Copy static data files
+mkdir -p ${DATA}/Data/fv3files
+cp -p ${PARMlandda}/jedi/fv3files/fmsmpp.nml ${DATA}/Data/fv3files/.
+cp -p ${PARMlandda}/jedi/fv3files/field_table ${DATA}/Data/fv3files/.
+ln -nsf ${JEDI_STATICDIR}/fv3files/akbk${NPZ}.nc4 ${DATA}/Data/fv3files/akbk.nc4
+
 # Output directory
 mkdir -p ${DATA}/diags
 
 # Prepare JEDI input yaml file
 if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
+
+  if [ "${FRAC_GRID}" = "NO" ]; then
+    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/Data/fv3files/fv3jedi_fieldmetadata_restart.yaml
+  else
+    cp -p ${PARMlandda}/jedi/fv3files/fv3jedi_fieldmetadata_restart.yaml ${DATA}/Data/fv3files/fv3jedi_fie
+ldmetadata_restart.yaml
+  fi
+
   # Set up backgroud and output directories
   mkdir -p ${DATA}/anl
   mkdir -p ${DATA}/bkg
@@ -89,45 +108,9 @@ if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
   done
   cp -p ${FILEDATE}.coupler.res ${DATA}/bkg
 
-  use_jcb="NO"
-  if [ "use_jcb" == "YES" ]; then
-    # Copy JEDI yaml file
-    jedi_nml_fn="jedi_jcb_snow_nml.yaml"
-    cp -p "${COMIN}/${jedi_nml_fn}" .
-  else
-    # Create JEDI input yaml
-    jedi_nml_fn="jedi_3dvar_snow.yaml"
-    cp -p "${PARMlandda}/jedi/${jedi_nml_fn}" "${DATA}/${jedi_nml_fn}"
-
-    cycle_freq_hr_half=$(( DATE_CYCLE_FREQ_HR / 2 ))
-    HPTIME=$($NDATE -${cycle_freq_hr_half} $PDY$cyc)
-    YYYHP=${HPTIME:0:4}
-    MHP=${HPTIME:4:2}
-    DHP=${HPTIME:6:2}
-    HHP=${HPTIME:8:2}
-
-    # update JEDI yaml file
-    settings="\
-    'yyyy': !!str ${YYYY}
-    'mm': !!str ${MM}
-    'dd': !!str ${DD}
-    'hh': !!str ${HH}
-    'yyyymmdd': !!str ${PDY}
-    'yyyymmddhh': !!str ${PDY}${cyc}
-    'yyyhp': !!str ${YYYHP}
-    'mhp': !!str ${MHP}
-    'dhp': !!str ${DHP}
-    'hhp': !!str ${HHP}
-    'fn_orog': C${RES}_oro_data
-    'datapath': ${FIXlandda}/FV3_fix_tiled/C${RES}
-    'DATE_CYCLE_FREQ_HR': ${DATE_CYCLE_FREQ_HR}
-    'NPZ': ${NPZ}
-    'res_p1': ${res_p1}
-" # End of settings variable
-
-    fp_template="${DATA}/${jedi_nml_fn}"
-    ${USHlandda}/fill_jinja_template.py -u "${settings}" -t "${fp_template}" -o "${jedi_nml_fn}"
-  fi
+  # Copy JEDI yaml file
+  jedi_nml_fn="jedi_${JEDI_ALGORITHM}_snow.yaml"
+  cp -p "${COMIN}/${jedi_nml_fn}" .
 
   # Set JEDI executable
   jedi_exe_fn="fv3jedi_var.x"
@@ -135,8 +118,10 @@ if [ "${JEDI_ALGORITHM}" = "3dvar" ]; then
 else # letkf
   if [ "${FRAC_GRID}" = "YES" ]; then
     snowdepth_vn="snodl"
+    cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
   else
     snowdepth_vn="snwdph"
+    cp -p ${JEDI_STATICDIR}/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
   fi
   # For LETKF, create pseudo-ensemble
   for ens in pos neg
@@ -189,20 +174,6 @@ fi
 ################################################
 # RUN JEDI
 ################################################
-
-# Copy static data files
-mkdir -p ${DATA}/Data/fv3files
-cp -p ${PARMlandda}/jedi/fv3files/fmsmpp.nml ${DATA}/Data/fv3files/.
-cp -p ${PARMlandda}/jedi/fv3files/field_table ${DATA}/Data/fv3files/.
-ln -nsf ${JEDI_STATICDIR}/fv3files/akbk${NPZ}.nc4 ${DATA}/Data/fv3files/akbk.nc4
-if [ "${FRAC_GRID}" = "NO" ]; then
-  cp -p ${PARMlandda}/jedi/gfs-land.yaml ${DATA}/gfs-land.yaml
-  cp -p ${PARMlandda}/jedi/fv3files/fv3jedi_fieldmetadata_restart_nofrac.yaml ${DATA}/Data/fv3files/fv3jedi_fieldmetadata_restart.yaml
-else
-  cp -p ${JEDI_STATICDIR}/fieldmetadata/gfs_v17-land.yaml ${DATA}/gfs-land.yaml
-  cp -p ${PARMlandda}/jedi/fv3files/fv3jedi_fieldmetadata_restart.yaml ${DATA}/Data/fv3files/fv3jedi_fie
-ldmetadata_restart.yaml
-fi
 
 export pgm="${jedi_exe_fn}"
 . prep_step
