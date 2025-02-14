@@ -1,11 +1,10 @@
 # JCB general
-algorithm: 3dvar_skylab
-#algorithm_path: "{{ PARMlandda }}/jedi/jcb-algorithms"
+algorithm: 3dvar
+algorithm_path: "{{ PARMlandda }}/jedi/jcb-algorithms"
 #app_path_algorithm: "{{ PARMlandda }}/jedi/jcb-gdas/algorithm/snow"
 #app_path_model: "{{ PARMlandda }}/jedi/jcb-gdas/model/snow"
 #app_path_observations: "{{ PARMlandda }}/jedi/jcb-gdas/observations/snow"
 #app_path_observation_chronicle: "{{ PARMlandda }}/jedi/jcb-gdas/observation_chronicle/snow"
-algorithm_path: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-algorithms"
 app_path_algorithm: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/algorithm/snow"
 app_path_model: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/model/snow"
 app_path_observations: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorithm_test/jcb-gdas/observations/snow"
@@ -14,9 +13,9 @@ app_path_observation_chronicle: "/scratch2/NAGAPE/epic/Chan-hoo.Jeon/jcb-algorit
 # Time window
 window_begin: "{{ snow_window_begin }}"
 window_length: "{{ snow_window_length }}"
-bound_to_include: begin
 
 # Geometry
+geometry_background_file: snow_geometry_background_skylab
 snow_fv3jedi_files_path: "{{ snow_fv3jedi_files_path }}"
 snow_layout_x: {{ snow_layout_x }}
 snow_layout_y: {{ snow_layout_y }}
@@ -38,6 +37,7 @@ minimizer: DRPCG
 number_of_outer_loops: 1
 
 # Background
+background_file: snow_background_skylab
 snow_background_path: "{{ snow_bkg_path }}"
 snow_background_time_fv3: "{{ snow_bkg_time_fv3 }}"
 snow_background_time_iso: "{{ snow_bkg_time_iso }}"
@@ -45,6 +45,7 @@ snow_increment_time_fv3: "{{ snow_bkg_time_fv3 }}"
 snow_increment_time_iso: "{{ snow_bkg_time_iso }}"
 
 # Background error
+background_error_file: snow_background_error_skylab
 snow_bump_data_directory: "{{ snow_bump_data_dir }}"
 
 # Output
@@ -53,7 +54,7 @@ output_file: snow_output_skylab
 # Observation
 observations:
 {%- if OBS_TYPE == "GHCN" %}
-- ghcn_snow
+- ghcn_snow_skylab
 {%- elif OBS_TYPE == "IMS" %}
 - ims_snow
 #- adpsfc_snow
